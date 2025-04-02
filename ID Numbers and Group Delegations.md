@@ -2,8 +2,8 @@
 
 ## ###**Vedang Kevlani (620153798)**
 
-## ###**Jada Walters ()**
+## ###**Jada Walters (620154361)**
 
-## ###**Abegail McCalla ()**
+## ###**Abegail McCalla (620157646)**
 
-## ###**Jonell Nelson ()**
+## ###**Jonell Nelson (620155815)**
