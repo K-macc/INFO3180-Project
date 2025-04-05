@@ -48,7 +48,7 @@ class Favourite(db.Model):
     
     id = db.Column(db.Integer, primary_key=True)
     user_id_fk = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    fav_user_id_fk = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    fav_user_id_fk = db.Column(db.Integer, db.ForeignKey('profile.id'), nullable=False)
     
     def __repr__(self):
         return f'<Favourite {self.user_id}>'
