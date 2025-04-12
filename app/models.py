@@ -2,7 +2,6 @@
 from app import db
 
 class User(db.Model):
-    """User model for the application"""
     __tablename__ = 'users'
     
     id = db.Column(db.Integer, primary_key=True)
@@ -10,15 +9,44 @@ class User(db.Model):
     password = db.Column(db.String(120), nullable=False)
     name = db.Column(db.String(80), nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
-    photo = db.Column(db.String(120), nullable=True)  # Path to the photo file
+    photo = db.Column(db.String(120), nullable=True)
     date_joined = db.Column(db.DateTime, nullable=False, default=db.func.current_timestamp())
 
+    profiles = db.relationship('Profile', backref='user', lazy=True)
+    favourites = db.relationship('Favourite', backref='user', lazy=True)
+
+     # Add the required methods for Flask-Login
+    def is_active(self):
+        # Return whether the user is active; return True for now
+        return True
+
+    def is_authenticated(self):
+        # Flask-Login uses this to check if the user is authenticated
+        return True
+
+    def is_anonymous(self):
+        # Return False to indicate that this user is not anonymous
+        return False
+
+    def get_id(self):
+        # This is used to retrieve the user ID (usually the primary key)
+        return str(self.id)
+    
     def __repr__(self):
         return f'<User {self.username}>'
-    
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "username": self.username,
+            "name": self.name,
+            "email": self.email,
+            "photo": self.photo,
+            "date_joined": str(self.date_joined)
+        }
+
 
 class Profile(db.Model):
-    """Profile model for the application"""
     __tablename__ = 'profile'
     
     id = db.Column(db.Integer, primary_key=True)
@@ -36,21 +64,53 @@ class Profile(db.Model):
     political = db.Column(db.Boolean, nullable=False, default=False)
     religious = db.Column(db.Boolean, nullable=False, default=False)
     family_oriented = db.Column(db.Boolean, nullable=False, default=False)
-    
-    
+
+    favourites = db.relationship('Favourite', backref='profile', lazy=True)
+
     def __repr__(self):
-        return f'<Profile {self.user_id}>'
-    
+        return f'<Profile {self.id}>'
+
+    def is_complete(self):
+        # Check all fields are filled (optional: make this stricter)
+        return all([
+            self.description, self.parish, self.biography, self.sex, self.race,
+            self.birth_year, self.height, self.fav_cuisine, self.fav_colour,
+            self.fav_school_subject
+        ])
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "user_id": self.user_id_fk,
+            "description": self.description,
+            "parish": self.parish,
+            "biography": self.biography,
+            "sex": self.sex,
+            "race": self.race,
+            "birth_year": self.birth_year,
+            "height": self.height,
+            "fav_cuisine": self.fav_cuisine,
+            "fav_colour": self.fav_colour,
+            "fav_school_subject": self.fav_school_subject,
+            "political": self.political,
+            "religious": self.religious,
+            "family_oriented": self.family_oriented
+        }
+
 
 class Favourite(db.Model):
-    """Favorite model for the application"""
     __tablename__ = 'favourite'
     
     id = db.Column(db.Integer, primary_key=True)
     user_id_fk = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     fav_user_id_fk = db.Column(db.Integer, db.ForeignKey('profile.id'), nullable=False)
-    
+
     def __repr__(self):
-        return f'<Favourite {self.user_id}>'
-    
-    
+        return f'<Favourite {self.user_id_fk} -> {self.fav_user_id_fk}>'
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "user_id": self.user_id_fk,
+            "fav_profile_id": self.fav_user_id_fk
+        }
