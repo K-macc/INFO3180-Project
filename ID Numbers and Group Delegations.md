@@ -11,6 +11,7 @@
 
 ## ###**Abegail McCalla (620157646)**
 - Api Creation
+- Overall Design
 
 ## ###**Jonell Nelson (620155815)**
 - VueJS Development
