@@ -5,16 +5,53 @@ Werkzeug Documentation:  https://werkzeug.palletsprojects.com/
 This file creates your application.
 """
 
-from flask_jwt_extended import current_user
+import os
+import jwt
+from datetime import datetime, timedelta
+from functools import wraps
+
+from flask import render_template, request, jsonify, send_file, send_from_directory, g
+from flask_jwt_extended import jwt_required, current_user, get_jwt_identity
+from flask_login import LoginManager, login_user, login_required, logout_user, current_user
+from flask_wtf.csrf import generate_csrf
+from werkzeug.utils import secure_filename
+from werkzeug.security import generate_password_hash, check_password_hash
+
+
 from app import app, db
 from app.models import User, Profile, Favourite
 from app.forms import UserForm, ProfileForm
-from flask_wtf.csrf import generate_csrf
-from flask_login import LoginManager, login_user, login_required, logout_user, current_user
-from flask import render_template, request, jsonify, send_file, send_from_directory
-from werkzeug.utils import secure_filename
-import os
 
+def requires_auth(f):
+  @wraps(f)
+  def decorated(*args, **kwargs):
+    auth = request.headers.get('Authorization', None) # or request.cookies.get('token', None)
+
+    if not auth:
+      return jsonify({'code': 'authorization_header_missing', 'description': 'Authorization header is expected'}), 401
+
+    parts = auth.split()
+
+    if parts[0].lower() != 'bearer':
+      return jsonify({'code': 'invalid_header', 'description': 'Authorization header must start with Bearer'}), 401
+    elif len(parts) == 1:
+      return jsonify({'code': 'invalid_header', 'description': 'Token not found'}), 401
+    elif len(parts) > 2:
+      return jsonify({'code': 'invalid_header', 'description': 'Authorization header must be Bearer + \s + token'}), 401
+
+    token = parts[1]
+    try:
+        payload = jwt.decode(token, app.config['SECRET_KEY'], algorithms=["HS256"])
+
+    except jwt.ExpiredSignatureError:
+        return jsonify({'code': 'token_expired', 'description': 'token is expired'}), 401
+    except jwt.DecodeError:
+        return jsonify({'code': 'token_invalid_signature', 'description': 'Token signature is invalid'}), 401
+
+    g.current_user = user = payload
+    return f(*args, **kwargs)
+
+  return decorated
 
 ###
 # Routing for your application.
@@ -25,17 +62,114 @@ def index():
     return jsonify(message="This is the beginning of our API")
 
 
+@app.route('/api/register', methods=['POST'])
+def register():
+    data = request.get_json()
+
+    required_fields = ['username', 'password', 'name', 'email']
+    if not all(field in data and data[field] for field in required_fields):
+        return jsonify({"error": "All fields are required"}), 400
+    
+    if User.query.filter_by(username=data['username']).first():
+        return jsonify({"error": "Username already exists"}), 400
+    
+    if User.query.filter_by(email=data['email']).first():
+        return jsonify({"error": "Email already exists"}), 400
+    
+    try:
+        new_user = User(
+            
+            username=data['username'],
+            password=generate_password_hash(data['password']),  # Secure the password
+            name=data['name'],
+            email=data['email'],
+            date_joined=datetime.utcnow()  # Add date_joined field
+        )
+
+        db.session.add(new_user)
+        db.session.commit()
+        return jsonify({
+            "message": "User registered successfully",
+            'user' : {
+                'id': new_user.id,
+                'username': new_user.username,
+                'name': new_user.name,
+                'email': new_user.email,
+                'date_joined': new_user.date_joined.strftime('%Y-%m-%d %H:%M:%S'),  # Format date as string
+                }
+            }), 201
+
+    except Exception as e:
+        return jsonify({"error":"An error occurred while processing the form", "details":str(e)}), 400
+
+@app.route('/api/auth/login', methods=['POST'])
+def login():
+    data=request.get_json()
+
+    if not data or not data.get('username') or not data.get('password'):
+        return jsonify({"error": "Username and password are required"}), 400
+    
+    user=User.query.filter_by(username=data['username']).first()
+    if not user or not check_password_hash(user.password, data['password']):
+        return jsonify({"error": "Invalid username or password"}), 401
+    
+    token=jwt.encode({
+        'user_id': user.id,
+        'iat': datetime.utcnow(),  # Issued at time
+        'exp': datetime.utcnow() + timedelta(hours=2)  # Token expires in 1 hour
+    }, app.config['SECRET_KEY'], algorithm='HS256')
+
+    return jsonify({
+        'message': 'Login successful',
+        'token': token,
+        'user': {
+            'username': user.username,
+            'name': user.name,
+        }
+    }),200
+
+@app.route('/api/auth/logout', methods=['POST'])
+@requires_auth 
+def logout():
+    return jsonify({"message": "Logged out successfully"}), 200
+
+
+@app.route('/api/profiles', methods=['GET'])
+@requires_auth
+def get_profiles():
+    # current_user_id = get_jwt_identity()
+    current_user_id = g.current_user['user_id']  # Get the user ID from the JWT payload
+    
+    # Get all profiles except the current user's
+    profiles = Profile.query.filter(Profile.user_id_fk != current_user_id).all()
+    
+    profiles_list = []
+    for profile in profiles:
+        profiles_list.append({
+            'id': profile.id,
+            'user_id': profile.user_id_fk,
+            'description': profile.description,
+            'parish': profile.parish,
+            'biography': profile.biography,
+            'sex': profile.sex,
+            'race': profile.race,
+            'birth_year': profile.birth_year,
+            'height': profile.height,
+            'fav_cuisine': profile.fav_cuisine,
+            'fav_colour': profile.fav_colour,
+            'fav_school_subject': profile.fav_school_subject,
+            'political': profile.political,
+            'religious': profile.religious,
+            'family_oriented': profile.family_oriented
+        })
+    
+    return jsonify({'profiles': profiles_list}), 200
 ###
 # The functions below should be applicable to all Flask apps.
 ###
 def has_complete_profile(user_id):
     profiles = Profile.query.filter_by(user_id_fk=user_id).all()
     return any(p.is_complete() for p in profiles)
-
-# just for testing 
-@app.route('/login')
-def login():
-    return "Login page"
 
 ## Vedang's Flask Endpoints starts here - Part 1
 

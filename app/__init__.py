@@ -31,5 +31,9 @@ def load_user(user_id):
     from app.models import User 
     return User.query.get(int(user_id))
 
+
+
+
 # Import views (this should come after initializing the app and extensions)
 from app import views
+
