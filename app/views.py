@@ -9,8 +9,9 @@ import os
 import jwt
 from datetime import datetime, timedelta
 from functools import wraps
+from binascii import Error
 
-from flask import render_template, request, jsonify, send_file, send_from_directory, g
+from flask import render_template, request, jsonify, send_file, send_from_directory, make_response
 from flask_jwt_extended import jwt_required, current_user, get_jwt_identity
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from flask_wtf.csrf import generate_csrf
@@ -255,7 +256,90 @@ def get_matches(profile_id):
 
     return jsonify([p.serialize() for p in matches])
 
-## Vedang's Flask Endpoints ends here- Part 1
+
+@app.route('/api/search', methods=['GET'])
+def search_profiles():
+    try:
+        name = request.args.get('name', default='', type=str)
+        birth_year = request.args.get('birth_year', default=None, type=int)
+        sex = request.args.get('sex', default='', type=str)
+        race = request.args.get('race', default='', type=str)
+        query = """
+            SELECT p.id, p.user_id_fk, p.description, p.parish, p.biography, p.sex, p.race, p.birth_year, p.height, 
+                   p.fav_cuisine, p.fav_colour, p.fav_school_sibject, p.political, p.religious, p.family_oriented
+            FROM profile p
+            JOIN users u ON p.user_id_fk = u.id
+            WHERE u.name = %s
+            AND p.birth_year = %s
+            AND p.sex = %s
+            AND p.race = %s;
+        """
+        params = (name, birth_year, sex, race)
+        cursor = db.cursor(dictionary=True)
+        cursor.execute(query, params)
+        results = cursor.fetchall()
+        if not results:
+            return make_response(jsonify({"error": "No profiles matched your search"}), 404)
+        return make_response(jsonify(results), 200)
+    except Error as e:
+        return make_response(jsonify({"error": str(e)}), 500)
+    finally:
+        cursor.close()
+
+@app.route('/api/users/<int:user_id>', methods=['GET'])
+def get_user(user_id):
+    try:
+        cursor = db.cursor(dictionary=True)
+        cursor.execute("SELECT id, username, password, name, email, photo, date_joined FROM users WHERE id = %s", (user_id,))
+        user = cursor.fetchone()
+        if not user:
+            return make_response(jsonify({"error": "User not found"}), 404)
+        return make_response(jsonify(user), 200)
+    except Error as e:
+        return make_response(jsonify({"error": str(e)}), 500)
+    finally:
+        cursor.close()
+
+@app.route('/api/users/<int:user_id>/favourites', methods=['GET'])
+def get_user_favourites(user_id):
+    try:
+        cursor = db.cursor(dictionary=True)
+        cursor.execute("""
+            SELECT u.id, u.username, u.password, u.name, u.email, u.photo, u.date_joined 
+            FROM users u
+            JOIN favourite f ON u.id = f.user_id_fk
+            WHERE f.user_id_fk = %s
+        """, (user_id,))
+        favourites = cursor.fetchall()
+        if not favourites:
+            return make_response(jsonify({"error": "No favourites found for this user"}), 404)
+        return make_response(jsonify(favourites), 200)
+    except Error as e:
+        return make_response(jsonify({"error": str(e)}), 500)
+    finally:
+        cursor.close()
+
+@app.route('/api/users/favourites/<int:N>', methods=['GET'])
+def get_top_favoured_users(N):
+    try:
+        cursor = db.cursor(dictionary=True)
+        cursor.execute("""
+            SELECT u.id, u.username, u.password, u.name, u.email, u.photo, u.date_joined, COUNT(f.user_id_fk) AS favourites_count
+            FROM users u          
+            JOIN favourite f ON u.id = f.user_id_fk       
+            GROUP BY u.id, u.username, u.name
+            ORDER BY favourites_count DESC
+            LIMIT %s
+        """, (N,))
+        top_favourites = cursor.fetchall()
+        if not top_favourites:
+            return make_response(jsonify({"error": "No favoured users found"}), 404)
+        return make_response(jsonify(top_favourites), 200)
+    except Error as e:
+        return make_response(jsonify({"error": str(e)}), 500)
+    finally:
+        cursor.close()
+
 
 
 # Here we define a function to collect form errors from Flask-WTF
