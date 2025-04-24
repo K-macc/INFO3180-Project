@@ -1,9 +1,9 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
+import Home from '../views/Home.vue'
 import AddProfileForm from '../components/AddProfileForm.vue'
 import Login from '../views/Login.vue'
 import Logout from '../components/Logout.vue'
-import RegistrationForm from '../components/RegistrationForm.vue'
+import Register from '../views/Register.vue'
 import FavouritesView from '../views/FavouritesView.vue'
 import ProfileDetailsView from '../views/ProfileDetailsView.vue'
 import UserProfileView from '../views/UserProfileView.vue'
@@ -14,7 +14,7 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      component: HomeView
+      component: Home
     },
     {
       path: '/about',
@@ -27,7 +27,7 @@ const router = createRouter({
     {
       path: '/register',
       name: 'register',
-      component: RegistrationForm
+      component: Register
     },
     {
       path: '/login',
@@ -37,12 +37,7 @@ const router = createRouter({
     {
       path: '/logout',
       name: 'logout',
-      component: Logout,
-      // This will be handled by a method that clears auth tokens
-      beforeEnter: (to, from, next) => {
-        // Logout logic here
-        next('/')
-      }
+      component: Logout
     },
     {
       path: '/users/:user_id',

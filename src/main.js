@@ -5,27 +5,7 @@ import router from './router'
 import axios from 'axios'
 
 // Set base URL for API requests
-axios.defaults.baseURL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'
-
-const app = createApp(App)
-
-// Initialize Pinia for state management
-const pinia = createPinia()
-app.use(pinia)
-
-// Use Vue Router
-app.use(router)
-
-// Global error handler
-app.config.errorHandler = (err) => {
-  console.error('Global Vue error:', err)
-}
-
-// Add axios to global properties for access in components
-app.config.globalProperties.$axios = axios
-
-// Mount the app
-app.mount('#app')
+axios.defaults.baseURL = import.meta.env.VITE_API_BASE_URL
 
 // Interceptor for adding JWT to requests
 axios.interceptors.request.use(config => {
@@ -33,6 +13,8 @@ axios.interceptors.request.use(config => {
   if (token) {
     config.headers.Authorization = `Bearer ${token}`
   }
+  console.log('Outgoing Request:', config.method.toUpperCase(), config.url);
+  console.log('Request Headers:', config.headers);
   return config
 }, error => {
   return Promise.reject(error)
@@ -46,3 +28,20 @@ axios.interceptors.response.use(response => response, error => {
   }
   return Promise.reject(error)
 })
+
+const app = createApp(App)
+
+// Initialize Pinia for state management
+const pinia = createPinia()
+app.use(pinia)
+
+// Use Vue Router
+app.use(router)
+
+
+// Add axios to global properties for access in components
+app.config.globalProperties.$axios = axios
+
+// Mount the app
+app.mount('#app')
+

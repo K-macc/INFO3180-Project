@@ -11,7 +11,7 @@ from datetime import datetime, timedelta
 from functools import wraps
 from binascii import Error
 
-from flask import render_template, request, jsonify, send_file, send_from_directory, make_response
+from flask import request, jsonify, send_file, send_from_directory, make_response, session, g
 from flask_jwt_extended import jwt_required, current_user, get_jwt_identity
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from flask_wtf.csrf import generate_csrf
@@ -21,42 +21,46 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 from app import app, db
 from app.models import User, Profile, Favourite
-from app.forms import UserForm, ProfileForm
+from app.forms import UserForm, ProfileForm, LoginForm, RegistrationForm
+from flask import flash
 
-# def requires_auth(f):
-#   @wraps(f)
-#   def decorated(*args, **kwargs):
-#     auth = request.headers.get('Authorization', None) # or request.cookies.get('token', None)
+def requires_auth(f):
+  @wraps(f)
+  def decorated(*args, **kwargs):
+    auth = request.headers.get('Authorization', None) # or request.cookies.get('token', None)
 
-#     if not auth:
-#       return jsonify({'code': 'authorization_header_missing', 'description': 'Authorization header is expected'}), 401
+    if not auth:
+      return jsonify({'code': 'authorization_header_missing', 'description': 'Authorization header is expected'}), 401
 
-#     parts = auth.split()
+    parts = auth.split()
 
-#     if parts[0].lower() != 'bearer':
-#       return jsonify({'code': 'invalid_header', 'description': 'Authorization header must start with Bearer'}), 401
-#     elif len(parts) == 1:
-#       return jsonify({'code': 'invalid_header', 'description': 'Token not found'}), 401
-#     elif len(parts) > 2:
-#       return jsonify({'code': 'invalid_header', 'description': 'Authorization header must be Bearer + \s + token'}), 401
+    if parts[0].lower() != 'bearer':
+      return jsonify({'code': 'invalid_header', 'description': 'Authorization header must start with Bearer'}), 401
+    elif len(parts) == 1:
+      return jsonify({'code': 'invalid_header', 'description': 'Token not found'}), 401
+    elif len(parts) > 2:
+      return jsonify({'code': 'invalid_header', 'description': r'Authorization header must be Bearer + \s + token'}), 401
 
-#     token = parts[1]
-#     try:
-#         payload = jwt.decode(token, app.config['SECRET_KEY'], algorithms=["HS256"])
+    token = parts[1]
+    try:
+        payload = jwt.decode(token, app.config['SECRET_KEY'], algorithms=["HS256"])
 
-#     except jwt.ExpiredSignatureError:
-#         return jsonify({'code': 'token_expired', 'description': 'token is expired'}), 401
-#     except jwt.DecodeError:
-#         return jsonify({'code': 'token_invalid_signature', 'description': 'Token signature is invalid'}), 401
+    except jwt.ExpiredSignatureError:
+        return jsonify({'code': 'token_expired', 'description': 'token is expired'}), 401
+    except jwt.DecodeError:
+        return jsonify({'code': 'token_invalid_signature', 'description': 'Token signature is invalid'}), 401
 
-#     g.current_user = user = payload
-#     return f(*args, **kwargs)
+    g.current_user = user = payload
+    return f(*args, **kwargs)
 
-#   return decorated
+  return decorated
 
 ###
 # Routing for your application.
 ###
+@app.route('/api/v1/csrf-token', methods=['GET'])
+def get_csrf():
+    return jsonify({'csrf_token': generate_csrf()}), 200
 
 @app.route('/')
 def index():
@@ -65,74 +69,72 @@ def index():
 
 @app.route('/api/register', methods=['POST'])
 def register():
-    data = request.get_json()
-
-    required_fields = ['username', 'password', 'name', 'email']
-    if not all(field in data and data[field] for field in required_fields):
-        return jsonify({"error": "All fields are required"}), 400
+    form = RegistrationForm()
     
-    if User.query.filter_by(username=data['username']).first():
-        return jsonify({"error": "Username already exists"}), 400
-    
-    if User.query.filter_by(email=data['email']).first():
-        return jsonify({"error": "Email already exists"}), 400
-    
-    try:
-        new_user = User(
-            
-            username=data['username'],
-            password=generate_password_hash(data['password']),  # Secure the password
-            name=data['name'],
-            email=data['email'],
-            date_joined=datetime.utcnow()  # Add date_joined field
-        )
-
-        db.session.add(new_user)
-        db.session.commit()
-        return jsonify({
-            "message": "User registered successfully",
+    if form.validate_on_submit():
+        if User.query.filter_by(username=form.username.data).first():
+            return jsonify({"error": "Username already exists!!"}), 400
+        elif User.query.filter_by(email=form.email.data).first():
+            return jsonify({"error": "Email Address already exists!!"}), 400
+        else:
+            new_user = User(
+            username=form.username.data,
+            password=generate_password_hash(form.password.data),
+            name=form.name.data,
+            email=form.email.data
+            )
+            db.session.add(new_user)
+            db.session.commit()
+            return jsonify({
+            "message": "User registered successfully!!",
             'user' : {
                 'id': new_user.id,
                 'username': new_user.username,
                 'name': new_user.name,
-                'email': new_user.email,
-                'date_joined': new_user.date_joined.strftime('%Y-%m-%d %H:%M:%S'),  # Format date as string
+                'email': new_user.email
                 }
             }), 201
+    else:
+        return jsonify({"errors": form_errors(form)}), 400
 
-    except Exception as e:
-        return jsonify({"error":"An error occurred while processing the form", "details":str(e)}), 400
 
 @app.route('/api/auth/login', methods=['POST'])
 def login():
-    data=request.get_json()
-
-    if not data or not data.get('username') or not data.get('password'):
-        return jsonify({"error": "Username and password are required"}), 400
+    form = LoginForm()
     
-    user=User.query.filter_by(username=data['username']).first()
-    if not user or not check_password_hash(user.password, data['password']):
-        return jsonify({"error": "Invalid username or password"}), 401
-    
-    token=jwt.encode({
-        'user_id': user.id,
-        'iat': datetime.utcnow(),  # Issued at time
-        'exp': datetime.utcnow() + timedelta(hours=2)  # Token expires in 1 hour
-    }, app.config['SECRET_KEY'], algorithm='HS256')
+    if form.validate_on_submit():
+        user = User.query.filter_by(username=form.username.data).first()
 
-    return jsonify({
-        'message': 'Login successful',
-        'token': token,
-        'user': {
-            'username': user.username,
-            'name': user.name,
-        }
-    }),200
+        if user and check_password_hash(user.password, form.password.data):
+            token=jwt.encode({
+            'user_id': user.id,
+            'iat': datetime.utcnow(),  # Issued at time
+            'exp': datetime.utcnow() + timedelta(hours=2)  # Token expires in 1 hour
+            }, app.config['SECRET_KEY'], algorithm='HS256')
+            session['user_id'] = user.id  # Store user ID in session
+            login_user(user)
+            return jsonify({
+                "message": "Logged in successfully!!",
+                'token': token,
+                'user': {
+                    'username': user.username,
+                    'name': user.name,
+                }}), 200
+        else:
+            return jsonify({"error": "Invalid username or password!!"}), 401
+    else:
+        return jsonify({"error": form_errors(form)}), 400
+    
 
 @app.route('/api/auth/logout', methods=['POST'])
-# @requires_auth 
+@requires_auth 
 def logout():
-    return jsonify({"message": "Logged out successfully"}), 200
+    try:
+        session.pop('user_id', None)  # Remove user ID from session
+        logout_user()
+        return jsonify({"message": "Logged out successfully!!"}), 200
+    except Exception as e:
+        return jsonify({"errors": [str(e)]}), 400
 
 
 @app.route('/api/profiles', methods=['GET'])

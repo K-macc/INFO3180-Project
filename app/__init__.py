@@ -18,6 +18,7 @@ app.config.from_object(Config)
 
 # Initialize extensions
 db = SQLAlchemy(app)
+csrf = CSRFProtect(app)
 migrate = Migrate(app, db)
 
 # Initialize LoginManager
