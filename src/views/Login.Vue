@@ -11,6 +11,7 @@ const successMessage = ref('');
 const token = ref('');
 const csrf_token = ref("");
 const authStore = useAuthStore();
+const user_id = ref(null);
 
 
 function flashMessage(prompt){
@@ -59,11 +60,12 @@ function login () {
       flashMessage(errorMessage);
     } else {
       token.value = data.token;
+      user_id.value = data.id;
       successMessage.value = data.message;
       username.value = '';
       password.value = '';
       authStore.setFlashMessage('');
-      authStore.login(form_data,token.value)
+      authStore.login(form_data,token.value,user_id.value);
       flashMessage(successMessage);
       setTimeout(() => {
         router.push('/');

@@ -1,29 +1,37 @@
 import { defineStore } from 'pinia';
 import { useRouter } from 'vue-router';
+import { ref } from 'vue';
+
+export const isAuthenticated = ref(false);
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
     user: null,
     token: null,
-    isAuthenticated: false,
     router: useRouter(),
-    flashMessage: ''
+    flashMessage: '',
+    user_id: null,
+    profile_id: null
   }),
   actions: {
-    login(userData, token) {
+    login(userData, token, user_id) {
       this.user = userData;
+      this.user_id = user_id;
       this.token = token;
-      this.isAuthenticated = true;
+      isAuthenticated.value = true;
       localStorage.setItem('jwt', token);
     },
     logout() {
       this.user = null;
-      this.isAuthenticated = false;
+      isAuthenticated.value = false;
       localStorage.removeItem('jwt');
       this.router.push('/');
     },
     setFlashMessage(message) {
       this.flashMessage = message;
+    },
+    setProfileId(profile_id) {
+      this.profile_id = profile_id;
     }
   }
 })

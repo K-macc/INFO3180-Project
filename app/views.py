@@ -116,6 +116,7 @@ def login():
             return jsonify({
                 "message": "Logged in successfully!!",
                 'token': token,
+                'id': user.id,
                 'user': {
                     'username': user.username,
                     'name': user.name,
@@ -138,9 +139,8 @@ def logout():
 
 
 @app.route('/api/profiles', methods=['GET'])
-# @requires_auth
+@requires_auth
 def get_profiles():
-    # current_user_id = get_jwt_identity()
     current_user_id = g.current_user['user_id']  # Get the user ID from the JWT payload
     
     # Get all profiles except the current user's
@@ -177,52 +177,68 @@ def has_complete_profile(user_id):
 ## Vedang's Flask Endpoints starts here - Part 1
 
 @app.route('/api/profiles', methods=['POST'])
-@login_required  # Uncomment to require login
+@requires_auth  
 def create_profile():
-    data = request.json
-    user_id = current_user.id  # Replace hardcoded user ID with current_user.id
-    if Profile.query.filter_by(user_id_fk=user_id).count() >= 3:
-        return jsonify({"error": "Max 3 profiles allowed"}), 400
-
-    # Validate required fields
-    required_fields = ['name', 'birth_year', 'sex', 'race']
-    if not all(field in data and data[field] for field in required_fields):
-        return jsonify({"error": "All profile fields required"}), 400
-
-    profile = Profile(user_id_fk=user_id, **data)  # Ensuring user_id_fk is set to current_user.id
-    db.session.add(profile)
-    db.session.commit()
-    return jsonify(profile.serialize()), 201
+    form = ProfileForm()
+    user_id = session.get('user_id') 
+    
+    if form.validate_on_submit():
+        if Profile.query.filter_by(user_id_fk=user_id).count() >= 3:
+            return jsonify({"error": "Max 3 profiles allowed"}), 400
+        else:
+            profile = Profile(
+                user_id_fk=user_id,
+                description=form.description.data,
+                parish=form.parish.data,
+                biography=form.biography.data,
+                sex=form.sex.data,
+                race=form.race.data,
+                birth_year=form.birth_year.data,
+                height=form.height.data,
+                fav_cuisine=form.fav_cuisine.data,
+                fav_colour=form.fav_colour.data,
+                fav_school_subject=form.fav_school_subject.data,
+                political=form.political.data,
+                religious=form.religious.data,
+                family_oriented=form.family_oriented.data
+            )  
+            db.session.add(profile)
+            db.session.commit()
+            return jsonify({"message":"New Profile Created!!"}), 201
+    else:
+        return jsonify({"errors": form_errors(form)}), 400
 
 @app.route('/api/profiles/<int:profile_id>', methods=['GET'])
-# @login_required
+@requires_auth
 def get_profile(profile_id):
     # Check if profile is complete for the current user 
     if not has_complete_profile(current_user.id):
         return jsonify({"error": "Complete your profile to access this feature."}), 403
 
     profile = Profile.query.get_or_404(profile_id)
-    return jsonify(profile.serialize())
+    return jsonify({"profile":profile.serialize()}), 200
 
 @app.route('/api/profiles/<int:user_id>/favourite', methods=['POST'])
-@login_required  # Uncomment to require login
+@requires_auth  
 def add_favourite(user_id):
-     # Check if profile is complete for the current user 
-    if not has_complete_profile(current_user.id):
+    
+    u_id = session.get('user_id')
+    
+    if not has_complete_profile(u_id):
         return jsonify({"error": "Complete your profile to access this feature."}), 403
     
-    if user_id == current_user.id:  # Replace hardcoded user ID with current_user.id
+    if user_id == u_id:  
         return jsonify({"error": "Cannot favourite yourself"}), 400
 
     profile = Profile.query.filter_by(user_id_fk=user_id).first()
     if not profile:
         return jsonify({"error": "Profile not found"}), 404
 
-    fav = Favourite.query.filter_by(user_id=current_user.id, favourite_id=user_id).first()
+    fav = Favourite.query.filter_by(user_id_fk=u_id, fav_user_id_fk=user_id).first()
     if fav:
-        return jsonify({"message": "Already favourited"}), 200
+        return jsonify({"message": "Already added to favourites"}), 200
 
-    fav = Favourite(user_id=current_user.id, favourite_id=user_id)
+    fav = Favourite(user_id_fk=u_id, fav_user_id_fk=user_id)
     db.session.add(fav)
     db.session.commit()
     return jsonify({"message": "Added to favourites"}), 201
@@ -293,7 +309,11 @@ def get_user(user_id):
     try:
         user = db.session.query(User).filter_by(id=user_id).first()
         if not user:
-            return make_response(jsonify({"error": "User not found"}), 404)
+            return jsonify({"error": "User not found"}), 404
+        
+        profiles = db.session.query(Profile).filter_by(user_id_fk=user_id).all()
+        if not profiles:
+            return jsonify({"error": "No profiles found for this user"}), 404
         
         user_data = {
             "id": user.id,
@@ -301,13 +321,35 @@ def get_user(user_id):
             "name": user.name,
             "email": user.email,
             "photo": f"/api/photo/{user.photo}",
-            "date_joined": user.date_joined.strftime('%Y-%m-%d')  # or whatever format you want
+            "date_joined": user.date_joined.strftime('%Y-%m-%d')  
         }
         
-        return make_response(jsonify(user_data), 200)
+        profiles_data = [
+            {
+                "id": profile.id,
+                "description": profile.description,
+                "parish": profile.parish,
+                "biography": profile.biography,
+                "sex": profile.sex,
+                "race": profile.race,
+                "birth_year": profile.birth_year,
+                "height": profile.height,
+                "fav_cuisine": profile.fav_cuisine,
+                "fav_colour": profile.fav_colour,
+                "fav_school_subject": profile.fav_school_subject,
+                "political": profile.political,
+                "religious": profile.religious,
+                "family_oriented": profile.family_oriented
+            }
+            for profile in profiles
+        ]
+        
+        return jsonify({
+            "user": user_data,
+            "profiles": profiles_data
+             }),200
     except Exception as e:
-        print(f"Error fetching user: {e}")
-        return make_response(jsonify({"error": str(e)}), 500)
+        return jsonify({"error": str(e)}), 500
 
 
 @app.route('/api/users/<int:user_id>/favourites', methods=['GET'])

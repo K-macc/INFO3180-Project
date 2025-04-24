@@ -1,8 +1,10 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted } from 'vue';
 
 const success_message = ref('');
 const errors = ref([]);
+const csrf_token = ref('');
+const jwt = localStorage.getItem('jwt');
 
 const description = ref('');
 const parish = ref('');
@@ -31,6 +33,69 @@ const toggleFamilyOrientedRadioButton = (value) => {
     family_oriented.value = family_oriented.value === value ? null : value;
 }
 
+function flashMessage(prompt){
+    setTimeout(() => {
+        if (Array.isArray(prompt)) {
+            prompt.value = [];
+        } else {
+            prompt.value = '';
+        }
+  }, 3000);
+}
+
+
+function getCsrfToken() {
+    fetch('/api/v1/csrf-token')
+        .then((response) => response.json())
+        .then((data) => {
+            csrf_token.value = data.csrf_token;
+        })
+        .catch((error) => {
+            console.error("Error: ",error);
+        });
+}
+
+onMounted(() => {
+    getCsrfToken();
+});
+
+function addProfile() {
+    const profileForm  = document.getElementById('profileForm');
+    const formData = new FormData(profileForm);
+
+    success_message.value = '';
+    errors.value = [];
+
+    fetch('/api/profiles', {
+        method: 'POST',
+        body: formData,
+        credentials: 'include',
+        headers: {
+            'Authorization': `Bearer ${jwt}`,
+            'X-CSRF-Token': csrf_token.value
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.message) {
+            success_message.value = data.message;
+            flashMessage(success_message);
+            profileForm.reset();
+        } else if (data.error) {
+            errors.value.push(data.error);
+            flashMessage(errors);
+        } else {
+            errors.value = data.errors;
+            flashMessage(errors);
+        }
+    })
+    .catch(error => {
+        console.error('Failed to parse JSON:', error);
+        errors.value.push('An error occurred while processing your request.');
+        flashMessage(errors);
+    });
+
+}
 </script>
 
 <template>
@@ -67,7 +132,7 @@ const toggleFamilyOrientedRadioButton = (value) => {
             <div class="group-items">
                 <div class="form-group mb-3">
                     <label for="parish" class="form-label">Parish</label>
-                    <select name="parishes" id="parish" v-model="parish">
+                    <select name="parish" id="parish" v-model="parish">
                             <option value="">--Select One--</option>
                             <option value="Clarendon">Clarendon</option>
                             <option value="Hanover">Hanover</option>
@@ -88,7 +153,7 @@ const toggleFamilyOrientedRadioButton = (value) => {
 
                 <div class="form-group mb-3">
                     <label for="sex" class="form-label">Sex</label>
-                    <select name="sexes" id="sex" v-model="sex">
+                    <select name="sex" id="sex" v-model="sex">
                         <option value="">--Select One--</option>
                         <option value="male">Male</option>
                         <option value="female">Female</option>
@@ -97,7 +162,7 @@ const toggleFamilyOrientedRadioButton = (value) => {
 
                 <div class="form-group mb-3">
                     <label for="race" class="form-label">Race</label>
-                    <select name="races" id="race" v-model="race">
+                    <select name="race" id="race" v-model="race">
                         <option value="">--Select One--</option>
                         <option value="asian">Asian</option>
                         <option value="black">Black</option>
@@ -278,5 +343,45 @@ select { background-color: #fff;
   font-size: 14px;
   cursor: pointer;
   height: 38px;
+  }
+
+  .success-message {
+    color: green;
+    background-color: #d4edda;
+    padding: 10px;
+    border-radius: 5px;
+    width: 15%;
+    top: 100px;
+    right: 45px;
+    text-align: center;
+    position: fixed;
+  }
+
+  .error-message {
+      color: red;
+      background-color: #f8d7da;
+      padding: 10px;
+      padding-top: 20px;
+      padding-left: 0px;
+      margin-bottom: 10px;
+      border-radius: 5px;
+      top: 70px;
+      right: 45px;
+      position: fixed;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      width: 26%;
+      min-height: 8%;
+      height: auto;
+  }
+
+  .fade-leave-active {
+    transition: opacity 1s ease-in-out;
+  }
+
+  .fade-leave-to {
+    opacity: 0;
   }
 </style>

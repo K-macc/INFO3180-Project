@@ -22,19 +22,19 @@
             <li class="nav-item">
               <RouterLink class="nav-link" to="/about">About</RouterLink>
             </li>
-            <li class="nav-item">
+            <li class="nav-item" v-if="!isAuthenticated">
               <RouterLink class="nav-link" to="/register">Register</RouterLink>
             </li>
-            <li class="nav-item">
+            <li class="nav-item" v-if="!isAuthenticated">
               <RouterLink class="nav-link" to="/login">Login</RouterLink>
             </li>
-            <li class="nav-item">
+            <li class="nav-item" v-if="isAuthenticated">
               <RouterLink class="nav-link" to="/logout">Logout</RouterLink>
             </li>
-            <li class="nav-item">
-              <RouterLink class="nav-link" to="/users/1">My Profile</RouterLink>
+            <li class="nav-item" v-if="isAuthenticated">
+              <RouterLink class="nav-link" :to="`/users/${authStore.user_id}`">My Profile</RouterLink>
             </li>
-            <li class="nav-item">
+            <li class="nav-item" v-if="isAuthenticated">
               <RouterLink class="nav-link" to="/profiles/new">Add New Profile</RouterLink>
             </li>
           </ul>
@@ -46,6 +46,9 @@
 
 <script setup>
 import { RouterLink } from "vue-router";
+import { useAuthStore, isAuthenticated } from "@/stores/auth";
+
+const authStore = useAuthStore();
 </script>
 
 <style>

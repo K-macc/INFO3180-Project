@@ -1,24 +1,32 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted } from 'vue';
+import { useAuthStore } from '@/stores/auth';
 
+const authStore = useAuthStore();
+const userID = authStore.user_id; 
 const user = ref(null);
+const profiles = ref([]);
 
-const fetchUser = () => {
-    fetch('/api/users/1', {
+function fetchUser(){
+    fetch(`/api/users/${userID}`, {
         method: 'GET',
     })
     .then(response => {
     return response.json();     
     })
     .then(data => { 
-        user.value = data;
-        console.log(user.value);
+        user.value = data.user;
+        profiles.value = data.profiles;
+        console.log(profiles.value);
     })
     .catch(error => {
             console.error('Failed to parse JSON:', error);
     })
 
+}
 
+function trackProfileView(profileID) {
+    authStore.setProfileId(profileID);
 }
 
 
@@ -36,17 +44,17 @@ onMounted(() => {
             <img :src="user.photo" alt="Profile Picture">
 
             <div class="text-content">
-                <div class="label-info">
+                <div class="user-info">
                     <label for="name">Name:</label>
                     <p>{{ user.name }} </p>
                 </div>
                 
-                <div class="label-info">
+                <div class="user-info">
                     <label for="email">Email:</label>
                     <p>{{ user.email }}</p>
                 </div>
                 
-                <div class="label-info">
+                <div class="user-info">
                     <label for="date_joined">Date Joined:</label>
                     <p>{{ user.date_joined }}</p>
                 </div>
@@ -57,7 +65,20 @@ onMounted(() => {
         <div class="profiles">
             <h2>Profiles</h2>
 
-            <div></div>
+            <div v-for="profile in profiles" :key="profile.id" class="profile-list">
+                <div class="profile-item card">
+                    <h3>About Me</h3>
+                    
+                    <label for="description">Description:</label>
+                    <p>{{ profile.description }}</p>
+
+            
+                    <label for="biography">Biography:</label>
+                    <p>{{ profile.biography }}</p>
+
+                    <router-link class="btn btn-primary" :to="`/profiles/${profile.id}`" @click="trackProfileView(profile.id)">View Profile</router-link>
+                </div>
+            </div>
         </div>
     </div>
 </template>
@@ -94,7 +115,7 @@ img {
     margin-bottom: 50px;
 }
 
-.label-info {
+.user-info {
     display: flex;
     flex-direction: row;
     justify-content: center;
@@ -115,16 +136,48 @@ label {
 }
 
 .profiles {
-    display: grid;
-    grid-template-columns: 190px 1fr; /* Image takes up 190px, text takes the remaining space */
-    align-items: flex-start;  /* Align the content to the top */
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.profile-list {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
     justify-content: center;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
-    width: 550px;
-    height: auto;
-    transition: all 0.3s ease-in-out;
+    width: 100%;
+    gap: 4rem;
+    
+}
+
+
+.profile-item.card  {
+  margin: 0 0 0.5rem;
+  font-size: 1.1rem;
+  color: #333;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+  width: auto;
+  height: 250px;
+  transition: all 0.3s ease-in-out;
+  justify-content: center;
+  padding: 0 25px;
+}
+
+
+.profile-item.card:hover {
+  background: white ;
+  transform: scale(1.05);
+  box-shadow: 0px 0px 10px rgb(146, 144, 144) ;
+  border-color: #817e7e96 ;
+}
+
+.btn.btn-primary {
+    width: 20%;
+    align-self: center;
 }
 
 </style>

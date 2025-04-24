@@ -7,7 +7,6 @@ const router = useRouter();
 const success_message = ref('');
 const errors = ref([]);
 const csrf_token = ref('');
-const jwt = localStorage.getItem('jwt');
 const authStore = useAuthStore();
 
 
@@ -28,16 +27,6 @@ function getCsrfToken() {
 }
 
 
-function flashMessage(prompt){
-    setTimeout(() => {
-        if (Array.isArray(prompt)) {
-            prompt.value = [];
-        } else {
-            prompt.value = '';
-        }
-  }, 2000);
-}
-
 
 const logoutUser = async () => {
     success_message.value = '';
@@ -52,7 +41,7 @@ const logoutUser = async () => {
         method: 'POST',
         credentials: 'include',
         headers: {
-            'Authorization': `Bearer ${jwt}`,
+            'Authorization': `Bearer ${authStore.token}`,
             'X-CSRF-Token': csrf_token.value, // Send CSRF token in header
             'Content-Type': 'application/json'
         }
