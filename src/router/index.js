@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import AddProfileForm from '../components/AddProfileForm.vue'
-import LoginForm from '../components/LoginForm.vue'
+import Login from '../views/Login.vue'
 import Logout from '../components/Logout.vue'
 import RegistrationForm from '../components/RegistrationForm.vue'
 import FavouritesView from '../views/FavouritesView.vue'
@@ -32,7 +32,7 @@ const router = createRouter({
     {
       path: '/login',
       name: 'login',
-      component: LoginForm
+      component: Login
     },
     {
       path: '/logout',

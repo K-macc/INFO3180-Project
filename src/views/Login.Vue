@@ -1,23 +1,7 @@
-<template>
-    <div>
-      <h1>Login</h1>
-      <form @submit.prevent="handleLogin">
-        <div>
-          <label>Username:</label>
-          <input v-model="credentials.username" type="text" required>
-        </div>
-        <div>
-          <label>Password:</label>
-          <input v-model="credentials.password" type="password" required>
-        </div>
-        <button type="submit">Login</button>
-      </form>
-      <p>Don't have an account? <router-link to="/register">Register here</router-link></p>
-    </div>
-  </template>
-  
-  <script>
-  export default {
+<script setup>
+import { ref, onMounted } from 'vue'
+
+export default {
     name: 'Login',
     data() {
       return {
@@ -52,4 +36,27 @@
       }
     }
   }
-  </script>
+</script>
+
+<template>
+    <div>
+      <h1>Login</h1>
+      <form @submit.prevent="handleLogin">
+        <div>
+          <label>Username:</label>
+          <input v-model="credentials.username" type="text" required>
+        </div>
+        <div>
+          <label>Password:</label>
+          <input v-model="credentials.password" type="password" required>
+        </div>
+        <button type="submit">Login</button>
+      </form>
+      <p>Don't have an account? <router-link to="/register">Register here</router-link></p>
+    </div>
+</template>
+
+
+<style scoped>
+
+</style>
