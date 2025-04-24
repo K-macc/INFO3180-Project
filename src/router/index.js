@@ -37,10 +37,15 @@ const router = createRouter({
     {
       path: '/logout',
       name: 'logout',
-      component: Logout
+      component: Logout,
+      // This will be handled by a method that clears auth tokens
+      beforeEnter: (to, from, next) => {
+        // Logout logic here
+        next('/')
+      }
     },
     {
-      path: '/users/1',
+      path: '/users/:user_id',
       name: 'user-profile-info',
       component: UserProfileView
     },
@@ -50,7 +55,7 @@ const router = createRouter({
       component: AddProfileForm
     },
     {
-      path: '/profiles/{profile_id}',
+      path: '/profiles/:profile_id',
       name: 'profile-details',
       component: ProfileDetailsView
     },
@@ -60,6 +65,6 @@ const router = createRouter({
       component: FavouritesView
     }    
   ]
-})
 
+})
 export default router
