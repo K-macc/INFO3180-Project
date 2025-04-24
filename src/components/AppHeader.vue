@@ -32,7 +32,7 @@
               <RouterLink class="nav-link" to="/logout">Logout</RouterLink>
             </li>
             <li class="nav-item">
-              <RouterLink class="nav-link" to="/users/{user_id}">My Profile</RouterLink>
+              <RouterLink class="nav-link" to="/users/1">My Profile</RouterLink>
             </li>
             <li class="nav-item">
               <RouterLink class="nav-link" to="/profiles/new">Add New Profile</RouterLink>

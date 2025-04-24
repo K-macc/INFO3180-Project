@@ -23,36 +23,36 @@ from app import app, db
 from app.models import User, Profile, Favourite
 from app.forms import UserForm, ProfileForm
 
-def requires_auth(f):
-  @wraps(f)
-  def decorated(*args, **kwargs):
-    auth = request.headers.get('Authorization', None) # or request.cookies.get('token', None)
+# def requires_auth(f):
+#   @wraps(f)
+#   def decorated(*args, **kwargs):
+#     auth = request.headers.get('Authorization', None) # or request.cookies.get('token', None)
 
-    if not auth:
-      return jsonify({'code': 'authorization_header_missing', 'description': 'Authorization header is expected'}), 401
+#     if not auth:
+#       return jsonify({'code': 'authorization_header_missing', 'description': 'Authorization header is expected'}), 401
 
-    parts = auth.split()
+#     parts = auth.split()
 
-    if parts[0].lower() != 'bearer':
-      return jsonify({'code': 'invalid_header', 'description': 'Authorization header must start with Bearer'}), 401
-    elif len(parts) == 1:
-      return jsonify({'code': 'invalid_header', 'description': 'Token not found'}), 401
-    elif len(parts) > 2:
-      return jsonify({'code': 'invalid_header', 'description': 'Authorization header must be Bearer + \s + token'}), 401
+#     if parts[0].lower() != 'bearer':
+#       return jsonify({'code': 'invalid_header', 'description': 'Authorization header must start with Bearer'}), 401
+#     elif len(parts) == 1:
+#       return jsonify({'code': 'invalid_header', 'description': 'Token not found'}), 401
+#     elif len(parts) > 2:
+#       return jsonify({'code': 'invalid_header', 'description': 'Authorization header must be Bearer + \s + token'}), 401
 
-    token = parts[1]
-    try:
-        payload = jwt.decode(token, app.config['SECRET_KEY'], algorithms=["HS256"])
+#     token = parts[1]
+#     try:
+#         payload = jwt.decode(token, app.config['SECRET_KEY'], algorithms=["HS256"])
 
-    except jwt.ExpiredSignatureError:
-        return jsonify({'code': 'token_expired', 'description': 'token is expired'}), 401
-    except jwt.DecodeError:
-        return jsonify({'code': 'token_invalid_signature', 'description': 'Token signature is invalid'}), 401
+#     except jwt.ExpiredSignatureError:
+#         return jsonify({'code': 'token_expired', 'description': 'token is expired'}), 401
+#     except jwt.DecodeError:
+#         return jsonify({'code': 'token_invalid_signature', 'description': 'Token signature is invalid'}), 401
 
-    g.current_user = user = payload
-    return f(*args, **kwargs)
+#     g.current_user = user = payload
+#     return f(*args, **kwargs)
 
-  return decorated
+#   return decorated
 
 ###
 # Routing for your application.
@@ -130,13 +130,13 @@ def login():
     }),200
 
 @app.route('/api/auth/logout', methods=['POST'])
-@requires_auth 
+# @requires_auth 
 def logout():
     return jsonify({"message": "Logged out successfully"}), 200
 
 
 @app.route('/api/profiles', methods=['GET'])
-@requires_auth
+# @requires_auth
 def get_profiles():
     # current_user_id = get_jwt_identity()
     current_user_id = g.current_user['user_id']  # Get the user ID from the JWT payload
@@ -289,16 +289,24 @@ def search_profiles():
 @app.route('/api/users/<int:user_id>', methods=['GET'])
 def get_user(user_id):
     try:
-        cursor = db.cursor(dictionary=True)
-        cursor.execute("SELECT id, username, password, name, email, photo, date_joined FROM users WHERE id = %s", (user_id,))
-        user = cursor.fetchone()
+        user = db.session.query(User).filter_by(id=user_id).first()
         if not user:
             return make_response(jsonify({"error": "User not found"}), 404)
-        return make_response(jsonify(user), 200)
-    except Error as e:
+        
+        user_data = {
+            "id": user.id,
+            "username": user.username,
+            "name": user.name,
+            "email": user.email,
+            "photo": f"/api/photo/{user.photo}",
+            "date_joined": user.date_joined.strftime('%Y-%m-%d')  # or whatever format you want
+        }
+        
+        return make_response(jsonify(user_data), 200)
+    except Exception as e:
+        print(f"Error fetching user: {e}")
         return make_response(jsonify({"error": str(e)}), 500)
-    finally:
-        cursor.close()
+
 
 @app.route('/api/users/<int:user_id>/favourites', methods=['GET'])
 def get_user_favourites(user_id):
@@ -341,6 +349,9 @@ def get_top_favoured_users(N):
         cursor.close()
 
 
+@app.route('/api/photo/<filename>', methods = ['GET'])
+def get_photo(filename):
+    return send_from_directory(os.path.join(os.getcwd(),app.config['UPLOAD_FOLDER']),filename),200
 
 # Here we define a function to collect form errors from Flask-WTF
 # which we can later use
@@ -379,4 +390,5 @@ def add_header(response):
 @app.errorhandler(404)
 def page_not_found(error):
     """Custom 404 page."""
-    return render_template('404.html'), 404
+    return jsonify({'error': 'Not found'}), 404
+    # return render_template('404.html'), 404

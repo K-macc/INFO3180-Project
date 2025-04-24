@@ -40,7 +40,7 @@ const router = createRouter({
       component: Logout
     },
     {
-      path: '/users/{user_id}',
+      path: '/users/1',
       name: 'user-profile-info',
       component: UserProfileView
     },
