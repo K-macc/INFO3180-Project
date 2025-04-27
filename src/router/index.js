@@ -7,6 +7,7 @@ import Register from '../views/Register.vue'
 import FavouritesView from '../views/FavouritesView.vue'
 import ProfileDetailsView from '../views/ProfileDetailsView.vue'
 import UserProfileView from '../views/UserProfileView.vue'
+import UserPage from '../views/UserPage.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -45,6 +46,11 @@ const router = createRouter({
       component: UserProfileView
     },
     {
+      path: '/users',
+      name: 'home-users',
+      component: UserPage
+    },
+    {
       path: '/profiles/new',
       name: 'new-profile',
       component: AddProfileForm
@@ -59,7 +65,10 @@ const router = createRouter({
       name: 'favourite-profiles',
       component: FavouritesView
     }    
-  ]
+  ],
+  scrollBehavior(to, from, savedPosition) {
+    return { top: 0 };
+  },
 
 })
 export default router

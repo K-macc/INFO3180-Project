@@ -62,13 +62,12 @@ function login () {
       token.value = data.token;
       user_id.value = data.id;
       successMessage.value = data.message;
-      username.value = '';
-      password.value = '';
+      loginForm.reset();
       authStore.setFlashMessage('');
       authStore.login(form_data,token.value,user_id.value);
       flashMessage(successMessage);
       setTimeout(() => {
-        router.push('/');
+        router.push('/users');
       }, 5000);
     }
   })

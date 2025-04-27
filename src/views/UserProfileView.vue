@@ -65,8 +65,8 @@ onMounted(() => {
         <div class="profiles">
             <h2>Profiles</h2>
 
-            <div v-for="profile in profiles" :key="profile.id" class="profile-list">
-                <div class="profile-item card">
+            <div class="profile-list">
+                <div v-for="profile in profiles" :key="profile.id" class="profile-item card">
                     <h3>About Me</h3>
                     
                     <label for="description">Description:</label>
@@ -138,6 +138,7 @@ label {
 .profiles {
     display: flex;
     flex-direction: column;
+    align-items: center;
     gap: 2rem;
 }
 
@@ -147,24 +148,22 @@ label {
     align-items: center;
     justify-content: center;
     width: 100%;
-    gap: 4rem;
-    
+    gap: 2rem;
 }
 
 
 .profile-item.card  {
-  margin: 0 0 0.5rem;
+  margin: 0.5rem 0 0.5rem;
   font-size: 1.1rem;
   color: #333;
-  padding: 10px;
   border: 1px solid #ddd;
   border-radius: 8px;
   box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
-  width: auto;
-  height: 250px;
+  width: 30%;
+  height: 300px;
   transition: all 0.3s ease-in-out;
-  justify-content: center;
-  padding: 0 25px;
+  justify-content: space-around;
+  padding: 1px 25px;
 }
 
 
@@ -176,8 +175,9 @@ label {
 }
 
 .btn.btn-primary {
-    width: 20%;
+    width: 30%;
     align-self: center;
+    margin-bottom: 10px;
 }
 
 </style>

@@ -3,6 +3,12 @@ import { createPinia } from 'pinia'
 import App from './App.vue'
 import router from './router'
 import axios from 'axios'
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { faHeart as fasHeart } from '@fortawesome/free-solid-svg-icons'
+import { faHeart as farHeart } from '@fortawesome/free-regular-svg-icons'
+
+library.add(fasHeart, farHeart)
 
 // Set base URL for API requests
 axios.defaults.baseURL = import.meta.env.VITE_API_BASE_URL
@@ -30,6 +36,7 @@ axios.interceptors.response.use(response => response, error => {
 })
 
 const app = createApp(App)
+app.component('font-awesome-icon', FontAwesomeIcon)
 
 // Initialize Pinia for state management
 const pinia = createPinia()

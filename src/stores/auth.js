@@ -32,6 +32,6 @@ export const useAuthStore = defineStore('auth', {
     },
     setProfileId(profile_id) {
       this.profile_id = profile_id;
-    }
+    },
   }
 })

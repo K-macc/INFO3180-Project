@@ -61,10 +61,7 @@ function register() {
       flashMessage(errorMessage);
     } else {
       successMessage.value = data.message;
-      username.value = '';
-      password.value = '';
-      name.value = '';
-      email.value = '';
+      registrationForm.reset();
       flashMessage(successMessage);
       setTimeout(() => {
         router.push('/');

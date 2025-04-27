@@ -211,37 +211,45 @@ def create_profile():
 @app.route('/api/profiles/<int:profile_id>', methods=['GET'])
 @requires_auth
 def get_profile(profile_id):
-    # Check if profile is complete for the current user 
     if not has_complete_profile(current_user.id):
         return jsonify({"error": "Complete your profile to access this feature."}), 403
 
     profile = Profile.query.get_or_404(profile_id)
     return jsonify({"profile":profile.serialize()}), 200
 
-@app.route('/api/profiles/<int:user_id>/favourite', methods=['POST'])
+@app.route('/api/profiles/<int:user_id>/favourite', methods=['POST', 'DELETE'])
 @requires_auth  
-def add_favourite(user_id):
+def favourites(user_id):
     
     u_id = session.get('user_id')
     
     if not has_complete_profile(u_id):
         return jsonify({"error": "Complete your profile to access this feature."}), 403
     
-    if user_id == u_id:  
-        return jsonify({"error": "Cannot favourite yourself"}), 400
+    if request.method  == 'DELETE':
+        fav = Favourite.query.filter_by(user_id_fk=u_id, fav_user_id_fk=user_id).first()
+        if not fav:
+            return jsonify({"error": "User not found"}), 404
+        else:
+            db.session.delete(fav)
+            db.session.commit()
+            return jsonify({"message": "User removed from favourites!!"}), 200
+    else:
+        if user_id == u_id:  
+            return jsonify({"error": "Cannot favourite yourself"}), 400
 
-    profile = Profile.query.filter_by(user_id_fk=user_id).first()
-    if not profile:
-        return jsonify({"error": "Profile not found"}), 404
+        profile = Profile.query.filter_by(user_id_fk=user_id).first()
+        if not profile:
+            return jsonify({"error": "User not found"}), 404
 
-    fav = Favourite.query.filter_by(user_id_fk=u_id, fav_user_id_fk=user_id).first()
-    if fav:
-        return jsonify({"message": "Already added to favourites"}), 200
+        fav = Favourite.query.filter_by(user_id_fk=u_id, fav_user_id_fk=user_id).first()
+        if fav:
+            return jsonify({"error": "Already added to favourites"}), 404
 
-    fav = Favourite(user_id_fk=u_id, fav_user_id_fk=user_id)
-    db.session.add(fav)
-    db.session.commit()
-    return jsonify({"message": "Added to favourites"}), 201
+        fav = Favourite(user_id_fk=u_id, fav_user_id_fk=user_id)
+        db.session.add(fav)
+        db.session.commit()
+        return jsonify({"message": "User added to favourites!!"}), 201
 
 @app.route('/api/profiles/matches/<int:profile_id>', methods=['GET'])
 @login_required
@@ -353,23 +361,21 @@ def get_user(user_id):
 
 
 @app.route('/api/users/<int:user_id>/favourites', methods=['GET'])
+@requires_auth
 def get_user_favourites(user_id):
-    try:
-        cursor = db.cursor(dictionary=True)
-        cursor.execute("""
-            SELECT u.id, u.username, u.password, u.name, u.email, u.photo, u.date_joined 
-            FROM users u
-            JOIN favourite f ON u.id = f.user_id_fk
-            WHERE f.user_id_fk = %s
-        """, (user_id,))
-        favourites = cursor.fetchall()
-        if not favourites:
-            return make_response(jsonify({"error": "No favourites found for this user"}), 404)
-        return make_response(jsonify(favourites), 200)
-    except Error as e:
-        return make_response(jsonify({"error": str(e)}), 500)
-    finally:
-        cursor.close()
+    favourites = Favourite.query.filter_by(user_id_fk=user_id).all()
+    if not favourites:
+        return jsonify({"error": "No favourites found for this user"}), 404
+    else:
+        favourites_list = [
+            {
+                "id": favourite.id,
+                "user_id": favourite.user_id_fk,
+                "fav_user_id": favourite.fav_user_id_fk
+            }
+            for favourite in favourites
+        ]
+    return jsonify({"favourites":favourites_list}), 200
 
 @app.route('/api/users/favourites/<int:N>', methods=['GET'])
 def get_top_favoured_users(N):

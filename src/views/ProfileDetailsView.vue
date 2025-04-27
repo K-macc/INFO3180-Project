@@ -5,6 +5,94 @@ import { useAuthStore } from '@/stores/auth';
 const profile = ref(null);
 const authStore = useAuthStore();
 const profileID = authStore.profile_id; // Assuming you have the profile ID stored in the auth store
+const favourites = ref([]);
+const success_message = ref('');
+const error_message = ref('');
+const csrf_token = ref("");
+
+const isFavourited = (id) => {return favourites.value.includes(id)};
+
+function loadFavourites() {
+    fetch(`/api/users/${authStore.user_id}/favourites`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${authStore.token}`
+        }
+      })
+      .then((response) => response.json())
+      .then((data) => {
+        const fav = data.favourites;
+        fav.forEach((favourite) => {
+            favourites.value.push(favourite.fav_user_id);
+        });
+      })
+      .catch((error) => {
+        console.error('Error fetching favourites:', error);
+      });
+}
+
+function getCsrfToken() {
+    fetch('/api/v1/csrf-token')
+        .then((response) => response.json())
+        .then((data) => {
+            csrf_token.value = data.csrf_token;
+        })
+        .catch((error) => {
+            console.error("Error: ",error);
+        });
+}
+
+
+function addToFavourites(id){
+  if (favourites.value.includes(id)) {
+    favourites.value = favourites.value.filter(fav => fav !== id);
+    fetch(`/api/profiles/${id}/favourite`, {
+      method: 'DELETE',
+      headers: {
+        'X-CSRFToken': csrf_token.value,
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${authStore.token}`
+      }
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.error) {
+        error_message.value = data.error;
+        authStore.setFlashMessage(error_message.value);
+      } else {
+        success_message.value = data.message;
+        authStore.setFlashMessage(success_message.value);
+      }
+    })
+    .catch(error => {
+      console.error('Error deleting from favourites:', error);
+    });
+  } else {
+    favourites.value.push(id);
+    fetch(`/api/profiles/${id}/favourite`, {
+      method: 'POST',
+      headers: {
+        'X-CSRFToken': csrf_token.value,
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${authStore.token}`
+      }
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.error) {
+        error_message.value = data.error;
+        authStore.setFlashMessage(error_message.value);
+      } else {
+        success_message.value = data.message;
+        authStore.setFlashMessage(success_message.value);
+      }
+    })
+    .catch(error => {
+      console.error('Error adding to favourites:', error);
+    });
+  }
+}
 
 function fetchProfile(){
     fetch(`/api/profiles/${profileID}`, {
@@ -19,10 +107,13 @@ function fetchProfile(){
     })
     .then(data => { 
         if (data.error) {
+            console.log(data.error);
             console.error('Error fetching profile:', data.error);
             return;
         } else {
             profile.value = data.profile;
+            loadFavourites();
+            console.log('Fetched favourites:', favourites.value);
         }
     })
     .catch(error => {
@@ -33,11 +124,24 @@ function fetchProfile(){
 
 onMounted(() => {
     fetchProfile(); 
+    getCsrfToken();
 });
 </script>
 
 <template>
     <div class="main-body" v-if="profile">
+        <transition name="fade">
+            <div v-if="success_message" class="success-message">
+                {{ success_message }}
+            </div>
+        </transition>
+
+        <transition name="fade">
+            <div v-if="error_message" class="error-message">
+                {{ error_message }}
+            </div>
+        </transition>
+
         <h1>My Profile</h1>
 
         <div class="header-info">
@@ -110,6 +214,9 @@ onMounted(() => {
             <label for="height">Height:</label>
             <p>{{ profile.height }}</p>
         </div>
+
+        <button class="btn btn-secondary">Email User</button>
+        <button class="btn btn-fav" @click="addToFavourites(profile.user_id)"><font-awesome-icon :icon="[isFavourited(profile.user_id) ? 'fas' : 'far', 'heart']" :class="{'heart-icon': true, 'favourited': isFavourited(profile.user_id)}"/></button>
     </div>
 </template>
 
@@ -198,4 +305,53 @@ onMounted(() => {
     transition: all 0.3s ease-in-out;
 }
 
+.heart-icon {
+  font-size: 50px;
+  cursor: pointer;
+  color: grey; /* default for unfavourited */
+}
+
+.favourited {
+  color: red;
+}
+
+.success-message {
+    color: green;
+    background-color: #d4edda;
+    padding: 10px;
+    border-radius: 5px;
+    width: 15%;
+    top: 100px;
+    right: 45px;
+    text-align: center;
+    position: fixed;
+  }
+
+  .error-message {
+      color: red;
+      background-color: #f8d7da;
+      padding: 10px;
+      padding-top: 20px;
+      padding-left: 0px;
+      margin-bottom: 10px;
+      border-radius: 5px;
+      top: 70px;
+      right: 45px;
+      position: fixed;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      width: 26%;
+      min-height: 8%;
+      height: auto;
+  }
+
+  .fade-leave-active {
+    transition: opacity 1s ease-in-out;
+  }
+
+  .fade-leave-to {
+    opacity: 0;
+  }
 </style>
