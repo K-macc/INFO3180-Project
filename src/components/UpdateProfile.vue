@@ -1,12 +1,16 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
+import { useAuthStore } from '@/stores/auth';
 
 const success_message = ref('');
 const errors = ref([]);
 const csrf_token = ref('');
 const jwt = localStorage.getItem('jwt');
 const router = useRouter();
+const authStore = useAuthStore();
+const profileID = authStore.profile_id;
+const profile = ref(null);
 
 const description = ref('');
 const parish = ref('');
@@ -46,6 +50,22 @@ function flashMessage(prompt){
   }, 3000);
 }
 
+function preFillForm() {
+    description.value = profile.value.description || '';
+    parish.value = profile.value.parish || '';
+    biography.value = profile.value.biography || '';
+    sex.value = profile.value.sex || '';
+    race.value = profile.value.race || '';
+    birth_year.value = profile.value.birth_year || null;
+    height.value = profile.value.height || null;
+    fav_cuisine.value = profile.value.fav_cuisine || '';
+    fav_colour.value = profile.value.fav_colour || '';
+    fav_school_subject.value = profile.value.fav_school_subject || '';
+    political.value = profile.value.political || null;
+    religious.value = profile.value.religious || null;
+    family_oriented.value = profile.value.family_oriented || null;   
+}
+
 
 function getCsrfToken() {
     fetch('/api/v1/csrf-token')
@@ -58,11 +78,39 @@ function getCsrfToken() {
         });
 }
 
+function fetchProfile(){
+    fetch(`/api/profiles/${profileID}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${authStore.token}`
+        }
+    })
+    .then(response => {
+    return response.json();     
+    })
+    .then(data => { 
+        if (data.error) {
+            console.log(data.error);
+            console.error('Error fetching profile:', data.error);
+            return;
+        } else {
+            profile.value = data.profile;
+            preFillForm();
+        }
+    })
+    .catch(error => {
+            console.error('Failed to parse JSON:', error);
+    })
+
+}
+
 onMounted(() => {
+    fetchProfile(); 
     getCsrfToken();
 });
 
-function addProfile() {
+function updateProfile() {
     const profileForm  = document.getElementById('profileForm');
     const formData = new FormData(profileForm);
 
@@ -70,7 +118,7 @@ function addProfile() {
     errors.value = [];
 
     fetch('/api/profiles', {
-        method: 'POST',
+        method: 'PUT',
         body: formData,
         credentials: 'include',
         headers: {
@@ -104,7 +152,7 @@ function addProfile() {
 <template>
     <div class="profile-form-div">
 
-        <h1>Add A New Profile</h1>
+        <h1>Update Your Profile</h1>
 
         <transition name="fade">
             <div v-if="success_message" class="success-message">

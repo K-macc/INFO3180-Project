@@ -10,6 +10,16 @@ const success_message = ref('');
 const error_message = ref('');
 const csrf_token = ref("");
 
+function flashMessage(prompt){
+    setTimeout(() => {
+        if (Array.isArray(prompt)) {
+            prompt.value = [];
+        } else {
+            prompt.value = '';
+        }
+  }, 2000);
+}
+
 const isFavourited = (id) => {return favourites.value.includes(id)};
 
 function loadFavourites() {
@@ -59,10 +69,10 @@ function addToFavourites(id){
     .then(data => {
       if (data.error) {
         error_message.value = data.error;
-        authStore.setFlashMessage(error_message.value);
+        flashMessage(error_message);
       } else {
         success_message.value = data.message;
-        authStore.setFlashMessage(success_message.value);
+        flashMessage(success_message);
       }
     })
     .catch(error => {
@@ -82,10 +92,10 @@ function addToFavourites(id){
     .then(data => {
       if (data.error) {
         error_message.value = data.error;
-        authStore.setFlashMessage(error_message.value);
+        flashMessage(error_message);
       } else {
         success_message.value = data.message;
-        authStore.setFlashMessage(success_message.value);
+        flashMessage(success_message);
       }
     })
     .catch(error => {
@@ -215,8 +225,8 @@ onMounted(() => {
             <p>{{ profile.height }}</p>
         </div>
 
-        <button class="btn btn-secondary">Email User</button>
-        <button class="btn btn-fav" @click="addToFavourites(profile.user_id)"><font-awesome-icon :icon="[isFavourited(profile.user_id) ? 'fas' : 'far', 'heart']" :class="{'heart-icon': true, 'favourited': isFavourited(profile.user_id)}"/></button>
+        <button class="btn btn-secondary" v-if="profile.user_id !== authStore.user_id">Email User</button>
+        <button class="btn btn-fav" @click="addToFavourites(profile.user_id)"><font-awesome-icon :icon="[isFavourited(profile.user_id) ? 'fas' : 'far', 'heart']" :class="{'heart-icon': true, 'favourited': isFavourited(profile.user_id)}" v-if="profile.user_id !== authStore.user_id"/></button>
     </div>
 </template>
 

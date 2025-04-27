@@ -8,6 +8,8 @@ import FavouritesView from '../views/FavouritesView.vue'
 import ProfileDetailsView from '../views/ProfileDetailsView.vue'
 import UserProfileView from '../views/UserProfileView.vue'
 import UserPage from '../views/UserPage.vue'
+import CheckProfiles from '../views/CheckProfiles.vue'
+import UpdateProfile from '../components/UpdateProfile.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -54,6 +56,16 @@ const router = createRouter({
       path: '/profiles/new',
       name: 'new-profile',
       component: AddProfileForm
+    },
+    {
+      path: '/profiles/check',
+      name: 'check-profiles',
+      component: CheckProfiles
+    },
+    {
+      path: '/profiles/update/:profile_id',
+      name: 'update-profile',
+      component: UpdateProfile
     },
     {
       path: '/profiles/:profile_id',

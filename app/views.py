@@ -21,8 +21,9 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 from app import app, db
 from app.models import User, Profile, Favourite
-from app.forms import UserForm, ProfileForm, LoginForm, RegistrationForm
+from app.forms import UserForm, ProfileForm, LoginForm
 from flask import flash
+import json
 
 def requires_auth(f):
   @wraps(f)
@@ -69,7 +70,7 @@ def index():
 
 @app.route('/api/register', methods=['POST'])
 def register():
-    form = RegistrationForm()
+    form = UserForm()
     
     if form.validate_on_submit():
         if User.query.filter_by(username=form.username.data).first():
@@ -77,21 +78,30 @@ def register():
         elif User.query.filter_by(email=form.email.data).first():
             return jsonify({"error": "Email Address already exists!!"}), 400
         else:
+            photo = form.photo.data
+            filename = secure_filename(photo.filename)
+            photo.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            
             new_user = User(
             username=form.username.data,
             password=generate_password_hash(form.password.data),
             name=form.name.data,
-            email=form.email.data
+            email=form.email.data,
+            photo=filename
             )
             db.session.add(new_user)
             db.session.commit()
+            
+            session['user_id'] = new_user.id 
+            
             return jsonify({
             "message": "User registered successfully!!",
             'user' : {
                 'id': new_user.id,
                 'username': new_user.username,
                 'name': new_user.name,
-                'email': new_user.email
+                'email': new_user.email,
+                'photo': new_user.photo
                 }
             }), 201
     else:
@@ -111,8 +121,10 @@ def login():
             'iat': datetime.utcnow(),  # Issued at time
             'exp': datetime.utcnow() + timedelta(hours=2)  # Token expires in 1 hour
             }, app.config['SECRET_KEY'], algorithm='HS256')
+            
             session['user_id'] = user.id  # Store user ID in session
             login_user(user)
+            
             return jsonify({
                 "message": "Logged in successfully!!",
                 'token': token,
@@ -146,33 +158,19 @@ def get_profiles():
     # Get all profiles except the current user's
     profiles = Profile.query.filter(Profile.user_id_fk != current_user_id).all()
     
-    profiles_list = []
-    for profile in profiles:
-        profiles_list.append({
-            'id': profile.id,
-            'user_id': profile.user_id_fk,
-            'description': profile.description,
-            'parish': profile.parish,
-            'biography': profile.biography,
-            'sex': profile.sex,
-            'race': profile.race,
-            'birth_year': profile.birth_year,
-            'height': profile.height,
-            'fav_cuisine': profile.fav_cuisine,
-            'fav_colour': profile.fav_colour,
-            'fav_school_subject': profile.fav_school_subject,
-            'political': profile.political,
-            'religious': profile.religious,
-            'family_oriented': profile.family_oriented
-        })
-    
-    return jsonify({'profiles': profiles_list}), 200
+    return jsonify({'profiles': [profile.serialize() for profile in profiles]}), 200
 ###
 # The functions below should be applicable to all Flask apps.
 ###
+@app.route('/api/check-profiles/<int:user_id>', methods=['GET'])
+@requires_auth
 def has_complete_profile(user_id):
     profiles = Profile.query.filter_by(user_id_fk=user_id).all()
-    return any(p.is_complete() for p in profiles)
+    status = any(p.is_complete() for p in profiles)
+    if status:
+        return jsonify({"status": status}), 200
+    else:
+        return jsonify({"error": "You need to have at least one profile completed"}), 404
 
 ## Vedang's Flask Endpoints starts here - Part 1
 
@@ -284,33 +282,45 @@ def get_matches(profile_id):
 
 
 @app.route('/api/search', methods=['GET'])
+@requires_auth
 def search_profiles():
     try:
-        name = request.args.get('name', default='', type=str)
-        birth_year = request.args.get('birth_year', default=None, type=int)
-        sex = request.args.get('sex', default='', type=str)
-        race = request.args.get('race', default='', type=str)
-        query = """
-            SELECT p.id, p.user_id_fk, p.description, p.parish, p.biography, p.sex, p.race, p.birth_year, p.height, 
-                   p.fav_cuisine, p.fav_colour, p.fav_school_sibject, p.political, p.religious, p.family_oriented
-            FROM profile p
-            JOIN users u ON p.user_id_fk = u.id
-            WHERE u.name = %s
-            AND p.birth_year = %s
-            AND p.sex = %s
-            AND p.race = %s;
-        """
-        params = (name, birth_year, sex, race)
-        cursor = db.cursor(dictionary=True)
-        cursor.execute(query, params)
-        results = cursor.fetchall()
-        if not results:
-            return make_response(jsonify({"error": "No profiles matched your search"}), 404)
-        return make_response(jsonify(results), 200)
+        u_id = session.get('user_id')
+        search = request.args.get('search','')
+        
+        if search:
+            query_profile = Profile.query.filter(
+                Profile.user_id_fk != u_id,
+                (Profile.sex == search) |
+                (Profile.race.ilike(f'%{search}%')) |
+                (Profile.birth_year == int(search) if search.isdigit() else False) 
+            ).all()
+            
+            query_user = User.query.filter(
+                User.id != u_id,
+                (User.name.ilike(f'%{search}%'))
+            ).all()
+            
+            results = []
+            
+            if query_profile:
+                for profile in query_profile:
+                    results.append(profile.serialize())
+                return jsonify({"results":results}), 200
+            elif query_user:
+                for user in query_user:
+                    print(user.serialize())
+                    get_profile = get_user(user.id)[0].data.decode('utf-8') 
+                    profiles = json.loads(get_profile)['profiles']
+                    for profile in profiles:
+                        results.append(profile)
+                return jsonify({"results":results}), 200
+            else:
+                return jsonify({"error": "No results found"}), 404
+        else:
+            return jsonify({"error": "No search query provided"}), 400      
     except Error as e:
-        return make_response(jsonify({"error": str(e)}), 500)
-    finally:
-        cursor.close()
+        return jsonify({"error": str(e)}), 500
 
 @app.route('/api/users/<int:user_id>', methods=['GET'])
 def get_user(user_id):
@@ -351,7 +361,7 @@ def get_user(user_id):
             }
             for profile in profiles
         ]
-        
+    
         return jsonify({
             "user": user_data,
             "profiles": profiles_data

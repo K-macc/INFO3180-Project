@@ -1,5 +1,6 @@
 <script setup>
 import { ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
 
 const profiles = ref([]);
@@ -7,27 +8,55 @@ const searchTerm = ref('');
 const recent_profiles = ref([]);
 const filtered_profiles = ref([]);
 const authStore = useAuthStore();
+const errorMessage = ref('');
+const router = useRouter();
+
+function flashMessage(prompt){
+    setTimeout(() => {
+        if (Array.isArray(prompt)) {
+            prompt.value = [];
+        } else {
+            prompt.value = '';
+        }
+  }, 2000);
+}
 
 function trackProfileView(profileID) {
     authStore.setProfileId(profileID);
 }
 
 function fetchProfiles(){
-  fetch('/api/profiles', {
-    method: 'GET',
-    headers: {
-        'Authorization': `Bearer ${authStore.token}`,
-        'Content-Type': 'application/json'
-    }
-  })
-  .then(response => response.json())
-  .then(data => {
-    profiles.value = data.profiles;
-    recent_profiles.value =  profiles.value.slice(-4).reverse();
-  })
-  .catch(error => {
-    console.error('Error fetching profiles:', error);
-  });
+    fetch(`/api/check-profiles/${authStore.user_id}`, {
+        method: 'GET',
+        headers: {
+             'Authorization': `Bearer ${authStore.token}`,
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.error) {
+            errorMessage.value = data.error;
+            flashMessage(errorMessage);
+            router.push('/profiles/check');
+        } else {
+            fetch('/api/profiles', {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${authStore.token}`,
+                'Content-Type': 'application/json'
+            }
+            })
+            .then(response => response.json())
+            .then(data => {
+                profiles.value = data.profiles;
+                recent_profiles.value =  profiles.value.slice(-4).reverse();
+            })
+            .catch(error => {
+                console.error('Error fetching profiles:', error);
+            });
+        }
+    })
 };
 
 onMounted(() => {
@@ -36,17 +65,41 @@ onMounted(() => {
 
 
 function filteredProfiles(){
-  const term = searchTerm.value.toLowerCase();
-  filtered_profiles.value = profiles.value.filter(profile =>
-    profile.birth_year?.toString().includes(term) ||
-    profile.sex?.toLowerCase().includes(term) ||
-    profile.race?.toLowerCase().includes(term)
-  );
+    errorMessage.value = '';
+    filtered_profiles.value = [];
+    fetch(`/api/search?search=${searchTerm.value}`, {
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${authStore.token}`,
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.results) {
+            const result = data.results;
+            console.log(result);
+            result.forEach((item) => {
+                filtered_profiles.value.push(item); 
+            });
+        } else {
+            errorMessage.value = data.error;
+            flashMessage(errorMessage);
+        }
+    })
+    .catch(error => {
+        console.error('Error fetching profiles:', error);
+    });
 };
 </script>
 
 <template>
     <div class="profiles">
+      <transition name="fade">
+        <div v-if="errorMessage" class="error-message">
+          {{ errorMessage }}
+        </div>
+      </transition>
       <div class="search-container">
         <input v-model="searchTerm" type="search" class="search-input" placeholder="Search name, birth year, sex, race..." @keyup.enter="filteredProfiles"/>
       </div>
@@ -118,6 +171,32 @@ function filteredProfiles(){
     align-self: center;
     margin-bottom: 10px;
 }
+
+.error-message {
+      color: red;
+      background-color: #f8d7da;
+      padding: 10px;
+      padding-left: 0px;
+      margin-bottom: 10px;
+      border-radius: 5px;
+      top: 70px;
+      right: 45px;
+      position: fixed;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      width: 12%;
+      height: 5%;
+  }
+
+  .fade-leave-active {
+    transition: opacity 1s ease-in-out;
+  }
+
+  .fade-leave-to {
+    opacity: 0;
+  }
 
 </style>
   

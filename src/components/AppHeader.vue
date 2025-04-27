@@ -40,6 +40,9 @@
             <li class="nav-item" v-if="isAuthenticated">
               <RouterLink class="nav-link" to="/profiles/new">Add New Profile</RouterLink>
             </li>
+            <li class="nav-item" v-if="isAuthenticated">
+              <RouterLink class="nav-link" to="/profiles/check">Check Profile</RouterLink>
+            </li>
           </ul>
         </div>
       </div>

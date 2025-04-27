@@ -159,7 +159,7 @@ label {
   border: 1px solid #ddd;
   border-radius: 8px;
   box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
-  width: 30%;
+  width: 500px;
   height: 300px;
   transition: all 0.3s ease-in-out;
   justify-content: space-around;

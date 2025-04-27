@@ -10,6 +10,11 @@ const router = useRouter();
 const errorMessage = ref([]);
 const successMessage = ref('');
 const csrf_token = ref("");
+const photo = ref(null);
+
+const handleFileChange = (event) => {
+    photo.value = event.target.files[0];
+};
 
 function flashMessage(prompt){
     setTimeout(() => {
@@ -64,7 +69,7 @@ function register() {
       registrationForm.reset();
       flashMessage(successMessage);
       setTimeout(() => {
-        router.push('/');
+        router.push('/profiles/new');
       }, 5000);
     }
   })
@@ -100,20 +105,21 @@ function register() {
     <form @submit.prevent="register" id="registrationForm" enctype="multipart/form-data">
       <div>
         <label>Username:</label>
-        <input v-model="username" type="text" name="username">
+        <input v-model="username" type="text" name="username" class="form-control">
       </div>
       <div>
         <label>Password:</label>
-        <input v-model="password" type="password" name="password">
+        <input v-model="password" type="password" name="password" class="form-control">
       </div>
       <div>
         <label>Name:</label>
-        <input v-model="name" type="text" name="name">
+        <input v-model="name" type="text" name="name" class="form-control">
       </div>
       <div>
         <label>Email:</label>
-        <input v-model="email" type="email" name="email">
+        <input v-model="email" type="email" name="email" class="form-control">
       </div>
+      <input id="photo" name="photo" type="file" @change="handleFileChange" ref="fileInput" accept="image/png, image/jpeg"  class="form-control"/>
       <button type="submit">Register</button>
     </form>
     <p>Already have an account? <router-link to="/login">Login here</router-link></p>
