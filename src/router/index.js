@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Home from '../views/Home.vue'
 import AddProfileForm from '../components/AddProfileForm.vue'
-import Login from '../views/Login.vue'
+// import Login from '../views/Login.vue'
 import Logout from '../components/Logout.vue'
 import Register from '../views/Register.vue'
 import FavouritesView from '../views/FavouritesView.vue'
