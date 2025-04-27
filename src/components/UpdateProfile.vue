@@ -6,11 +6,11 @@ import { useAuthStore } from '@/stores/auth';
 const success_message = ref('');
 const errors = ref([]);
 const csrf_token = ref('');
-const jwt = localStorage.getItem('jwt');
 const router = useRouter();
 const authStore = useAuthStore();
 const profileID = authStore.profile_id;
 const profile = ref(null);
+
 
 const description = ref('');
 const parish = ref('');
@@ -45,25 +45,24 @@ function flashMessage(prompt){
             prompt.value = [];
         } else {
             prompt.value = '';
-            router.push('/');
         }
   }, 3000);
 }
 
 function preFillForm() {
-    description.value = profile.value.description || '';
-    parish.value = profile.value.parish || '';
-    biography.value = profile.value.biography || '';
-    sex.value = profile.value.sex || '';
-    race.value = profile.value.race || '';
-    birth_year.value = profile.value.birth_year || null;
-    height.value = profile.value.height || null;
-    fav_cuisine.value = profile.value.fav_cuisine || '';
-    fav_colour.value = profile.value.fav_colour || '';
-    fav_school_subject.value = profile.value.fav_school_subject || '';
-    political.value = profile.value.political || null;
-    religious.value = profile.value.religious || null;
-    family_oriented.value = profile.value.family_oriented || null;   
+    description.value = profile.value.description;
+    parish.value = profile.value.parish;
+    biography.value = profile.value.biography;
+    sex.value = profile.value.sex;
+    race.value = profile.value.race;
+    birth_year.value = profile.value.birth_year;
+    height.value = profile.value.height;
+    fav_cuisine.value = profile.value.fav_cuisine;
+    fav_colour.value = profile.value.fav_colour;
+    fav_school_subject.value = profile.value.fav_school_subject;
+    political.value = profile.value.political;
+    religious.value = profile.value.religious;
+    family_oriented.value = profile.value.family_oriented;   
 }
 
 
@@ -91,7 +90,6 @@ function fetchProfile(){
     })
     .then(data => { 
         if (data.error) {
-            console.log(data.error);
             console.error('Error fetching profile:', data.error);
             return;
         } else {
@@ -117,12 +115,12 @@ function updateProfile() {
     success_message.value = '';
     errors.value = [];
 
-    fetch('/api/profiles', {
+    fetch(`/api/profiles/${profileID}`, {
         method: 'PUT',
         body: formData,
         credentials: 'include',
         headers: {
-            'Authorization': `Bearer ${jwt}`,
+            'Authorization': `Bearer ${authStore.token}`,
             'X-CSRF-Token': csrf_token.value
         }
     })
@@ -132,6 +130,9 @@ function updateProfile() {
             success_message.value = data.message;
             flashMessage(success_message);
             profileForm.reset();
+            setTimeout(() => { 
+                router.push('/users');
+            }, 4000);
         } else if (data.error) {
             errors.value.push(data.error);
             flashMessage(errors);
@@ -169,7 +170,7 @@ function updateProfile() {
             </div>
         </transition>
 
-        <form id="profileForm" @submit.prevent="addProfile" class="profile-form" enctype="multipart/form-data">
+        <form id="profileForm" @submit.prevent="updateProfile" class="profile-form" enctype="multipart/form-data">
             <div class="form-group mb-3">
                 <label for="description" class="form-label">Description</label>
                 <textarea id="description" name="description" v-model="description" class="form-control" ></textarea>

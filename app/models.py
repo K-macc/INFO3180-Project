@@ -72,6 +72,10 @@ class Profile(db.Model):
 
     def __repr__(self):
         return f'<Profile {self.id}>'
+    
+    def get_id(self):
+        # This is used to retrieve the user ID (usually the primary key)
+        return str(self.id)
 
     def is_complete(self):
         # Check all fields are filled (optional: make this stricter)

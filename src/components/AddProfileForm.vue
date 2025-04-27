@@ -1,12 +1,14 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
+import { useAuthStore } from '@/stores/auth.js';
 
 const success_message = ref('');
 const errors = ref([]);
 const csrf_token = ref('');
 const jwt = localStorage.getItem('jwt');
 const router = useRouter();
+const authStore = useAuthStore();
 
 const description = ref('');
 const parish = ref('');
@@ -74,7 +76,7 @@ function addProfile() {
         body: formData,
         credentials: 'include',
         headers: {
-            'Authorization': `Bearer ${jwt}`,
+            'Authorization': `Bearer ${authStore.token}`,
             'X-CSRF-Token': csrf_token.value
         }
     })

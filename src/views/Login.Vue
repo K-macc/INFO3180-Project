@@ -102,11 +102,11 @@ function login () {
       <form @submit.prevent="login" id="loginForm" enctype="multipart/form-data">
         <div>
           <label>Username:</label>
-          <input v-model="username" type="text" name="username">
+          <input v-model="username" type="text" name="username" class="form-control">
         </div>
         <div>
           <label>Password:</label>
-          <input v-model="password" type="password" name="password">
+          <input v-model="password" type="password" name="password" class="form-control">
         </div>
         <button type="submit">Login</button>
       </form>

@@ -19,7 +19,6 @@ function fetchProfiles(){
     })
     .then(data => { 
         profiles.value = data.profiles;
-        console.log(profiles.value);
     })
     .catch(error => {
             console.error('Failed to parse JSON:', error);
@@ -33,19 +32,21 @@ onMounted(() => {
 </script>
 
 <template>
-    <h1 class="title">Choose a Profile</h1>
+    <div>
+        <h1 class="title">Choose a Profile</h1>
 
-    <div class="profile-list">
-        <div v-for="profile in profiles" :key="profile.id" class="profile-item card">
-            <label for="description">Description:</label>
-            <p>{{ profile.description }}</p>
+        <div class="profile-list">
+            <div v-for="profile in profiles" :key="profile.id" class="profile-item card">
+                <label for="description">Description:</label>
+                <p>{{ profile.description }}</p>
 
-            <label for="sex">Sex:</label>
-            <p>{{ profile.sex }}</p>
+                <label for="sex">Sex:</label>
+                <p>{{ profile.sex }}</p>
 
-            <label for="race">Race:</label>
-            <p>{{ profile.race }}</p>
-            <router-link class="btn btn-primary" @click="trackProfileView(profile.id)" :to="`/profiles/update/${profile.id}`">Complete this profile</router-link>
+                <label for="race">Race:</label>
+                <p>{{ profile.race }}</p>
+                <router-link class="btn btn-primary" :to="`/profiles/update/${profile.id}`" @click="trackProfileView(profile.id)">Complete this profile</router-link>
+            </div>
         </div>
     </div>
 </template>

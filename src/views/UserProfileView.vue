@@ -17,7 +17,6 @@ function fetchUser(){
     .then(data => { 
         user.value = data.user;
         profiles.value = data.profiles;
-        console.log(profiles.value);
     })
     .catch(error => {
             console.error('Failed to parse JSON:', error);

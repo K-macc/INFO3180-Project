@@ -56,9 +56,62 @@ def requires_auth(f):
 
   return decorated
 
+
 ###
 # Routing for your application.
 ###
+def check_fields(fields):
+    for key, value in fields.items():
+        if value == '':
+            return False
+        
+def query_profile(user_id, field): 
+    if len(field) == 1:  
+        if 'sex' in field:    
+            profile = Profile.query.filter(
+                Profile.user_id_fk == user_id,
+                (Profile.sex == field['sex'])
+            ).all()
+        elif 'birth_year' in field:
+            profile = Profile.query.filter(
+                Profile.user_id_fk == user_id,
+                (Profile.birth_year == int(field['birth_year']) if field['birth_year'].isdigit() else False)
+            ).all
+        else:
+            profile = Profile.query.filter(
+                Profile.user_id_fk == user_id,
+                (Profile.race == field['race'])
+            ).all()
+    elif len(field) == 2:
+        if 'birth_year' in field and 'sex' in field:
+            profile = Profile.query.filter(
+                    Profile.user_id_fk == user_id,
+                    (Profile.sex == field['sex']),
+                    (Profile.birth_year == int(field['birth_year']) if field['birth_year'].isdigit() else False)
+                ).all()
+        elif 'birth_year' in field:
+            profile = Profile.query.filter(
+                Profile.user_id_fk == user_id,
+                (Profile.race == field['race']),
+                (Profile.birth_year == int(field['birth_year']) if field['birth_year'].isdigit() else False)
+            ).all()
+        else:
+            profile = Profile.query.filter(
+                Profile.user_id_fk == user_id,
+                (Profile.sex == field['sex']),
+                (Profile.race == field['race'])
+            ).all()
+    elif len(field) == 3:
+        profile = Profile.query.filter(
+            Profile.user_id_fk == user_id,
+            (Profile.sex == field['sex']),
+            (Profile.race == field['race']),
+            (Profile.birth_year == int(field['birth_year']) if field['birth_year'].isdigit() else False)
+        ).all()
+    else:
+        profile = Profile.query.filter_by(user_id_fk = user_id).all()  
+    return profile
+
 @app.route('/api/v1/csrf-token', methods=['GET'])
 def get_csrf():
     return jsonify({'csrf_token': generate_csrf()}), 200
@@ -66,7 +119,6 @@ def get_csrf():
 @app.route('/')
 def index():
     return jsonify(message="This is the beginning of our API")
-
 
 @app.route('/api/register', methods=['POST'])
 def register():
@@ -174,6 +226,34 @@ def has_complete_profile(user_id):
 
 ## Vedang's Flask Endpoints starts here - Part 1
 
+@app.route('/api/profiles/<int:profile_id>', methods=['PUT'])
+@requires_auth
+def update_profile(profile_id):
+    form = ProfileForm()
+    user_id = session.get('user_id') 
+    
+    profile = Profile.query.get_or_404(profile_id)
+    
+    if profile.user_id_fk != user_id:
+        return jsonify({"error": "Unauthorized"}), 403
+    
+    profile.description = form.description.data
+    profile.parish = form.parish.data
+    profile.biography = form.biography.data
+    profile.sex = form.sex.data
+    profile.race = form.race.data
+    profile.birth_year = form.birth_year.data
+    profile.height = form.height.data
+    profile.fav_cuisine = form.fav_cuisine.data
+    profile.fav_colour = form.fav_colour.data
+    profile.fav_school_subject = form.fav_school_subject.data
+    profile.political = form.political.data
+    profile.religious = form.religious.data
+    profile.family_oriented = form.family_oriented.data
+    
+    db.session.commit()
+    return jsonify({"message": "Profile updated successfully!!"}), 200
+
 @app.route('/api/profiles', methods=['POST'])
 @requires_auth  
 def create_profile():
@@ -217,7 +297,7 @@ def get_profile(profile_id):
 
 @app.route('/api/profiles/<int:user_id>/favourite', methods=['POST', 'DELETE'])
 @requires_auth  
-def favourites(user_id):
+def add_or_delete_favourite(user_id):
     
     u_id = session.get('user_id')
     
@@ -286,37 +366,32 @@ def get_matches(profile_id):
 def search_profiles():
     try:
         u_id = session.get('user_id')
-        search = request.args.get('search','')
+        search_term = request.args.get('search')
+        search_field = json.loads(request.args.get('field'))
+        search_field = dict(search_field)
+        results = []
         
-        if search:
-            query_profile = Profile.query.filter(
-                Profile.user_id_fk != u_id,
-                (Profile.sex == search) |
-                (Profile.race.ilike(f'%{search}%')) |
-                (Profile.birth_year == int(search) if search.isdigit() else False) 
-            ).all()
+        if check_fields(search_field) == False:
+            return jsonify({"error": "Please fill all filter fields"}), 400
+        
+        if search_term:
+                user_query = User.query.filter(
+                                User.id != u_id,
+                                (User.name.ilike(f'%{search_term}%'))
+                                ).all()
             
-            query_user = User.query.filter(
-                User.id != u_id,
-                (User.name.ilike(f'%{search}%'))
-            ).all()
-            
-            results = []
-            
-            if query_profile:
-                for profile in query_profile:
-                    results.append(profile.serialize())
-                return jsonify({"results":results}), 200
-            elif query_user:
-                for user in query_user:
-                    print(user.serialize())
-                    get_profile = get_user(user.id)[0].data.decode('utf-8') 
-                    profiles = json.loads(get_profile)['profiles']
-                    for profile in profiles:
-                        results.append(profile)
-                return jsonify({"results":results}), 200
-            else:
-                return jsonify({"error": "No results found"}), 404
+                if user_query:
+                    for user in user_query:
+                        profiles = query_profile(user.id, search_field)
+                        for profile in profiles:  
+                            profile = profile.serialize()  
+                            results.append(profile)
+                    if results != []:      
+                        return jsonify({"results":results}), 200
+                    else:
+                        return jsonify({"error": "No results found"}), 404
+                else:
+                    return jsonify({"error": "No profiles found"}), 404
         else:
             return jsonify({"error": "No search query provided"}), 400      
     except Error as e:

@@ -117,13 +117,11 @@ function fetchProfile(){
     })
     .then(data => { 
         if (data.error) {
-            console.log(data.error);
             console.error('Error fetching profile:', data.error);
             return;
         } else {
             profile.value = data.profile;
             loadFavourites();
-            console.log('Fetched favourites:', favourites.value);
         }
     })
     .catch(error => {

@@ -5,11 +5,15 @@ import { useAuthStore } from '@/stores/auth';
 
 const profiles = ref([]);
 const searchTerm = ref('');
+const selectedFilter = ref('');
 const recent_profiles = ref([]);
 const filtered_profiles = ref([]);
 const authStore = useAuthStore();
 const errorMessage = ref('');
 const router = useRouter();
+const filters = ref([])
+const filterValues = ref([]);
+const filterOptions = ref([]);
 
 function flashMessage(prompt){
     setTimeout(() => {
@@ -25,6 +29,30 @@ function trackProfileView(profileID) {
     authStore.setProfileId(profileID);
 }
 
+function addFilter() {
+      if (!filterValues.value.includes(selectedFilter.value) && selectedFilter.value === 'sex') {
+        filters.value.push({field: selectedFilter.value, operator: 'between', value: ''});
+        filterValues.value.push(selectedFilter.value);
+        selectedFilter.value = ''; // reset the dropdown
+      } else if (!filterValues.value.includes(selectedFilter.value) && selectedFilter.value === 'race') {
+        filters.value.push({field: selectedFilter.value, operator: 'among', value: ''});
+        filterValues.value.push(selectedFilter.value);
+        selectedFilter.value = ''; // reset the dropdown
+      } else if (!filterValues.value.includes(selectedFilter.value) && selectedFilter.value !== '') {
+        filters.value.push({field: selectedFilter.value, operator: '', value: ''});
+        filterValues.value.push(selectedFilter.value);
+        selectedFilter.value = ''; // reset the dropdown
+      } else {
+        errorMessage.value = 'Filter already added!';
+        flashMessage(errorMessage);
+      }
+}
+    // Removes the filter from the list
+function removeFilter(index) {
+      filters.value.splice(index, 1);
+      filterValues.value.splice(index, 1);
+}
+
 function fetchProfiles(){
     fetch(`/api/check-profiles/${authStore.user_id}`, {
         method: 'GET',
@@ -38,7 +66,9 @@ function fetchProfiles(){
         if (data.error) {
             errorMessage.value = data.error;
             flashMessage(errorMessage);
-            router.push('/profiles/check');
+            setTimeout(() => {
+                router.push('/profiles/check');
+            }, 3000);
         } else {
             fetch('/api/profiles', {
             method: 'GET',
@@ -67,7 +97,12 @@ onMounted(() => {
 function filteredProfiles(){
     errorMessage.value = '';
     filtered_profiles.value = [];
-    fetch(`/api/search?search=${searchTerm.value}`, {
+    filterOptions.value = [];
+    filters.value.forEach((filter) => {
+       filterOptions.value.push([filter.field, filter.value]);
+    });
+    const url = `/api/search?search=${encodeURIComponent(searchTerm.value)}&field=${encodeURIComponent(JSON.stringify(filterOptions.value))}`;
+    fetch(url, {
         method: 'GET',
         headers: {
             'Authorization': `Bearer ${authStore.token}`,
@@ -78,7 +113,6 @@ function filteredProfiles(){
     .then(data => {
         if (data.results) {
             const result = data.results;
-            console.log(result);
             result.forEach((item) => {
                 filtered_profiles.value.push(item); 
             });
@@ -101,8 +135,57 @@ function filteredProfiles(){
         </div>
       </transition>
       <div class="search-container">
-        <input v-model="searchTerm" type="search" class="search-input" placeholder="Search name, birth year, sex, race..." @keyup.enter="filteredProfiles"/>
+        <input v-model="searchTerm" type="search" class="search-input" placeholder="Enter an item to search" @keyup.enter="filteredProfiles"/>
+
+        <select v-model="selectedFilter" @change="addFilter" class="filter-dropdown">
+            <option value="">Select filter</option>
+            <option value="birth_year">Birth Year</option>
+            <option value="sex">Sex</option>
+            <option value="race">Race</option>
+            <!-- Add more options as needed -->
+        </select>
+    
+    <!-- Filter Container -->
+    <div class="border rounded p-4 mb-4" v-if="filters.length">
+      <div v-for="(filter, index) in filters" :key="index" class="flex items-center mb-3 space-x-2">
+        <!-- Filter Field Dropdown -->
+        
+
+        <!-- Input Fields -->
+        <div class="flex space-x-2">
+          <input
+            v-if="filter.operator === ''"
+            v-model="filter.value"
+            type="text"
+            class="border rounded px-2 py-1 w-24"
+            :placeholder="filter.field"
+          />
+        </div>
+
+        <select v-model="filter.value" v-if="filter.operator === 'between'" class="filter">
+            <option value="">--Select one--</option>
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+            <!-- Add more options as needed -->
+        </select>
+
+        <select v-model="filter.value" v-if="filter.operator === 'among'" class="filter">
+            <option value="">--Select one--</option>
+            <option value="asian">Asian</option>
+            <option value="black">Black</option>
+            <option value="indigenous">Indigenous</option>
+            <option value="mixed">Mixed</option>
+            <option value="white">White</option>
+            <!-- Add more options as needed -->
+        </select>
+
+        <!-- Remove Filter -->
+        <button @click="removeFilter(index)" class="text-gray-500 hover:text-red-600">✕</button>
       </div>
+      <button @click="filteredProfiles" class="btn btn-primary">Search</button>
+    </div>
+
+  </div>
   
       <h2>Recently Added Profiles</h2>
       <div class="profile-list">
@@ -129,6 +212,9 @@ function filteredProfiles(){
 .search-container {
     text-align: center;
     margin: 2rem 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
   
   .search-input {
@@ -143,6 +229,7 @@ function filteredProfiles(){
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
+    gap: 1rem;
   }
   
   .profile-item.card {
@@ -171,6 +258,30 @@ function filteredProfiles(){
     align-self: center;
     margin-bottom: 10px;
 }
+
+.filter-dropdown { background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 8px 20px 5px 12px;
+  font-size: 18px;
+  cursor: pointer;
+  height: 38px;
+  align-self: flex-end;
+  margin-right: 395px;
+  margin-top: 5px;
+  }
+
+  .filter { 
+    background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 8px 20px 5px 12px;
+  font-size: 18px;
+  cursor: pointer;
+  height: 38px;
+  margin-top: 5px;
+  margin-right: 5px;
+  }
 
 .error-message {
       color: red;
