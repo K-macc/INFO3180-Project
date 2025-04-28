@@ -118,7 +118,7 @@ def get_csrf():
 
 @app.route('/')
 def index():
-    return send_from_directory(os.getcwd(),'index.html')
+    return app.send_static_file('index.html')
 
 
 @app.route('/assets/<path:filename>')

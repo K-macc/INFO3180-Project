@@ -22,11 +22,7 @@ export default defineConfig({
     }
     },
   build: {
-    outDir: 'dist',
+    outDir: 'app/static',
     emptyOutDir: true,
-    assetsDir: 'assets',
-    rollupOptions: {
-      input: 'index.html',  // Make sure the correct input HTML is being built
-    },
   },
 })
