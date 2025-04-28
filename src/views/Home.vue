@@ -8,19 +8,6 @@
   
   flashMessage.value = authStore.flashMessage;
 
-  function fetchHome(){
-    fetch('/', {
-      method: 'GET',
-    })
-    .then(response => response.json())
-    .then(data => {
-      console.log(data)
-    })
-  }
-
-  onMounted(() => {
-    fetchHome();
-  });
 
   setTimeout(() => {
     flashMessage.value = '';

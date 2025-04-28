@@ -13,6 +13,10 @@ function trackProfileView(profileID) {
 function fetchProfiles(){
     fetch(`/api/users/${userID}`, {
         method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${authStore.token}`,
+            'Content-Type': 'application/json'
+        }
     })
     .then(response => {
     return response.json();     

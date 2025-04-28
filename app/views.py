@@ -76,7 +76,7 @@ def query_profile(user_id, field):
             profile = Profile.query.filter(
                 Profile.user_id_fk == user_id,
                 (Profile.birth_year == int(field['birth_year']) if field['birth_year'].isdigit() else False)
-            ).all
+            ).all()
         else:
             profile = Profile.query.filter(
                 Profile.user_id_fk == user_id,
@@ -374,6 +374,7 @@ def search_profiles():
         search_term = request.args.get('search')
         search_field = json.loads(request.args.get('field'))
         search_field = dict(search_field)
+        
         results = []
         
         if check_fields(search_field) == False:
@@ -403,6 +404,7 @@ def search_profiles():
         return jsonify({"error": str(e)}), 500
 
 @app.route('/api/users/<int:user_id>', methods=['GET'])
+@requires_auth 
 def get_user(user_id):
     try:
         user = db.session.query(User).filter_by(id=user_id).first()
@@ -468,6 +470,7 @@ def get_user_favourites(user_id):
     return jsonify({"favourites":favourites_list}), 200
 
 @app.route('/api/users/favourites/<int:N>', methods=['GET'])
+@requires_auth 
 def get_top_favoured_users(N):
     try:
         cursor = db.cursor(dictionary=True)
