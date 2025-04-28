@@ -11,7 +11,7 @@ import os
 load_dotenv()
 
 # Initialize Flask app
-app = Flask(__name__)
+app = Flask(__name__, template_folder= 'static', static_folder= 'static', static_url_path= '/static')
 
 # Load configuration from config.py
 app.config.from_object(Config)

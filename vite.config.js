@@ -8,7 +8,14 @@ import vue from '@vitejs/plugin-vue'
 // https://vitejs.dev/config/
 
 export default defineConfig({
-  plugins: [vue()],
+  plugins: [vue(),{
+    name: 'inject-main-js',
+    transformIndexHtml(html) {
+      return html.replace(/<\/body>/,
+          `<script type="module" src="../main.js"></script></body>`)
+    }
+  }
+  ],
   resolve: {
     alias: {
       '@': path.resolve(__dirname, 'src'),
@@ -22,8 +29,9 @@ export default defineConfig({
     }
     },
   build: {
-    outDir: 'app/src',
+    outDir: 'static',
     emptyOutDir: true,
   },
+  base: '/',
   root: 'app/static',
 })
