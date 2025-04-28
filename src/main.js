@@ -1,6 +1,6 @@
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
-import App from '@/App.vue'
+import App from './App.vue'
 import router from '@/router'
 import axios from 'axios'
 import { library } from '@fortawesome/fontawesome-svg-core'
