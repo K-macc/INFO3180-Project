@@ -1,7 +1,7 @@
 <script setup>
 import { RouterLink, RouterView } from 'vue-router'
 import { computed } from 'vue'
-import { useAuthStore } from '@/stores/auth' // Assuming you're using Pinia for state management
+import { useAuthStore } from '@/stores/auth' 
 import AppHeader from '@/components/AppHeader.vue'
 import AppFooter from '@/components/AppFooter.vue'
 

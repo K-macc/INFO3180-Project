@@ -11,7 +11,7 @@ export default defineConfig({
   plugins: [vue()],
   resolve: {
     alias: {
-      '@': '/src',
+      '@': path.resolve(__dirname, 'src'),
     }
   },
   server: {
@@ -25,4 +25,5 @@ export default defineConfig({
     outDir: 'app/src',
     emptyOutDir: true,
   },
+  root: 'app/static',
 })

@@ -11,7 +11,7 @@ from datetime import datetime, timedelta
 from functools import wraps
 from binascii import Error
 
-from flask import request, jsonify, send_file, send_from_directory, make_response, session, g, render_template
+from flask import request, jsonify, send_file, send_from_directory, make_response, session, g
 from flask_jwt_extended import jwt_required, current_user, get_jwt_identity
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from flask_wtf.csrf import generate_csrf
@@ -118,7 +118,7 @@ def get_csrf():
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return app.send_static_file('index.html')
 
 @app.route('/api/register', methods=['POST'])
 def register():
