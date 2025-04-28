@@ -26,5 +26,5 @@ export default defineConfig({
     emptyOutDir: true,
     assetsDir: 'assets',
   },
-  root: 'app',
+  root: 'app/static',
 })
