@@ -29,5 +29,4 @@ export default defineConfig({
       input: 'index.html',  // Make sure the correct input HTML is being built
     },
   },
-  base: '/app/',
 })

@@ -1,5 +1,5 @@
 <script setup>
-  import { ref } from 'vue'
+  import { ref, onMounted } from 'vue'
   import { useAuthStore } from '@/stores/auth.js';
 
   const authStore = useAuthStore();
@@ -7,6 +7,20 @@
   const flashMessage = ref('');
   
   flashMessage.value = authStore.flashMessage;
+
+  function fetchHome(){
+    fetch('/', {
+      method: 'GET',
+    })
+    .then(response => response.json())
+    .then(data => {
+      console.log(data)
+    })
+  }
+
+  onMounted(() => {
+    fetchHome();
+  });
 
   setTimeout(() => {
     flashMessage.value = '';
