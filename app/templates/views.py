@@ -118,7 +118,11 @@ def get_csrf():
 
 @app.route('/')
 def index():
-    return jsonify(message="This is the beginning of our API")
+    return app.send_static_file('index.html')
+
+@app.route('/assets/<path:filename>')
+def assets(filename):
+    return app.send_static_file(os.path.join('assets', filename)), 200
 
 @app.route('/api/register', methods=['POST'])
 def register():
