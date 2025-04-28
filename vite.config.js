@@ -25,6 +25,9 @@ export default defineConfig({
     outDir: 'dist',
     emptyOutDir: true,
     assetsDir: 'assets',
+    rollupOptions: {
+      input: 'index.html',  // Make sure the correct input HTML is being built
+    },
   },
-  root: 'app/static',
+  base: '/app/',
 })
