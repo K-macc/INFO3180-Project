@@ -22,8 +22,7 @@ export default defineConfig({
     }
     },
   build: {
-    outDir: 'app/static',
+    outDir: 'app/src',
     emptyOutDir: true,
   },
-  root: 'app/static',
 })
