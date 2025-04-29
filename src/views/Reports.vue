@@ -5,14 +5,15 @@ import { useAuthStore } from '@/stores/auth';
 const fav = ref([]);
 const top_fav = ref([]);
 const authStore = useAuthStore();
-const order = ref('');
+const fav_order = ref('');
+const top_fav_order = ref('');
 const show = ref(false);
 const show_fav = ref(false);
 const num = ref(0)
 
 function loadFavourites(id) {
     show.value = true;
-    fetch(`/api/users/${id}/favourites?order=${order.value}`, {
+    fetch(`/api/users/${id}/favourites?order=${fav_order.value}`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
@@ -34,7 +35,7 @@ function sortFavourites() {
 
 function loadFavouritedNUsers() {
     show_fav.value  = true;
-    fetch(`/api/users/favourites/${num.value}?order=${order.value}`, {
+    fetch(`/api/users/favourites/${num.value}?order=${top_fav_order.value}`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
@@ -72,7 +73,7 @@ function sortFavourited() {
         <div class="favourite-users" v-if="show">
             <h3>My Favourite Users</h3>
 
-            <select v-model="order" name="order" id="order" class="order-options"  @change="sortFavourites">
+            <select v-model="fav_order" name="order" id="order" class="order-options"  @change="sortFavourites">
                 <option value="">--Select--</option>
                 <option value="age">Age</option>
                 <option value="name">Name</option>
@@ -102,7 +103,7 @@ function sortFavourited() {
         <div class="top-favourited-users" v-if="show_fav">
             <h3>Top Favourited Users</h3>
 
-            <select v-model="order" name="order" id="order" class="order-options"  @change="sortFavourited">
+            <select v-model="top_fav_order" name="order" id="order" class="order-options"  @change="sortFavourited">
                 <option value="">--Select--</option>
                 <option value="age">Age</option>
                 <option value="name">Name</option>
