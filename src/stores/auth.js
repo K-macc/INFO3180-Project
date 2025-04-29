@@ -36,9 +36,6 @@ export const useAuthStore = defineStore('auth', {
     },
     setUserId(user_id) {
       this.user_id = user_id;
-    },
-    setCurrentFavId(current_fav_id) {
-      this.current_fav_id = current_fav_id;
     }
   }
 });

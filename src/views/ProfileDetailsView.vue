@@ -5,14 +5,14 @@ import { useRoute } from 'vue-router';
 
 const profile = ref(null);
 const authStore = useAuthStore();
-const profileID = ref(null); // Assuming you have the profile ID stored in the auth store
+const profileID = ref(null); 
 const favourites = ref([]);
-const fav = ref([]);
+const check_fav = ref([]);
+const load_fav = ref([])
 const success_message = ref('');
 const error_message = ref('');
 const csrf_token = ref("");
 const route = useRoute();
-const order = ref('');
 
 
 profileID.value = authStore.profile_id;
@@ -35,7 +35,7 @@ const isFavourited = (id) => { return favourites.value.includes(id) };
 
 function loadFavourites(id) {
   favourites.value = [];
-  fetch(`/api/users/${id}/favourites?order=name`, {
+  fetch(`/api/users/${id}/favourites`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
@@ -44,8 +44,7 @@ function loadFavourites(id) {
   })
     .then((response) => response.json())
     .then((data) => {
-      fav.value = data.favourites;
-      console.log(fav.value);
+      load_fav.value = data.favourites;
     })
     .catch((error) => {
       console.error('Error fetching favourites:', error);
@@ -63,9 +62,9 @@ function checkFavourites() {
   })
     .then((response) => response.json())
     .then((data) => {
-      fav.value = data.favourites;
-      fav.value.forEach((favourite) => {
-        favourites.value.push(favourite.fav_user_id);
+      check_fav.value = data.favourites;
+      check_fav.value.forEach((favourite) => {
+        favourites.value.push(favourite.fav_profile_id);
       });
     })
     .catch((error) => {
@@ -82,10 +81,6 @@ function getCsrfToken() {
     .catch((error) => {
       console.error("Error: ", error);
     });
-}
-
-function setFavId(id){
-  authStore.setCurrentFavId(id);
 }
 
 function addToFavourites(id) {
@@ -114,7 +109,6 @@ function addToFavourites(id) {
       });
   } else {
     favourites.value.push(id);
-    setFavId(id);
     fetch(`/api/profiles/${id}/favourite`, {
       method: 'POST',
       headers: {
@@ -270,21 +264,12 @@ watch(() => route.params.profile_id, (newId) => {
       <h3>Favourite Users</h3>
       <div class="favourites">
         <ul>
-          <li v-for="favourite in fav" :key="favourite.id">
-            <router-link :to="`/profiles/${favourite._id}`">
-              {{ favourite.id }}
-              {{  favourite.parish }}
-              {{ favourite.birth_year }}
+          <li v-for="favourite in load_fav" :key="favourite.id">
+            <router-link :to="`/profiles/${favourite.fav_profile_id}`">
+              {{ favourite.user_name }}
             </router-link>
           </li>
         </ul>
-
-        <select v-model="order" name="order" id="order" class="order-options">
-          <option value="">--Select--</option>
-          <option value="age">Age</option>
-          <option value="name">Name</option>
-          <option value="parish">Parish</option>
-        </select>
       </div>
     </div>
 

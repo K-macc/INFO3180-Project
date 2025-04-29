@@ -17,6 +17,7 @@ from flask_login import LoginManager, login_user, login_required, logout_user, c
 from flask_wtf.csrf import generate_csrf
 from werkzeug.utils import secure_filename
 from werkzeug.security import generate_password_hash, check_password_hash
+from sqlalchemy import func, desc
 
 
 from app import app, db
@@ -461,71 +462,64 @@ def get_user(user_id):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
     
-def get_users_favoured_by_current_user(current_user_id, order_by):
-    # Join favourites -> profiles
-    favourites = db.session.query(Profile).join(Favourite, Profile.id == Favourite.fav_user_id_fk).filter(Favourite.fav_user_id_fk == current_user_id)
-
-    # Ordering logic
-    if order_by == 'name':
-        query = query.join(User, Profile.user_id_fk == User.id).order_by(User.name)
-    elif order_by == 'parish':
-        query = query.order_by(Profile.parish)
-    elif order_by == 'age':
-        query = query.order_by(Profile.birth_year)
-
-    results = query.all()
-    return results
-
-
 
 @app.route('/api/users/<int:user_id>/favourites', methods=['GET'])
 @requires_auth
 def get_user_favourites(user_id):
     order = request.args.get('order')
-    print('order',order)
-    
-    # fav = get_users_favoured_by_current_user(profile_id,'name')
-    # for f in fav:
-    #     print(f.serialize())
-    
-    # favourites = db.session.query(Profile).join(Favourite, Profile.id == Favourite.fav_user_id_fk).filter(Favourite.user_id_fk == user_id)
-    favourites = Favourite.query.filter_by(user_id_fk=user_id)
-    print("favo",favourites)
+    favourites = db.session.query(Favourite).join(Profile, Favourite.fav_user_id_fk == Profile.id).join(User, Profile.user_id_fk == User.id).filter(Favourite.user_id_fk == user_id)
+   
     if not favourites:
         return jsonify({"error": "No favourites found for this user"}), 404
     else:
         if order == 'name':
-            favourites = favourites.join(User, Favourite.user_id_fk == User.id).order_by(User.name.desc())
+            favourites = favourites.order_by(User.name.asc())
         elif order == 'parish':
             favourites = favourites.order_by(Profile.parish.asc())
         elif order == 'age':
             favourites = favourites.order_by(Profile.birth_year.desc())
         favourites = favourites.all()
-        print(favourites)
         return jsonify({"favourites":[favourite.serialize() for favourite in favourites]}), 200
 
 @app.route('/api/users/favourites/<int:N>', methods=['GET'])
 @requires_auth 
 def get_top_favoured_users(N):
     try:
-        cursor = db.cursor(dictionary=True)
-        cursor.execute("""
-            SELECT u.id, u.username, u.password, u.name, u.email, u.photo, u.date_joined, COUNT(f.user_id_fk) AS favourites_count
-            FROM users u          
-            JOIN favourite f ON u.id = f.user_id_fk       
-            GROUP BY u.id, u.username, u.name
-            ORDER BY favourites_count DESC
-            LIMIT %s
-        """, (N,))
-        top_favourites = cursor.fetchall()
+        order = request.args.get('order')
+        
+        year = datetime.now().year
+        
+        top_favourites_ids = db.session.query(Favourite.fav_user_id_fk.label('fav_user_id'), func.count(Favourite.fav_user_id_fk).label('fav_count')).group_by(Favourite.fav_user_id_fk).order_by(desc('fav_count')).limit(N).subquery()
+        
+        top_favourites = db.session.query(Profile, User).select_from(top_favourites_ids).join(Profile, Profile.id == top_favourites_ids.c.fav_user_id).join(User, User.id == Profile.user_id_fk)
+        
         if not top_favourites:
-            return make_response(jsonify({"error": "No favoured users found"}), 404)
-        return make_response(jsonify(top_favourites), 200)
-    except Error as e:
-        return make_response(jsonify({"error": str(e)}), 500)
-    finally:
-        cursor.close()
+            return jsonify({"error": "No favoured users found"}), 404
+        
+        else:
+            if order == 'name':
+                top_favourites = top_favourites.order_by(User.name.asc())
+            elif order == 'parish':
+                top_favourites = top_favourites.order_by(Profile.parish.asc())
+            elif order == 'age':
+                top_favourites = top_favourites.order_by(Profile.birth_year.desc())
+            else:
+                top_favourites = top_favourites.order_by(top_favourites_ids.c.fav_count.desc())
+                
+            top_favourites = top_favourites.all()
+            
+            favourites_list = []
+            for profile, user in top_favourites:
+                favourites_list.append({
+                    "fav_profile_id": profile.id,
+                    "user_name": user.name,
+                    "parish": profile.parish,
+                    "age": year - profile.birth_year
+                })
 
+            return jsonify({"favourites": favourites_list}), 200
+    except Error as e:
+        return jsonify({"error": str(e)}), 500
 
 @app.route('/api/photo/<filename>', methods = ['GET'])
 def get_photo(filename):

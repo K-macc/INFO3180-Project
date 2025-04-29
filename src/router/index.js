@@ -4,7 +4,6 @@ import Home from '../views/Home.vue'
 import AddProfileForm from '../components/AddProfileForm.vue'
 import Logout from '../components/Logout.vue'
 import Register from '../views/Register.vue'
-import FavouritesView from '../views/FavouritesView.vue'
 import ProfileDetailsView from '../views/ProfileDetailsView.vue'
 import UserProfileView from '../views/UserProfileView.vue'
 import UserPage from '../views/UserPage.vue'
@@ -65,11 +64,6 @@ const router = createRouter({
       path: '/profiles/:profile_id',
       name: 'profile-details',
       component: ProfileDetailsView
-    },
-    {
-      path: '/profiles/favourites',
-      name: 'favourite-profiles',
-      component: FavouritesView
     },
     {
       path: '/profiles/match',

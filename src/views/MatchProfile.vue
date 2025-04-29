@@ -32,13 +32,11 @@ function matchProfile() {
     })
         .then(response => response.json())
         .then(data => {
-            console.log(data.message);
             if (data.error) {
                 error_message.value = data.error;
                 flashMessage(error_message);
             } else {
                 matches.value = data.matches;
-                console.log(matches.value);
                 success_message.value = data.message;
                 flashMessage(success_message);
             }
