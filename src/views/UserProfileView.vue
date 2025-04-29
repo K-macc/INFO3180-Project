@@ -3,11 +3,11 @@ import { ref, onMounted } from 'vue';
 import { useAuthStore } from '@/stores/auth';
 
 const authStore = useAuthStore();
-const userID = authStore.user_id; 
+const userID = authStore.user_id;
 const user = ref(null);
 const profiles = ref([]);
 
-function fetchUser(){
+function fetchUser() {
     fetch(`/api/users/${userID}`, {
         method: 'GET',
         headers: {
@@ -15,16 +15,16 @@ function fetchUser(){
             'Content-Type': 'application/json'
         }
     })
-    .then(response => {
-    return response.json();     
-    })
-    .then(data => { 
-        user.value = data.user;
-        profiles.value = data.profiles;
-    })
-    .catch(error => {
+        .then(response => {
+            return response.json();
+        })
+        .then(data => {
+            user.value = data.user;
+            profiles.value = data.profiles;
+        })
+        .catch(error => {
             console.error('Failed to parse JSON:', error);
-    })
+        })
 
 }
 
@@ -34,7 +34,7 @@ function trackProfileView(profileID) {
 
 
 onMounted(() => {
-    fetchUser(); 
+    fetchUser();
 });
 
 </script>
@@ -51,18 +51,18 @@ onMounted(() => {
                     <label for="name">Name:</label>
                     <p>{{ user.name }} </p>
                 </div>
-                
+
                 <div class="user-info">
                     <label for="email">Email:</label>
                     <p>{{ user.email }}</p>
                 </div>
-                
+
                 <div class="user-info">
                     <label for="date_joined">Date Joined:</label>
                     <p>{{ user.date_joined }}</p>
                 </div>
             </div>
-            
+
         </div>
 
         <div class="profiles">
@@ -71,15 +71,16 @@ onMounted(() => {
             <div class="profile-list">
                 <div v-for="profile in profiles" :key="profile.id" class="profile-item card">
                     <h3>About Me</h3>
-                    
+
                     <label for="description">Description:</label>
                     <p>{{ profile.description }}</p>
 
-            
+
                     <label for="biography">Biography:</label>
                     <p>{{ profile.biography }}</p>
 
-                    <router-link class="btn btn-primary" :to="`/profiles/${profile.id}`" @click="trackProfileView(profile.id)">View Profile</router-link>
+                    <router-link class="btn btn-primary" :to="`/profiles/${profile.id}`"
+                        @click="trackProfileView(profile.id)">View Profile</router-link>
                 </div>
             </div>
         </div>
@@ -88,7 +89,6 @@ onMounted(() => {
 
 
 <style scoped>
-
 .main-body {
     display: flex;
     flex-direction: column;
@@ -105,8 +105,10 @@ img {
 
 .header-info {
     display: grid;
-    grid-template-columns: 140px 1fr; /* Image takes up 190px, text takes the remaining space */
-    align-items: flex-start;  /* Align the content to the top */
+    grid-template-columns: 140px 1fr;
+    /* Image takes up 190px, text takes the remaining space */
+    align-items: flex-start;
+    /* Align the content to the top */
     justify-content: center;
     border: 1px solid #ddd;
     border-radius: 8px;
@@ -155,26 +157,26 @@ label {
 }
 
 
-.profile-item.card  {
-  margin: 0.5rem 0 0.5rem;
-  font-size: 1.1rem;
-  color: #333;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
-  width: 500px;
-  height: 300px;
-  transition: all 0.3s ease-in-out;
-  justify-content: space-around;
-  padding: 1px 25px;
+.profile-item.card {
+    margin: 0.5rem 0 0.5rem;
+    font-size: 1.1rem;
+    color: #333;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+    width: 500px;
+    height: 300px;
+    transition: all 0.3s ease-in-out;
+    justify-content: space-around;
+    padding: 1px 25px;
 }
 
 
 .profile-item.card:hover {
-  background: white ;
-  transform: scale(1.05);
-  box-shadow: 0px 0px 10px rgb(146, 144, 144) ;
-  border-color: #817e7e96 ;
+    background: white;
+    transform: scale(1.05);
+    box-shadow: 0px 0px 10px rgb(146, 144, 144);
+    border-color: #817e7e96;
 }
 
 .btn.btn-primary {
@@ -182,5 +184,4 @@ label {
     align-self: center;
     margin-bottom: 10px;
 }
-
 </style>

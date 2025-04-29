@@ -31,7 +31,7 @@ function getCsrfToken() {
 const logoutUser = async () => {
     success_message.value = '';
     errors.value = [];
-    
+
     if (!csrf_token.value) {
         console.error('CSRF Token is not available');
         return;
@@ -46,21 +46,21 @@ const logoutUser = async () => {
             'Content-Type': 'application/json'
         }
     })
-    .then(response => response.json())
-    .then(data => {
-        if (data.message) {
-            success_message.value = data.message;
-            authStore.setFlashMessage(success_message.value);
-            authStore.logout(); 
-            router.push('/'); // Redirect to login page after logout
-        } else {
-            errors.value = data.errors;
-        }
-    })
-    .catch(error => {
-        console.error('Error during logout:', error);
-        errors.value.push('An error occurred during logout.');
-    });
+        .then(response => response.json())
+        .then(data => {
+            if (data.message) {
+                success_message.value = data.message;
+                authStore.setFlashMessage(success_message.value);
+                authStore.logout();
+                router.push('/'); // Redirect to login page after logout
+            } else {
+                errors.value = data.errors;
+            }
+        })
+        .catch(error => {
+            console.error('Error during logout:', error);
+            errors.value.push('An error occurred during logout.');
+        });
 }
 
 
@@ -76,19 +76,19 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="logout-message">
-    <transition name="fade">
-      <div v-if="success_message" class="success-message">
-        {{ success_message }}
-      </div>
-    </transition>
+    <div class="logout-message">
+        <transition name="fade">
+            <div v-if="success_message" class="success-message">
+                {{ success_message }}
+            </div>
+        </transition>
 
-    <transition name="fade">
-      <div v-if="errors.length > 0" class="error-message">
-        <ul>
-          <li v-for="(error, index) in errors" :key="index">{{ error }}</li>
-        </ul>
-      </div>
-    </transition>
-  </div>
+        <transition name="fade">
+            <div v-if="errors.length > 0" class="error-message">
+                <ul>
+                    <li v-for="(error, index) in errors" :key="index">{{ error }}</li>
+                </ul>
+            </div>
+        </transition>
+    </div>
 </template>

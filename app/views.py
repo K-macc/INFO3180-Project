@@ -23,6 +23,7 @@ from app import app, db
 from app.models import User, Profile, Favourite
 from app.forms import UserForm, ProfileForm, LoginForm
 from flask import flash
+from datetime import datetime
 import json
 
 def requires_auth(f):
@@ -335,8 +336,11 @@ def add_or_delete_favourite(user_id):
         return jsonify({"message": "User added to favourites!!"}), 201
 
 @app.route('/api/profiles/matches/<int:profile_id>', methods=['GET'])
-@login_required
+@requires_auth
 def get_matches(profile_id):
+    
+    matches = []
+    year = datetime.now().year
     # Check if profile is complete for the current user 
     if not has_complete_profile(current_user.id):
         return jsonify({"error": "Complete your profile to access this feature."}), 403
@@ -346,24 +350,30 @@ def get_matches(profile_id):
     # Ensure the profile belongs to the current user
     if profile.user_id_fk != current_user.id:  # Use user_id_fk to compare with current_user.id
         return jsonify({"error": "Unauthorized"}), 403
+    
+    age = year - profile.birth_year
 
-    matches = Profile.query.filter(
+    potential_matches = Profile.query.filter(
         Profile.id != profile.id,
         Profile.user_id_fk != current_user.id,  # Use user_id_fk to filter
-        Profile.birth_year == profile.birth_year,
-        Profile.race == profile.race,
-        Profile.sex == profile.sex,
-        Profile.parish == profile.parish,
-        Profile.biography == profile.biography,
-        Profile.fav_cuisine == profile.fav_cuisine,
-        Profile.fav_colour == profile.fav_colour,
-        Profile.fav_school_subject == profile.fav_school_subject,
-        Profile.political == profile.political,
-        Profile.religious == profile.religious,
-        Profile.family_oriented == profile.family_oriented
     ).all()
+    
+    for match in potential_matches:
+        match_age = year - match.birth_year
+        age_diff = abs(match_age - age)
+        height_diff = abs(profile.height - match.height)
+        if age_diff <= 5 and 3 <= height_diff <= 10:
+            fields_to_check = ['fav_cuisine', 'fav_colour', 'fav_school_subject','political', 'religious', 'family_oriented']
 
-    return jsonify([p.serialize() for p in matches])
+            match_count = sum(1 for field in fields_to_check if getattr(profile, field) == getattr(match, field))
+        
+            if match_count >= 3:
+                matches.append(match)
+            
+    if match != []:
+        return jsonify({"message": "Matches found!!","matches": [p.serialize() for p in matches]}),200
+    else:
+        return jsonify({"error": "No matches found"}), 404
 
 
 @app.route('/api/search', methods=['GET'])
@@ -450,24 +460,49 @@ def get_user(user_id):
              }),200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+    
+def get_users_favoured_by_current_user(current_user_id, order_by):
+    # Join favourites -> profiles
+    favourites = db.session.query(Profile).join(Favourite, Profile.id == Favourite.fav_user_id_fk).filter(Favourite.fav_user_id_fk == current_user_id)
+
+    # Ordering logic
+    if order_by == 'name':
+        query = query.join(User, Profile.user_id_fk == User.id).order_by(User.name)
+    elif order_by == 'parish':
+        query = query.order_by(Profile.parish)
+    elif order_by == 'age':
+        query = query.order_by(Profile.birth_year)
+
+    results = query.all()
+    return results
+
 
 
 @app.route('/api/users/<int:user_id>/favourites', methods=['GET'])
 @requires_auth
 def get_user_favourites(user_id):
-    favourites = Favourite.query.filter_by(user_id_fk=user_id).all()
+    order = request.args.get('order')
+    print('order',order)
+    
+    # fav = get_users_favoured_by_current_user(profile_id,'name')
+    # for f in fav:
+    #     print(f.serialize())
+    
+    # favourites = db.session.query(Profile).join(Favourite, Profile.id == Favourite.fav_user_id_fk).filter(Favourite.user_id_fk == user_id)
+    favourites = Favourite.query.filter_by(user_id_fk=user_id)
+    print("favo",favourites)
     if not favourites:
         return jsonify({"error": "No favourites found for this user"}), 404
     else:
-        favourites_list = [
-            {
-                "id": favourite.id,
-                "user_id": favourite.user_id_fk,
-                "fav_user_id": favourite.fav_user_id_fk
-            }
-            for favourite in favourites
-        ]
-    return jsonify({"favourites":favourites_list}), 200
+        if order == 'name':
+            favourites = favourites.join(User, Favourite.user_id_fk == User.id).order_by(User.name.desc())
+        elif order == 'parish':
+            favourites = favourites.order_by(Profile.parish.asc())
+        elif order == 'age':
+            favourites = favourites.order_by(Profile.birth_year.desc())
+        favourites = favourites.all()
+        print(favourites)
+        return jsonify({"favourites":[favourite.serialize() for favourite in favourites]}), 200
 
 @app.route('/api/users/favourites/<int:N>', methods=['GET'])
 @requires_auth 

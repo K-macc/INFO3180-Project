@@ -13,34 +13,34 @@ const csrf_token = ref("");
 const photo = ref(null);
 
 const handleFileChange = (event) => {
-    photo.value = event.target.files[0];
+  photo.value = event.target.files[0];
 };
 
-function flashMessage(prompt){
-    setTimeout(() => {
-        if (Array.isArray(prompt)) {
-            prompt.value = [];
-        } else {
-            prompt.value = '';
-        }
+function flashMessage(prompt) {
+  setTimeout(() => {
+    if (Array.isArray(prompt)) {
+      prompt.value = [];
+    } else {
+      prompt.value = '';
+    }
   }, 2000);
 }
 
 function getCsrfToken() {
-    fetch('/api/v1/csrf-token')
-        .then((response) => response.json())
-        .then((data) => {
-            csrf_token.value = data.csrf_token;
-        })
-        .catch((error) => {
-            console.error("Error: ",error);
-        });
+  fetch('/api/v1/csrf-token')
+    .then((response) => response.json())
+    .then((data) => {
+      csrf_token.value = data.csrf_token;
+    })
+    .catch((error) => {
+      console.error("Error: ", error);
+    });
 }
 
 onMounted(() => {
-    getCsrfToken();
+  getCsrfToken();
 });
- 
+
 function register() {
   const registrationForm = document.getElementById('registrationForm');
   const form_data = new FormData(registrationForm);
@@ -56,29 +56,29 @@ function register() {
     },
     body: form_data
   })
-  .then(response => response.json())
-  .then(data => {
-    if (data.errors) {
-      errorMessage.value = data.errors;
+    .then(response => response.json())
+    .then(data => {
+      if (data.errors) {
+        errorMessage.value = data.errors;
+        flashMessage(errorMessage);
+      } else if (data.error) {
+        errorMessage.value.push(data.error);
+        flashMessage(errorMessage);
+      } else {
+        successMessage.value = data.message;
+        registrationForm.reset();
+        flashMessage(successMessage);
+        setTimeout(() => {
+          router.push('/profiles/new');
+        }, 5000);
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      errorMessage.value.push('An error occurred during registration.');
       flashMessage(errorMessage);
-    } else if (data.error) {
-      errorMessage.value.push(data.error);
-      flashMessage(errorMessage);
-    } else {
-      successMessage.value = data.message;
-      registrationForm.reset();
-      flashMessage(successMessage);
-      setTimeout(() => {
-        router.push('/profiles/new');
-      }, 5000);
-    }
-  })
-  .catch(error => {
-    console.error('Error:', error);
-    errorMessage.value.push('An error occurred during registration.');
-    flashMessage(errorMessage);
-  });
-     
+    });
+
 }
 </script>
 
@@ -119,7 +119,8 @@ function register() {
         <label>Email:</label>
         <input v-model="email" type="email" name="email" class="form-control">
       </div>
-      <input id="photo" name="photo" type="file" @change="handleFileChange" ref="fileInput" accept="image/png, image/jpeg"  class="form-control"/>
+      <input id="photo" name="photo" type="file" @change="handleFileChange" ref="fileInput"
+        accept="image/png, image/jpeg" class="form-control" />
       <button type="submit">Register</button>
     </form>
     <p>Already have an account? <router-link to="/login">Login here</router-link></p>
@@ -128,44 +129,43 @@ function register() {
 
 
 <style scoped>
-  .success-message {
-    color: green;
-    background-color: #d4edda;
-    padding: 10px;
-    border-radius: 5px;
-    width: 15%;
-    top: 100px;
-    right: 45px;
-    text-align: center;
-    position: fixed;
-  }
+.success-message {
+  color: green;
+  background-color: #d4edda;
+  padding: 10px;
+  border-radius: 5px;
+  width: 15%;
+  top: 100px;
+  right: 45px;
+  text-align: center;
+  position: fixed;
+}
 
-  .error-message {
-      color: red;
-      background-color: #f8d7da;
-      padding: 10px;
-      padding-top: 20px;
-      padding-left: 0px;
-      margin-bottom: 10px;
-      border-radius: 5px;
-      top: 70px;
-      right: 45px;
-      position: fixed;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      width: 26%;
-      min-height: 8%;
-      height: auto;
-  }
+.error-message {
+  color: red;
+  background-color: #f8d7da;
+  padding: 10px;
+  padding-top: 20px;
+  padding-left: 0px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  top: 70px;
+  right: 45px;
+  position: fixed;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 26%;
+  min-height: 8%;
+  height: auto;
+}
 
-  .fade-leave-active {
-    transition: opacity 1s ease-in-out;
-  }
+.fade-leave-active {
+  transition: opacity 1s ease-in-out;
+}
 
-  .fade-leave-to {
-    opacity: 0;
-  }
+.fade-leave-to {
+  opacity: 0;
+}
 </style>
-  

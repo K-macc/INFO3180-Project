@@ -11,7 +11,8 @@ export const useAuthStore = defineStore('auth', {
     router: useRouter(),
     flashMessage: '',
     user_id: null,
-    profile_id: null
+    profile_id: null,
+    current_fav_id: null  
   }),
   actions: {
     login(userData, token, user_id) {
@@ -33,5 +34,11 @@ export const useAuthStore = defineStore('auth', {
     setProfileId(profile_id) {
       this.profile_id = profile_id;
     },
+    setUserId(user_id) {
+      this.user_id = user_id;
+    },
+    setCurrentFavId(current_fav_id) {
+      this.current_fav_id = current_fav_id;
+    }
   }
-})
+});

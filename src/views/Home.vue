@@ -1,19 +1,19 @@
 <script setup>
-  import { ref, onMounted } from 'vue'
-  import { useAuthStore } from '@/stores/auth.js';
+import { ref, onMounted } from 'vue'
+import { useAuthStore } from '@/stores/auth.js';
 
-  const authStore = useAuthStore();
+const authStore = useAuthStore();
 
-  const flashMessage = ref('');
-  
-  flashMessage.value = authStore.flashMessage;
+const flashMessage = ref('');
+
+flashMessage.value = authStore.flashMessage;
 
 
-  setTimeout(() => {
-    flashMessage.value = '';
-  }, 3000);
+setTimeout(() => {
+  flashMessage.value = '';
+}, 3000);
 </script>
-  
+
 <template>
   <div>
     <transition name="fade">
@@ -35,27 +35,23 @@
 </template>
 
 <style scoped>
-  .flash-message {
-    color: green;
-    background-color: #d4edda;
-    padding: 10px;
-    border-radius: 5px;
-    width: 15%;
-    top: 100px;
-    right: 45px;
-    text-align: center;
-    position: fixed;
-  }
+.flash-message {
+  color: green;
+  background-color: #d4edda;
+  padding: 10px;
+  border-radius: 5px;
+  width: 15%;
+  top: 100px;
+  right: 45px;
+  text-align: center;
+  position: fixed;
+}
 
-  .fade-leave-active {
-    transition: opacity 1s ease-in-out;
-  }
+.fade-leave-active {
+  transition: opacity 1s ease-in-out;
+}
 
-  .fade-leave-to {
-    opacity: 0;
-  }
+.fade-leave-to {
+  opacity: 0;
+}
 </style>
-
-
-  
-  

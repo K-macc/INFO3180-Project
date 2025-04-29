@@ -4,13 +4,13 @@ import { useAuthStore } from '@/stores/auth.js';
 
 const authStore = useAuthStore();
 const profiles = ref([]);
-const userID = authStore.user_id; 
+const userID = authStore.user_id;
 
 function trackProfileView(profileID) {
     authStore.setProfileId(profileID);
 }
 
-function fetchProfiles(){
+function fetchProfiles() {
     fetch(`/api/users/${userID}`, {
         method: 'GET',
         headers: {
@@ -18,20 +18,20 @@ function fetchProfiles(){
             'Content-Type': 'application/json'
         }
     })
-    .then(response => {
-    return response.json();     
-    })
-    .then(data => { 
-        profiles.value = data.profiles;
-    })
-    .catch(error => {
+        .then(response => {
+            return response.json();
+        })
+        .then(data => {
+            profiles.value = data.profiles;
+        })
+        .catch(error => {
             console.error('Failed to parse JSON:', error);
-    })
+        })
 
 }
 
 onMounted(() => {
-    fetchProfiles(); 
+    fetchProfiles();
 });
 </script>
 
@@ -49,7 +49,8 @@ onMounted(() => {
 
                 <label for="race">Race:</label>
                 <p>{{ profile.race }}</p>
-                <router-link class="btn btn-primary" :to="`/profiles/update/${profile.id}`" @click="trackProfileView(profile.id)">Complete this profile</router-link>
+                <router-link class="btn btn-primary" :to="`/profiles/update/${profile.id}`"
+                    @click="trackProfileView(profile.id)">Complete this profile</router-link>
             </div>
         </div>
     </div>
@@ -75,26 +76,26 @@ label {
 }
 
 
-.profile-item.card  {
-  margin: 0.5rem 0 0.5rem;
-  font-size: 1.1rem;
-  color: #333;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
-  width: 500px;
-  height: 300px;
-  transition: all 0.3s ease-in-out;
-  justify-content: space-around;
-  padding: 10px 25px;
+.profile-item.card {
+    margin: 0.5rem 0 0.5rem;
+    font-size: 1.1rem;
+    color: #333;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+    width: 500px;
+    height: 300px;
+    transition: all 0.3s ease-in-out;
+    justify-content: space-around;
+    padding: 10px 25px;
 }
 
 
 .profile-item.card:hover {
-  background: white ;
-  transform: scale(1.05);
-  box-shadow: 0px 0px 10px rgb(146, 144, 144) ;
-  border-color: #817e7e96 ;
+    background: white;
+    transform: scale(1.05);
+    box-shadow: 0px 0px 10px rgb(146, 144, 144);
+    border-color: #817e7e96;
 }
 
 .btn.btn-primary {

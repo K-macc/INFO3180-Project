@@ -1,7 +1,7 @@
 <script setup>
 import { RouterLink, RouterView } from 'vue-router'
 import { computed } from 'vue'
-import { useAuthStore } from '@/stores/auth' 
+import { useAuthStore } from '@/stores/auth'
 import AppHeader from '@/components/AppHeader.vue'
 import AppFooter from '@/components/AppFooter.vue'
 
@@ -12,7 +12,7 @@ const isAuthenticated = computed(() => authStore.isAuthenticated)
 <template>
   <div class="app-container">
     <AppHeader :is-authenticated="isAuthenticated" />
-    
+
     <main class="main-content">
       <RouterView v-slot="{ Component }">
         <transition name="fade" mode="out-in">
@@ -20,7 +20,7 @@ const isAuthenticated = computed(() => authStore.isAuthenticated)
         </transition>
       </RouterView>
     </main>
-    
+
     <AppFooter />
   </div>
 </template>
@@ -58,7 +58,8 @@ body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   line-height: 1.6;
   color: #333;
-  padding-top: 80px; /* Space for fixed header */
+  padding-top: 80px;
+  /* Space for fixed header */
 }
 
 a {

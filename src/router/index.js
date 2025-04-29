@@ -10,6 +10,8 @@ import UserProfileView from '../views/UserProfileView.vue'
 import UserPage from '../views/UserPage.vue'
 import CheckProfiles from '../views/CheckProfiles.vue'
 import UpdateProfile from '../components/UpdateProfile.vue'
+import MatchProfile from '../views/MatchProfile.vue'
+import Reports from '../views/Reports.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -68,7 +70,17 @@ const router = createRouter({
       path: '/profiles/favourites',
       name: 'favourite-profiles',
       component: FavouritesView
-    }    
+    },
+    {
+      path: '/profiles/match',
+      name: 'match-profiles',
+      component: MatchProfile
+    },
+    {
+      path: '/reports',
+      name: 'reports',
+      component: Reports
+    }   
   ],
   scrollBehavior(to, from, savedPosition) {
     return { top: 0 };

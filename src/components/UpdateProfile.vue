@@ -39,14 +39,14 @@ const toggleFamilyOrientedRadioButton = (value) => {
     family_oriented.value = family_oriented.value === value ? null : value;
 }
 
-function flashMessage(prompt){
+function flashMessage(prompt) {
     setTimeout(() => {
         if (Array.isArray(prompt)) {
             prompt.value = [];
         } else {
             prompt.value = '';
         }
-  }, 3000);
+    }, 3000);
 }
 
 function preFillForm() {
@@ -62,7 +62,7 @@ function preFillForm() {
     fav_school_subject.value = profile.value.fav_school_subject;
     political.value = profile.value.political;
     religious.value = profile.value.religious;
-    family_oriented.value = profile.value.family_oriented;   
+    family_oriented.value = profile.value.family_oriented;
 }
 
 
@@ -73,11 +73,11 @@ function getCsrfToken() {
             csrf_token.value = data.csrf_token;
         })
         .catch((error) => {
-            console.error("Error: ",error);
+            console.error("Error: ", error);
         });
 }
 
-function fetchProfile(){
+function fetchProfile() {
     fetch(`/api/profiles/${profileID}`, {
         method: 'GET',
         headers: {
@@ -85,31 +85,31 @@ function fetchProfile(){
             'Authorization': `Bearer ${authStore.token}`
         }
     })
-    .then(response => {
-    return response.json();     
-    })
-    .then(data => { 
-        if (data.error) {
-            console.error('Error fetching profile:', data.error);
-            return;
-        } else {
-            profile.value = data.profile;
-            preFillForm();
-        }
-    })
-    .catch(error => {
+        .then(response => {
+            return response.json();
+        })
+        .then(data => {
+            if (data.error) {
+                console.error('Error fetching profile:', data.error);
+                return;
+            } else {
+                profile.value = data.profile;
+                preFillForm();
+            }
+        })
+        .catch(error => {
             console.error('Failed to parse JSON:', error);
-    })
+        })
 
 }
 
 onMounted(() => {
-    fetchProfile(); 
+    fetchProfile();
     getCsrfToken();
 });
 
 function updateProfile() {
-    const profileForm  = document.getElementById('profileForm');
+    const profileForm = document.getElementById('profileForm');
     const formData = new FormData(profileForm);
 
     success_message.value = '';
@@ -124,28 +124,28 @@ function updateProfile() {
             'X-CSRF-Token': csrf_token.value
         }
     })
-    .then(response => response.json())
-    .then(data => {
-        if (data.message) {
-            success_message.value = data.message;
-            flashMessage(success_message);
-            profileForm.reset();
-            setTimeout(() => { 
-                router.push('/users');
-            }, 4000);
-        } else if (data.error) {
-            errors.value.push(data.error);
+        .then(response => response.json())
+        .then(data => {
+            if (data.message) {
+                success_message.value = data.message;
+                flashMessage(success_message);
+                profileForm.reset();
+                setTimeout(() => {
+                    router.push('/users');
+                }, 4000);
+            } else if (data.error) {
+                errors.value.push(data.error);
+                flashMessage(errors);
+            } else {
+                errors.value = data.errors;
+                flashMessage(errors);
+            }
+        })
+        .catch(error => {
+            console.error('Failed to parse JSON:', error);
+            errors.value.push('An error occurred while processing your request.');
             flashMessage(errors);
-        } else {
-            errors.value = data.errors;
-            flashMessage(errors);
-        }
-    })
-    .catch(error => {
-        console.error('Failed to parse JSON:', error);
-        errors.value.push('An error occurred while processing your request.');
-        flashMessage(errors);
-    });
+        });
 
 }
 </script>
@@ -173,33 +173,33 @@ function updateProfile() {
         <form id="profileForm" @submit.prevent="updateProfile" class="profile-form" enctype="multipart/form-data">
             <div class="form-group mb-3">
                 <label for="description" class="form-label">Description</label>
-                <textarea id="description" name="description" v-model="description" class="form-control" ></textarea>
+                <textarea id="description" name="description" v-model="description" class="form-control"></textarea>
             </div>
 
             <div class="form-group mb-3">
                 <label for="biography" class="form-label">Biography</label>
-                <textarea id="biography" name="biography" v-model="biography" class="form-control" ></textarea>
+                <textarea id="biography" name="biography" v-model="biography" class="form-control"></textarea>
             </div>
 
             <div class="group-items">
                 <div class="form-group mb-3">
                     <label for="parish" class="form-label">Parish</label>
                     <select name="parish" id="parish" v-model="parish">
-                            <option value="">--Select One--</option>
-                            <option value="Clarendon">Clarendon</option>
-                            <option value="Hanover">Hanover</option>
-                            <option value="Kingston">Kingston</option>
-                            <option value="Manchester">Manchester</option>
-                            <option value="Portland">Portland</option>
-                            <option value="St Andrew">St Andrew</option>
-                            <option value="St Ann">St Ann</option>
-                            <option value="St Catherine">St Catherine</option>
-                            <option value="St Elizabeth">St Elizabeth</option>
-                            <option value="St James">St James</option>
-                            <option value="St Mary">St Mary</option>
-                            <option value="St Thomas">St Thomas</option>
-                            <option value="Trelawny">Trelawny</option>
-                            <option value="Westmoreland">Westmoreland</option>
+                        <option value="">--Select One--</option>
+                        <option value="Clarendon">Clarendon</option>
+                        <option value="Hanover">Hanover</option>
+                        <option value="Kingston">Kingston</option>
+                        <option value="Manchester">Manchester</option>
+                        <option value="Portland">Portland</option>
+                        <option value="St Andrew">St Andrew</option>
+                        <option value="St Ann">St Ann</option>
+                        <option value="St Catherine">St Catherine</option>
+                        <option value="St Elizabeth">St Elizabeth</option>
+                        <option value="St James">St James</option>
+                        <option value="St Mary">St Mary</option>
+                        <option value="St Thomas">St Thomas</option>
+                        <option value="Trelawny">Trelawny</option>
+                        <option value="Westmoreland">Westmoreland</option>
                     </select>
                 </div>
 
@@ -248,53 +248,62 @@ function updateProfile() {
 
                 <div class="form-group mb-3">
                     <label for="fav_school_subject" class="form-label">Favourite School Subject</label>
-                    <input id="fav_school_subject" type="text" name="fav_school_subject" v-model="fav_school_subject" class="form-control" />
+                    <input id="fav_school_subject" type="text" name="fav_school_subject" v-model="fav_school_subject"
+                        class="form-control" />
                 </div>
             </div>
 
             <div class="radio-options">
-                <div class = "form-group mb3">
-                    <label for = "political" class = "form-label">Political</label>
+                <div class="form-group mb3">
+                    <label for="political" class="form-label">Political</label>
                     <div class="choices">
                         <div>
-                            <input id = "political_yes" type = "radio" name = "political" v-model = "political" class = "form-check-input" :value="true" @click = "togglePoliticalRadioButton(true)"/>
-                            <label for = "political_yes">Yes</label>
+                            <input id="political_yes" type="radio" name="political" v-model="political"
+                                class="form-check-input" :value="true" @click="togglePoliticalRadioButton(true)" />
+                            <label for="political_yes">Yes</label>
                         </div>
-                        
+
                         <div>
-                            <input id = "political_no" type = "radio" name = "political" v-model = "political" class = "form-check-input" :value="false" @click = "togglePoliticalRadioButton(false)"/>
-                            <label for = "political_no">No</label>
+                            <input id="political_no" type="radio" name="political" v-model="political"
+                                class="form-check-input" :value="false" @click="togglePoliticalRadioButton(false)" />
+                            <label for="political_no">No</label>
                         </div>
                     </div>
-                </div>
-                
-                <div class = "form-group mb3">
-                    <label for = "religious" class = "form-label">Religious</label>
-                    <div class="choices">
-                        <div>
-                            <input id = "religious_yes" type = "radio" name = "religious" v-model = "religious" class = "form-check-input" :value="true" @click = "toggleReligiousRadioButton(true)"/>
-                            <label for = "religious_yes">Yes</label>
-                        </div>
-                        
-                        <div>
-                            <input id = "religious_no" type = "radio" name = "religious" v-model = "religious" class = "form-check-input" :value="false" @click = "toggleReligiousRadioButton(false)"/>
-                            <label for = "religious_no">No</label>
-                        </div>
-                    </div>
-                    
                 </div>
 
-                <div class = "form-group mb3">
-                    <label for = "family_oriented" class = "form-label">Family Oriented</label>
+                <div class="form-group mb3">
+                    <label for="religious" class="form-label">Religious</label>
                     <div class="choices">
                         <div>
-                            <input id = "family_oriented_yes" type = "radio" name = "family_oriented" v-model = "family_oriented" class = "form-check-input" :value="true" @click = "toggleFamilyOrientedRadioButton(true)"/>
-                            <label for = "family_oriented_yes">Yes</label>
+                            <input id="religious_yes" type="radio" name="religious" v-model="religious"
+                                class="form-check-input" :value="true" @click="toggleReligiousRadioButton(true)" />
+                            <label for="religious_yes">Yes</label>
                         </div>
-                        
+
                         <div>
-                            <input id = "family_oriented_no" type = "radio" name = "family_oriented" v-model = "family_oriented" class = "form-check-input" :value="false" @click = "toggleFamilyOrientedRadioButton(false)"/>
-                            <label for = "family_oriented_no">No</label>
+                            <input id="religious_no" type="radio" name="religious" v-model="religious"
+                                class="form-check-input" :value="false" @click="toggleReligiousRadioButton(false)" />
+                            <label for="religious_no">No</label>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="form-group mb3">
+                    <label for="family_oriented" class="form-label">Family Oriented</label>
+                    <div class="choices">
+                        <div>
+                            <input id="family_oriented_yes" type="radio" name="family_oriented"
+                                v-model="family_oriented" class="form-check-input" :value="true"
+                                @click="toggleFamilyOrientedRadioButton(true)" />
+                            <label for="family_oriented_yes">Yes</label>
+                        </div>
+
+                        <div>
+                            <input id="family_oriented_no" type="radio" name="family_oriented" v-model="family_oriented"
+                                class="form-check-input" :value="false"
+                                @click="toggleFamilyOrientedRadioButton(false)" />
+                            <label for="family_oriented_no">No</label>
                         </div>
                     </div>
                 </div>
@@ -309,7 +318,6 @@ function updateProfile() {
 
 
 <style scoped>
-
 .profile-form-div {
     margin: 0 auto;
     width: 75%;
@@ -367,7 +375,9 @@ input[id^='fav'] {
     width: 140%;
 }
 
-input[id^='pol'], input[id^='rel'], input[id^='fam'] {
+input[id^='pol'],
+input[id^='rel'],
+input[id^='fam'] {
     margin-right: 10px;
 }
 
@@ -388,16 +398,17 @@ textarea {
     border: 1px solid #ccc;
 }
 
-select { background-color: #fff;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  padding: 8px 20px 5px 12px;
-  font-size: 14px;
-  cursor: pointer;
-  height: 38px;
-  }
+select {
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 8px 20px 5px 12px;
+    font-size: 14px;
+    cursor: pointer;
+    height: 38px;
+}
 
-  .success-message {
+.success-message {
     color: green;
     background-color: #d4edda;
     padding: 10px;
@@ -407,33 +418,33 @@ select { background-color: #fff;
     right: 45px;
     text-align: center;
     position: fixed;
-  }
+}
 
-  .error-message {
-      color: red;
-      background-color: #f8d7da;
-      padding: 10px;
-      padding-top: 20px;
-      padding-left: 0px;
-      margin-bottom: 10px;
-      border-radius: 5px;
-      top: 70px;
-      right: 45px;
-      position: fixed;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      width: 26%;
-      min-height: 8%;
-      height: auto;
-  }
+.error-message {
+    color: red;
+    background-color: #f8d7da;
+    padding: 10px;
+    padding-top: 20px;
+    padding-left: 0px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    top: 70px;
+    right: 45px;
+    position: fixed;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 26%;
+    min-height: 8%;
+    height: auto;
+}
 
-  .fade-leave-active {
+.fade-leave-active {
     transition: opacity 1s ease-in-out;
-  }
+}
 
-  .fade-leave-to {
+.fade-leave-to {
     opacity: 0;
-  }
+}
 </style>

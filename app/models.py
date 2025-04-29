@@ -1,6 +1,9 @@
 # Add any model classes for Flask-SQLAlchemy here
 from app import db
 from werkzeug.security import generate_password_hash, check_password_hash
+from datetime import datetime
+
+year = datetime.now().year
 
 class User(db.Model):
     __tablename__ = 'users'
@@ -13,8 +16,8 @@ class User(db.Model):
     photo = db.Column(db.String(120), nullable=True)
     date_joined = db.Column(db.DateTime, nullable=False, default=db.func.current_timestamp())
 
-    profiles = db.relationship('Profile', backref='users', lazy=True)
-    favourites = db.relationship('Favourite', backref='users', lazy=True)
+    profiles = db.relationship('Profile', backref='user', lazy=True)
+    favourites = db.relationship('Favourite', backref='user', lazy=True)
 
      # Add the required methods for Flask-Login
     def is_active(self):
@@ -66,9 +69,8 @@ class Profile(db.Model):
     religious = db.Column(db.Boolean, nullable=True, default=False)
     family_oriented = db.Column(db.Boolean, nullable=True, default=False)
     
-    
 
-    favourites = db.relationship('Favourite', backref='profiles', lazy=True)
+    favourites = db.relationship('Favourite', backref='profile', lazy=True)
 
     def __repr__(self):
         return f'<Profile {self.id}>'
@@ -89,6 +91,7 @@ class Profile(db.Model):
         return {
             "id": self.id,
             "user_id": self.user_id_fk,
+            "user_name": self.user.name if self.user else None,
             "description": self.description,
             "parish": self.parish,
             "biography": self.biography,
@@ -119,5 +122,8 @@ class Favourite(db.Model):
         return {
             "id": self.id,
             "user_id": self.user_id_fk,
-            "fav_profile_id": self.fav_user_id_fk
+            "fav_profile_id": self.fav_user_id_fk,
+            "user_name": self.profile.user.name,
+            "parish": self.profile.parish,
+            "age": (year - self.profile.birth_year)
         }
