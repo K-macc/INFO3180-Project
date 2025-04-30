@@ -1,20 +1,23 @@
 # Add any model classes for Flask-SQLAlchemy here
 from app import db
 from werkzeug.security import generate_password_hash, check_password_hash
+from datetime import datetime
+
+year = datetime.now().year
 
 class User(db.Model):
     __tablename__ = 'users'
     
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
-    password = db.Column(db.Text, nullable=False)
+    password = db.Column(db.String(255), nullable=False)
     name = db.Column(db.String(80), nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     photo = db.Column(db.String(120), nullable=True)
     date_joined = db.Column(db.DateTime, nullable=False, default=db.func.current_timestamp())
 
-    profiles = db.relationship('Profile', backref='user', lazy=True)
-    favourites = db.relationship('Favourite', backref='user', lazy=True)
+    profiles = db.relationship('Profile', backref='users', lazy=True)
+    favourites = db.relationship('Favourite', backref='users', lazy=True)
 
      # Add the required methods for Flask-Login
     def is_active(self):
@@ -48,41 +51,47 @@ class User(db.Model):
 
 
 class Profile(db.Model):
-    __tablename__ = 'profile'
+    __tablename__ = 'profiles'
     
     id = db.Column(db.Integer, primary_key=True)
     user_id_fk = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    description = db.Column(db.Text, nullable=False)
-    parish = db.Column(db.String(80), nullable=False)
-    biography = db.Column(db.Text, nullable=False)
-    sex = db.Column(db.String(10), nullable=False)
-    race = db.Column(db.String(10), nullable=False)
-    birth_year = db.Column(db.Integer, nullable=False)
-    height = db.Column(db.Float, nullable=False)
-    fav_cuisine = db.Column(db.String(80), nullable=False)
-    fav_colour = db.Column(db.String(80), nullable=False)
-    fav_school_subject = db.Column(db.String(80), nullable=False)
-    political = db.Column(db.Boolean, nullable=False, default=False)
-    religious = db.Column(db.Boolean, nullable=False, default=False)
-    family_oriented = db.Column(db.Boolean, nullable=False, default=False)
+    description = db.Column(db.Text, nullable=True)
+    parish = db.Column(db.String(80), nullable=True)
+    biography = db.Column(db.Text, nullable=True)
+    sex = db.Column(db.String(10), nullable=True)
+    race = db.Column(db.String(10), nullable=True)
+    birth_year = db.Column(db.Integer, nullable=True)
+    height = db.Column(db.Float, nullable=True)
+    fav_cuisine = db.Column(db.String(80), nullable=True)
+    fav_colour = db.Column(db.String(80), nullable=True)
+    fav_school_subject = db.Column(db.String(80), nullable=True)
+    political = db.Column(db.Boolean, nullable=True, default=False)
+    religious = db.Column(db.Boolean, nullable=True, default=False)
+    family_oriented = db.Column(db.Boolean, nullable=True, default=False)
+    
 
-    favourites = db.relationship('Favourite', backref='profile', lazy=True)
+    favourites = db.relationship('Favourite', backref='profiles', lazy=True)
 
     def __repr__(self):
         return f'<Profile {self.id}>'
+    
+    def get_id(self):
+        # This is used to retrieve the user ID (usually the primary key)
+        return str(self.id)
 
     def is_complete(self):
         # Check all fields are filled (optional: make this stricter)
         return all([
             self.description, self.parish, self.biography, self.sex, self.race,
             self.birth_year, self.height, self.fav_cuisine, self.fav_colour,
-            self.fav_school_subject
+            self.fav_school_subject, self.political is not None, self.religious is not None, self.family_oriented is not None
         ])
 
     def serialize(self):
         return {
             "id": self.id,
             "user_id": self.user_id_fk,
+            "user_name": self.user.name if self.user else None,
             "description": self.description,
             "parish": self.parish,
             "biography": self.biography,
@@ -100,11 +109,11 @@ class Profile(db.Model):
 
 
 class Favourite(db.Model):
-    __tablename__ = 'favourite'
+    __tablename__ = 'favourites'
     
     id = db.Column(db.Integer, primary_key=True)
     user_id_fk = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    fav_user_id_fk = db.Column(db.Integer, db.ForeignKey('profile.id'), nullable=False)
+    fav_user_id_fk = db.Column(db.Integer, db.ForeignKey('profiles.id'), nullable=False)
 
     def __repr__(self):
         return f'<Favourite {self.user_id_fk} -> {self.fav_user_id_fk}>'
@@ -113,5 +122,8 @@ class Favourite(db.Model):
         return {
             "id": self.id,
             "user_id": self.user_id_fk,
-            "fav_profile_id": self.fav_user_id_fk
+            "fav_profile_id": self.fav_user_id_fk,
+            "user_name": self.profile.user.name,
+            "parish": self.profile.parish,
+            "age": (year - self.profile.birth_year)
         }
