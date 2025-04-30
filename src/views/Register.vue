@@ -105,10 +105,10 @@ function register() {
     <!-- Registration Form -->
     <div class="form-container">
       <form @submit.prevent="register" id="registrationForm" enctype="multipart/form-data">
-        <input v-model="username" type="text" name="username" placeholder="Username" class="input-field" required />
-        <input v-model="password" type="password" name="password" placeholder="Password" class="input-field" required />
-        <input v-model="name" type="text" name="name" placeholder="Full Name" class="input-field" required />
-        <input v-model="email" type="email" name="email" placeholder="Email Address" class="input-field" required />
+        <input v-model="username" type="text" name="username" placeholder="Username" class="input-field"/>
+        <input v-model="password" type="password" name="password" placeholder="Password" class="input-field" />
+        <input v-model="name" type="text" name="name" placeholder="Full Name" class="input-field"/>
+        <input v-model="email" type="email" name="email" placeholder="Email Address" class="input-field" />
 
         <label for="photo" class="upload-label">Upload Profile Picture</label>
         <input id="photo" name="photo" type="file" @change="handleFileChange" accept="image/png, image/jpeg" class="input-field" />

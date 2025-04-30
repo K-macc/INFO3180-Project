@@ -16,8 +16,8 @@ class User(db.Model):
     photo = db.Column(db.String(120), nullable=True)
     date_joined = db.Column(db.DateTime, nullable=False, default=db.func.current_timestamp())
 
-    profiles = db.relationship('Profile', backref='users', lazy=True)
-    favourites = db.relationship('Favourite', backref='users', lazy=True)
+    profiles = db.relationship('Profile', backref='user', lazy=True)
+    favourites = db.relationship('Favourite', backref='user', lazy=True)
 
      # Add the required methods for Flask-Login
     def is_active(self):
@@ -70,7 +70,7 @@ class Profile(db.Model):
     family_oriented = db.Column(db.Boolean, nullable=True, default=False)
     
 
-    favourites = db.relationship('Favourite', backref='profiles', lazy=True)
+    favourites = db.relationship('Favourite', backref='profile', lazy=True)
 
     def __repr__(self):
         return f'<Profile {self.id}>'
@@ -91,7 +91,7 @@ class Profile(db.Model):
         return {
             "id": self.id,
             "user_id": self.user_id_fk,
-            "user_name": self.user.name if self.user else None,
+            "user_name": self.user.name,
             "description": self.description,
             "parish": self.parish,
             "biography": self.biography,
