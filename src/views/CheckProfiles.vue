@@ -30,6 +30,18 @@ function fetchProfiles() {
 
 }
 
+function getInitials(text) {
+    return text ? text.charAt(0).toUpperCase() : '?';
+}
+
+function stringToColor(str) {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+        hash = str.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    return `hsl(${hash % 360}, 70%, 70%)`;
+}
+
 onMounted(() => {
     fetchProfiles();
 });
@@ -40,18 +52,23 @@ onMounted(() => {
         <h1 class="title">Choose a Profile</h1>
 
         <div class="profile-list">
-            <div v-for="profile in profiles" :key="profile.id" class="profile-item card">
-                <label for="description">Description:</label>
-                <p>{{ profile.description }}</p>
+                    <div v-for="profile in profiles" :key="profile.id" class="profile-item card">
+        <div class="profile-avatar" :style="{ backgroundColor: profile.profile_pic ? 'transparent' : stringToColor(profile.description) }">
+            <img v-if="profile.profile_pic" :src="profile.profile_pic" alt="Profile" class="avatar-img" />
+            <span v-else class="avatar-initials">{{ getInitials(profile.description || profile.sex) }}</span>
+        </div>
 
-                <label for="sex">Sex:</label>
-                <p>{{ profile.sex }}</p>
+        <div class="profile-details">
+            <p><strong>Description:</strong> {{ profile.description }}</p>
+            <p><strong>Sex:</strong> {{ profile.sex }}</p>
+            <p><strong>Race:</strong> {{ profile.race }}</p>
 
-                <label for="race">Race:</label>
-                <p>{{ profile.race }}</p>
-                <router-link class="btn btn-primary" :to="`/profiles/update/${profile.id}`"
-                    @click="trackProfileView(profile.id)">Complete this profile</router-link>
-            </div>
+            <router-link class="btn btn-primary" :to="`/profiles/update/${profile.id}`"
+                @click="trackProfileView(profile.id)">
+                Complete this profile
+            </router-link>
+        </div>
+        </div>
         </div>
     </div>
 </template>
@@ -59,48 +76,88 @@ onMounted(() => {
 <style scoped>
 .title {
     text-align: center;
-    margin-top: 2rem;
-}
-
-label {
-    font-weight: bold;
+    margin: 2rem 0 1.5rem;
+    font-size: 2rem;
+    color: #333;
 }
 
 .profile-list {
     display: flex;
-    flex-direction: row;
-    align-items: center;
+    flex-wrap: wrap;
     justify-content: center;
-    width: 100%;
     gap: 2rem;
 }
 
-
 .profile-item.card {
-    margin: 0.5rem 0 0.5rem;
-    font-size: 1.1rem;
-    color: #333;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
-    width: 500px;
-    height: 300px;
-    transition: all 0.3s ease-in-out;
-    justify-content: space-around;
-    padding: 10px 25px;
+    background-color: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    width: 380px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-
 .profile-item.card:hover {
-    background: white;
-    transform: scale(1.05);
-    box-shadow: 0px 0px 10px rgb(146, 144, 144);
-    border-color: #817e7e96;
+    transform: scale(1.03);
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.1);
+    border-color: #ccc;
+}
+
+.profile-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    margin-bottom: 1rem;
+    background-color: #ccc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    color: #fff;
+    overflow: hidden;
+}
+
+.avatar-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.avatar-initials {
+    font-weight: bold;
+    user-select: none;
+}
+
+.profile-details {
+    width: 100%;
+    text-align: center;
+    margin-top: 0.5rem;
+}
+
+.profile-details p {
+    margin: 0.3rem 0;
+    color: #555;
+    font-size: 1rem;
 }
 
 .btn.btn-primary {
-    width: 40%;
-    align-self: center;
-    margin-bottom: 5px;
+    margin-top: 1rem;
+    background-color: #007bff;
+    color: #fff;
+    padding: 0.6rem 1rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn.btn-primary:hover {
+    background-color: #0056b3;
 }
 </style>

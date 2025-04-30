@@ -198,6 +198,29 @@ function filteredProfiles() {
 </template>
 
 <style scoped>
+/* Layout and Container Styling */
+.profiles {
+    padding: 2rem;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f7f9fc;
+    min-height: 100vh;
+}
+
+/* Error message box */
+.error-message {
+    color: #721c24;
+    background-color: #f8d7da;
+    padding: 10px 20px;
+    margin-bottom: 20px;
+    border: 1px solid #f5c6cb;
+    border-radius: 8px;
+    position: fixed;
+    top: 70px;
+    right: 45px;
+    z-index: 1000;
+}
+
+/* Search container */
 .search-container {
     text-align: center;
     margin: 2rem 0;
@@ -206,85 +229,123 @@ function filteredProfiles() {
     align-items: center;
 }
 
+/* Input field */
 .search-input {
-    padding: 0.7rem;
-    width: 50%;
+    padding: 0.75rem 1rem;
+    width: 60%;
+    max-width: 500px;
     border-radius: 10px;
     font-size: 1rem;
     border: 1px solid #ccc;
+    margin-bottom: 1rem;
+    outline-color: #4e73df;
 }
 
+/* Filter dropdown */
+.filter-dropdown {
+    padding: 0.5rem;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    width: 200px;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+}
+
+/* Filter container */
+.border.rounded.p-4.mb-4 {
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    width: 60%;
+    max-width: 600px;
+    margin: 1rem auto;
+    padding: 1rem;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+/* Filter inputs and selects */
+.filter input,
+.filter select {
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    padding: 0.5rem;
+    font-size: 0.95rem;
+}
+
+/* Filter remove button */
+button.text-gray-500 {
+    font-size: 1.2rem;
+    cursor: pointer;
+    background: none;
+    border: none;
+}
+
+/* Profile section title */
+h2 {
+    font-size: 1.5rem;
+    color: #333;
+    margin: 3rem 0 1rem;
+    text-align: center;
+}
+
+/* Profile cards layout */
 .profile-list {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 1rem;
+    gap: 1.5rem;
+    margin-top: 1rem;
 }
 
+/* Card styling */
 .profile-item.card {
     width: 300px;
-    padding: 1rem;
-    border-radius: 12px;
-    border: 1px solid #ccc;
-    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 1.5rem;
+    background-color: #ffffff;
+    border-radius: 15px;
+    border: 1px solid #e0e0e0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+    transition: transform 0.2s, box-shadow 0.2s;
 }
 
 .profile-item.card:hover {
-    background: white;
-    transform: scale(1.05);
-    box-shadow: 0px 0px 10px rgb(146, 144, 144);
-    border-color: #817e7e96;
+    transform: translateY(-5px);
+    box-shadow: 0px 6px 16px rgba(0, 0, 0, 0.1);
+    border-color: #d0d0d0;
 }
 
-h2 {
-    align-self: center;
-    justify-self: center;
-    margin: 70px 0 20px 0;
-    ;
+/* Profile text */
+.profile-item.card h3 {
+    margin: 0;
+    font-size: 1.2rem;
+    color: #4e73df;
 }
 
+.profile-item.card p {
+    margin: 0.5rem 0 1rem;
+    color: #555;
+}
+
+/* Primary button */
 .btn.btn-primary {
-    width: 60%;
-    align-self: center;
-    margin-bottom: 10px;
-}
-
-.filter-dropdown {
-    background-color: #fff;
-    border: 1px solid #ccc;
+    background-color: #4e73df;
+    color: white;
+    padding: 0.6rem 1rem;
     border-radius: 8px;
-    padding: 8px 20px 5px 12px;
-    font-size: 18px;
+    border: none;
+    font-weight: bold;
     cursor: pointer;
-    height: 38px;
-    align-self: flex-end;
-    margin-right: 395px;
-    padding: 8px 20px 5px 12px;
-    font-size: 18px;
-    cursor: pointer;
-    height: 38px;
-    margin-top: 5px;
-    margin-right: 5px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    transition: background-color 0.3s;
 }
 
-.error-message {
-    color: red;
-    background-color: #f8d7da;
-    padding: 10px;
-    padding-left: 0px;
-    margin-bottom: 10px;
-    border-radius: 5px;
-    top: 70px;
-    right: 45px;
-    position: fixed;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    width: 12%;
-    height: 5%;
+.btn.btn-primary:hover {
+    background-color: #2e59d9;
 }
 
+/* Fade transition for error */
 .fade-leave-active {
     transition: opacity 1s ease-in-out;
 }

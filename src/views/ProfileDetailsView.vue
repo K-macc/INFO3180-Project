@@ -190,7 +190,10 @@ watch(() => route.params.profile_id, (newId) => {
     <h1>My Profile</h1>
 
     <div class="header-info">
-      <img src="" alt="Profile Picture">
+      <div class="profile-pic">
+  <img v-if="profile.image" :src="profile.image" alt="Profile Picture" />
+  <div v-else class="placeholder-pic">{{ profile.user_name?.charAt(0).toUpperCase() }}</div>
+</div>
 
       <h3>About Me</h3>
 
@@ -287,163 +290,191 @@ watch(() => route.params.profile_id, (newId) => {
 
 
 <style scoped>
+.profile-pic {
+  width: 150px;
+  height: 150px;
+  margin: 20px;
+}
+
+.profile-pic img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #ccc;
+}
+
+.placeholder-pic {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 48px;
+  color: white;
+  background-color: #6c63ff; /* Example color */
+  font-weight: bold;
+  border: 2px solid #ccc;
+}
+
 .main-body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  height: 100vh;
+  padding: 2rem;
+  gap: 2rem;
 }
 
-.header-info {
-  display: grid;
-  grid-template-columns: 190px 1fr;
-  /* Image takes up 190px, text takes the remaining space */
-  align-items: flex-start;
-  /* Align the content to the top */
-  justify-content: center;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
-  width: 550px;
-  height: auto;
-  transition: all 0.3s ease-in-out;
-  margin-top: 20px;
+h1 {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #333;
+}
+
+section {
+  background: white;
+  border-radius: 1rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  padding: 1.5rem 2rem;
+  width: 100%;
+  max-width: 700px;
+  transition: transform 0.3s;
+}
+
+section:hover {
+  transform: translateY(-3px);
+}
+
+.header-info img {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #ccc;
+  margin-right: 1.5rem;
+}
+
+.header-info,
+.user-info,
+.location,
+.appearance,
+.favourite-users {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
 .user-info {
-  display: flex;
-  justify-content: center;
-  width: 100%;
-  margin: 20px 0px;
-  gap: 40px;
+  flex-direction: row;
+  justify-content: space-between;
+  flex-wrap: wrap;
 }
 
-.preferences {
-  display: grid;
-  grid-template-columns: 190px 1fr;
-  /* Image takes up 190px, text takes the remaining space */
-  align-items: flex-start;
-  /* Align the content to the top */
-  justify-content: center;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
-  width: 400px;
-  height: auto;
-  transition: all 0.3s ease-in-out;
-}
-
+.preferences,
 .values {
-  display: grid;
-  grid-template-columns: 190px 1fr;
-  /* Image takes up 190px, text takes the remaining space */
-  align-items: flex-start;
-  /* Align the content to the top */
-  justify-content: center;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
-  width: 400px;
-  height: auto;
-  transition: all 0.3s ease-in-out;
+  flex: 1 1 45%;
 }
 
-.location {
-  display: grid;
-  grid-template-columns: 190px 1fr;
-  /* Image takes up 190px, text takes the remaining space */
-  align-items: flex-start;
-  /* Align the content to the top */
-  justify-content: center;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
-  width: 400px;
-  height: auto;
-  transition: all 0.3s ease-in-out;
-  margin-bottom: 20px;
+label {
+  font-weight: 600;
+  color: #555;
+  margin-top: 0.5rem;
 }
 
-.appearance {
-  display: grid;
-  grid-template-columns: 190px 1fr;
-  /* Image takes up 190px, text takes the remaining space */
-  align-items: flex-start;
-  /* Align the content to the top */
-  justify-content: center;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
-  width: 550px;
-  height: auto;
-  transition: all 0.3s ease-in-out;
-  margin-bottom: 20px;
+p {
+  margin: 0.2rem 0 1rem;
+  color: #333;
 }
 
-.favourite-users {
-  display: grid;
-  grid-template-columns: 190px 1fr;
-  /* Image takes up 190px, text takes the remaining space */
-  align-items: flex-start;
-  /* Align the content to the top */
-  justify-content: center;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
-  width: 550px;
-  height: auto;
-  transition: all 0.3s ease-in-out;
-  margin-bottom: 20px;
-}
-
-.heart-icon {
-  font-size: 50px;
-  cursor: pointer;
-  color: grey;
-  /* default for unfavourited */
-}
-
-.favourited {
-  color: red;
+.success-message,
+.error-message {
+  position: fixed;
+  top: 70px;
+  right: 30px;
+  padding: 1rem 1.5rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  animation: fadeOut 2s forwards;
+  z-index: 1000;
 }
 
 .success-message {
-  color: green;
-  background-color: #d4edda;
-  padding: 10px;
-  border-radius: 5px;
-  width: 15%;
-  top: 100px;
-  right: 45px;
-  text-align: center;
-  position: fixed;
+  background-color: #d1e7dd;
+  color: #0f5132;
 }
 
 .error-message {
-  color: red;
   background-color: #f8d7da;
-  padding: 10px;
-  padding-top: 20px;
-  padding-left: 0px;
-  margin-bottom: 10px;
-  border-radius: 5px;
-  top: 70px;
-  right: 45px;
-  position: fixed;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  width: 26%;
-  min-height: 8%;
-  height: auto;
+  color: #842029;
 }
 
-.fade-leave-active {
-  transition: opacity 1s ease-in-out;
+@keyframes fadeOut {
+  0% { opacity: 1; }
+  80% { opacity: 1; }
+  100% { opacity: 0; }
 }
 
-.fade-leave-to {
-  opacity: 0;
+.btn {
+  padding: 0.6rem 1.2rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: background 0.3s;
 }
+
+.btn-primary {
+  background-color: #007bff;
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: #0056b3;
+}
+
+.btn-secondary {
+  background-color: #6c757d;
+  color: white;
+}
+
+.btn-secondary:hover {
+  background-color: #5a6268;
+}
+
+.btn-fav {
+  background: none;
+  border: none;
+  padding: 0;
+  margin-top: 1rem;
+}
+
+.heart-icon {
+  font-size: 2rem;
+  cursor: pointer;
+  color: grey;
+  transition: color 0.3s;
+}
+
+.heart-icon.favourited {
+  color: red;
+}
+
+.favourites ul {
+  list-style: none;
+  padding: 0;
+}
+
+.favourites li {
+  margin-bottom: 0.5rem;
+}
+
+@media screen and (max-width: 768px) {
+  .user-info {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+}
+
 </style>

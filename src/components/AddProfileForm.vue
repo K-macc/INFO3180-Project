@@ -278,9 +278,9 @@ function addProfile() {
     padding: 30px;
     border-radius: 20px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-    background: linear-gradient(135deg, #5ff596, #8a6507); /* Green to Gold gradient */
+    background: linear-gradient(135deg, #d1c736, #98d625); /* Green to Gold gradient */
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    color: white;
+    color: #000;
 }
 
 .profile-form {
