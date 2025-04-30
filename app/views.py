@@ -263,7 +263,7 @@ def update_profile(profile_id):
     return jsonify({"message": "Profile updated successfully!!"}), 200
 
 @app.route('/api/profiles', methods=['POST'])
-@requires_auth  
+# @requires_auth  
 def create_profile():
     form = ProfileForm()
     user_id = session.get('user_id') 

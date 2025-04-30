@@ -42,7 +42,7 @@ function flashMessage(prompt) {
             prompt.value = [];
         } else {
             prompt.value = '';
-            router.push('/');
+            // router.push('/');
         }
 
   }, 3000);
@@ -85,6 +85,9 @@ function addProfile() {
                 success_message.value = data.message;
                 flashMessage(success_message);
                 profileForm.reset();
+                setTimeout(() => {
+                    router.push("/users");
+                }, 3000);
             } else if (data.error) {
                 errors.value.push(data.error);
                 flashMessage(errors);
