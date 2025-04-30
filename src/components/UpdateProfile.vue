@@ -1,14 +1,16 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-import { useAuthStore } from '@/stores/auth.js';
+import { useAuthStore } from '@/stores/auth';
 
 const success_message = ref('');
 const errors = ref([]);
 const csrf_token = ref('');
-const jwt = localStorage.getItem('jwt');
 const router = useRouter();
 const authStore = useAuthStore();
+const profileID = authStore.profile_id;
+const profile = ref(null);
+
 
 const description = ref('');
 const parish = ref('');
@@ -23,6 +25,7 @@ const fav_school_subject = ref('');
 const political = ref(null);
 const religious = ref(null);
 const family_oriented = ref(null);
+
 
 const togglePoliticalRadioButton = (value) => {
     political.value = political.value === value ? null : value;
@@ -42,11 +45,26 @@ function flashMessage(prompt) {
             prompt.value = [];
         } else {
             prompt.value = '';
-            router.push('/');
         }
-
-  }, 3000);
+    }, 3000);
 }
+
+function preFillForm() {
+    description.value = profile.value.description;
+    parish.value = profile.value.parish;
+    biography.value = profile.value.biography;
+    sex.value = profile.value.sex;
+    race.value = profile.value.race;
+    birth_year.value = profile.value.birth_year;
+    height.value = profile.value.height;
+    fav_cuisine.value = profile.value.fav_cuisine;
+    fav_colour.value = profile.value.fav_colour;
+    fav_school_subject.value = profile.value.fav_school_subject;
+    political.value = profile.value.political;
+    religious.value = profile.value.religious;
+    family_oriented.value = profile.value.family_oriented;
+}
+
 
 function getCsrfToken() {
     fetch('/api/v1/csrf-token')
@@ -59,19 +77,46 @@ function getCsrfToken() {
         });
 }
 
+function fetchProfile() {
+    fetch(`/api/profiles/${profileID}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${authStore.token}`
+        }
+    })
+        .then(response => {
+            return response.json();
+        })
+        .then(data => {
+            if (data.error) {
+                console.error('Error fetching profile:', data.error);
+                return;
+            } else {
+                profile.value = data.profile;
+                preFillForm();
+            }
+        })
+        .catch(error => {
+            console.error('Failed to parse JSON:', error);
+        })
+
+}
+
 onMounted(() => {
+    fetchProfile();
     getCsrfToken();
 });
 
-function addProfile() {
+function updateProfile() {
     const profileForm = document.getElementById('profileForm');
     const formData = new FormData(profileForm);
 
     success_message.value = '';
     errors.value = [];
 
-    fetch('/api/profiles', {
-        method: 'POST',
+    fetch(`/api/profiles/${profileID}`, {
+        method: 'PUT',
         body: formData,
         credentials: 'include',
         headers: {
@@ -85,6 +130,9 @@ function addProfile() {
                 success_message.value = data.message;
                 flashMessage(success_message);
                 profileForm.reset();
+                setTimeout(() => {
+                    router.push('/users');
+                }, 4000);
             } else if (data.error) {
                 errors.value.push(data.error);
                 flashMessage(errors);
@@ -105,7 +153,7 @@ function addProfile() {
 <template>
     <div class="profile-form-div">
 
-        <h1>Add A New Profile</h1>
+        <h1>Update Your Profile</h1>
 
         <transition name="fade">
             <div v-if="success_message" class="success-message">
@@ -122,7 +170,7 @@ function addProfile() {
             </div>
         </transition>
 
-        <form id="profileForm" @submit.prevent="addProfile" class="profile-form" enctype="multipart/form-data">
+        <form id="profileForm" @submit.prevent="updateProfile" class="profile-form" enctype="multipart/form-data">
             <div class="form-group mb-3">
                 <label for="description" class="form-label">Description</label>
                 <textarea id="description" name="description" v-model="description" class="form-control"></textarea>
@@ -268,111 +316,111 @@ function addProfile() {
 
 </template>
 
-<style scoped>
+<style>
 .profile-form-div {
     margin: 0 auto;
     width: 75%;
-    padding: 30px;
-    border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
     background: linear-gradient(135deg, #5ff596, #8a6507); /* Green to Gold gradient */
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    padding: 20px;
+    border: 1px solid #ddd;
     color: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+}
+
+h1 {
+    text-align: center;
+    color: #2c3e50;
+    font-size: 2rem;
 }
 
 .profile-form {
     display: flex;
     flex-direction: column;
-    gap: 32px;
-    margin-top: 20px;
+    gap: 30px;
+    margin-top: 30px;
 }
 
-.form-group label {
-    font-weight: bold;
-    font-size: 1rem;
-    margin-bottom: 8px;
-    color: #fff;
+.form-label {
+    font-weight: 600;
+    color: #34495e;
 }
 
-input[type="text"],
-input[type="number"],
+input,
 textarea,
 select {
-    border: 2px solid #1a1a1a;
-    border-radius: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
     padding: 10px;
-    font-size: 16px;
-    background-color: #ffffff;
-    color: #000000;
-    width: 100%;
-}
-
-input:focus,
-textarea:focus,
-select:focus {
-    border-color: #ffb800;
-    outline: none;
-    box-shadow: 0 0 5px #ffb800;
+    font-size: 14px;
+    background-color: #fdfdfd;
+    color: #2c3e50;
 }
 
 textarea {
     height: 100px;
-    resize: vertical;
+    resize: none;
 }
 
 button {
-    width: 40%;
-    background-color: #000000;
-    color: #ffb800;
-    padding: 14px 20px;
+    background-color: #3498db;
+    color: white;
+    padding: 10px 20px;
     border: none;
-    border-radius: 12px;
+    border-radius: 8px;
     font-size: 16px;
-    font-weight: bold;
     cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.2s ease;
+    transition: background-color 0.3s ease;
+    width: 150px;
+    align-self: center;
 }
 
 button:hover {
-    background-color: #222222;
-    transform: scale(1.05);
+    background-color: #2980b9;
+}
+
+.group-items,
+.fav,
+.radio-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px;
+}
+
+input[id^='fav'],
+input[id^='pol'],
+input[id^='rel'],
+input[id^='fam'] {
+    margin-right: 10px;
 }
 
 .success-message {
-    background-color: #d4edda;
     color: #155724;
-    padding: 12px;
+    background-color: #d4edda;
+    padding: 10px;
     border-radius: 8px;
+    border: 1px solid #c3e6cb;
+    text-align: center;
     position: fixed;
-    top: 80px;
+    top: 100px;
     right: 45px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    width: 250px;
+    z-index: 1000;
+    box-shadow: 0 2px 8px rgba(0, 128, 0, 0.2);
 }
 
 .error-message {
-    background-color: #f8d7da;
     color: #721c24;
-    padding: 16px;
+    background-color: #f8d7da;
+    padding: 12px;
     border-radius: 8px;
+    border: 1px solid #f5c6cb;
     position: fixed;
-    top: 80px;
+    top: 70px;
     right: 45px;
-    max-width: 350px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-}
-
-.radio-options,
-.group-items,
-.fav,
-.choices {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 24px;
-}
-
-input[type='radio'] {
-    margin-right: 8px;
-    accent-color: #000;
+    width: 300px;
+    z-index: 1000;
+    box-shadow: 0 2px 8px rgba(255, 0, 0, 0.2);
 }
 
 .fade-leave-active {
@@ -383,4 +431,12 @@ input[type='radio'] {
     opacity: 0;
 }
 
+select {
+    appearance: none;
+    background-color: #fff;
+    background-image: url('data:image/svg+xml;charset=US-ASCII,<svg xmlns="http://www.w3.org/2000/svg" width="14" height="10"><polygon points="7,10 0,0 14,0" style="fill:%233498db"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 12px;
+}
 </style>

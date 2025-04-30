@@ -1,12 +1,16 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import Login from '../components/Login.vue'
 import HomeView from '../views/HomeView.vue'
 import AddProfileForm from '../components/AddProfileForm.vue'
-import LoginForm from '../components/LoginForm.vue'
 import Logout from '../components/Logout.vue'
-import RegistrationForm from '../components/RegistrationForm.vue'
-import FavouritesView from '../views/FavouritesView.vue'
+import Register from '../views/Register.vue'
 import ProfileDetailsView from '../views/ProfileDetailsView.vue'
 import UserProfileView from '../views/UserProfileView.vue'
+import UserPage from '../views/UserPage.vue'
+import CheckProfiles from '../views/CheckProfiles.vue'
+import UpdateProfile from '../components/UpdateProfile.vue'
+import MatchProfile from '../views/MatchProfile.vue'
+import Reports from '../views/Reports.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -17,22 +21,14 @@ const router = createRouter({
       component: HomeView
     },
     {
-      path: '/about',
-      name: 'about',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import('../views/AboutView.vue')
-    },
-    {
       path: '/register',
       name: 'register',
-      component: RegistrationForm
+      component: Register
     },
     {
       path: '/login',
       name: 'login',
-      component: LoginForm
+      component: Login
     },
     {
       path: '/logout',
@@ -40,9 +36,14 @@ const router = createRouter({
       component: Logout
     },
     {
-      path: '/users/{user_id}',
+      path: '/users/:user_id',
       name: 'user-profile-info',
       component: UserProfileView
+    },
+    {
+      path: '/users',
+      name: 'home-users',
+      component: UserPage
     },
     {
       path: '/profiles/new',
@@ -50,16 +51,34 @@ const router = createRouter({
       component: AddProfileForm
     },
     {
-      path: '/profiles/{profile_id}',
+      path: '/profiles/check',
+      name: 'check-profiles',
+      component: CheckProfiles
+    },
+    {
+      path: '/profiles/update/:profile_id',
+      name: 'update-profile',
+      component: UpdateProfile
+    },
+    {
+      path: '/profiles/:profile_id',
       name: 'profile-details',
       component: ProfileDetailsView
     },
     {
-      path: '/profiles/favourites',
-      name: 'favourite-profiles',
-      component: FavouritesView
-    }    
-  ]
-})
+      path: '/profiles/match',
+      name: 'match-profiles',
+      component: MatchProfile
+    },
+    {
+      path: '/reports',
+      name: 'reports',
+      component: Reports
+    }   
+  ],
+  scrollBehavior(to, from, savedPosition) {
+    return { top: 0 };
+  },
 
+})
 export default router
