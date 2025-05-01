@@ -189,102 +189,118 @@ watch(() => route.params.profile_id, (newId) => {
 
     <h1>My Profile</h1>
 
-    <div class="header-info">
+    <div class="user-card card">
       <div class="profile-pic">
-  <img v-if="profile.image" :src="profile.image" alt="Profile Picture" />
-  <div v-else class="placeholder-pic">{{ profile.user_name?.charAt(0).toUpperCase() }}</div>
-</div>
+        <img v-if="profile.image" :src="profile.image" alt="Profile Picture" />
+        <div v-else class="placeholder-pic">{{ profile.user_name?.charAt(0).toUpperCase() }}</div>
+      </div>
+      <div class="header-info">
+      <h3>About {{ profile.user_name }}</h3>
 
-      <h3>About Me</h3>
+      <div>
+          <label for="description">Description:</label>
+          <p>{{ profile.description }}</p>
 
-      <label for="description">Description:</label>
-      <p>{{ profile.description }}</p>
+          <label for="biography">Biography:</label>
+          <p>{{ profile.biography }}</p>
 
-
-      <label for="biography">Biography:</label>
-      <p>{{ profile.biography }}</p>
+          <label for="parish">Parish:</label>
+          <p>{{ profile.parish }}</p>
+      </div>
     </div>
 
+    <hr>
     <div class="user-info">
       <div class="preferences">
-        <h3>Preferences</h3>
+      <h3>Preferences</h3>
 
-        <label for="fav_cuisine">Favourite Cuisine:</label>
-        <p>{{ profile.fav_cuisine }}</p>
+        <div>
+          <label for="fav_cuisine">Favourite Cuisine:</label>
+          <p>{{ profile.fav_cuisine }}</p>
+        </div>
 
+        <div>
+          <label for="fav_colour">Favourite Colour:</label>
+          <p>{{ profile.fav_colour }}</p>
+        </div>
 
-        <label for="fav_colour">Favourite Colour:</label>
-        <p>{{ profile.fav_colour }}</p>
-
-
-        <label for="fav_school_subject">Favourite School Subject:</label>
-        <p>{{ profile.fav_school_subject }}</p>
+        <div>
+          <label for="fav_school_subject">Favourite School Subject:</label>
+          <p>{{ profile.fav_school_subject }}</p>
+        </div>
       </div>
 
       <div class="values">
-        <h3>Values</h3>
+      <h3>Values</h3>
 
-        <label for="political">Political:</label>
-        <p>{{ profile.political }}</p>
+        <div>
+          <label for="political">Political:</label>
+          <p>{{ profile.political }}</p>
+        </div>
 
+        <div>
+          <label for="religious">Religious:</label>
+          <p>{{ profile.religious }}</p>
+        </div>
 
-        <label for="religious">Religious:</label>
-        <p>{{ profile.religious }}</p>
-
-
-        <label for="family_oriented">Family Oriented:</label>
-        <p>{{ profile.family_oriented }}</p>
+        <div>
+          <label for="family_oriented">Family Oriented:</label>
+          <p>{{ profile.family_oriented }}</p>
+        </div>
       </div>
     </div>
 
-    <div class="location">
-      <h3>Location</h3>
-
-      <label for="parish">Parish:</label>
-      <p>{{ profile.parish }}</p>
-    </div>
-
+    <hr>
     <div class="appearance">
       <h3>Appearance</h3>
 
-      <label for="sex">Sex:</label>
-      <p>{{ profile.sex }}</p>
 
+      <div>
+        <label for="sex">Sex:</label>
+        <p>{{ profile.sex }}</p>
+      </div>
 
-      <label for="race">Race:</label>
-      <p>{{ profile.race }}</p>
+      <div>
+        <label for="race">Race:</label>
+        <p>{{ profile.race }}</p>
+      </div>
 
+      <div>
+        <label for="birth_year">Birth Year:</label>
+        <p>{{ profile.birth_year }}</p>
+      </div>
 
-      <label for="birth_year">Birth Year:</label>
-      <p>{{ profile.birth_year }}</p>
-
-
-      <label for="height">Height:</label>
-      <p>{{ profile.height }}</p>
+      <div>
+        <label for="height">Height:</label>
+        <p>{{ profile.height }} cm</p>
+      </div>
     </div>
 
+    <hr>
     <div class="favourite-users">
       <h3>Favourite Users</h3>
       <div class="favourites">
         <ul>
           <li v-for="favourite in load_fav" :key="favourite.id">
-            <router-link :to="`/profiles/${favourite.fav_profile_id}`">
+            <router-link :to="`/profiles/${favourite.fav_profile_id}`" class ="btn-favourite">
               {{ favourite.user_name }}
             </router-link>
           </li>
         </ul>
       </div>
     </div>
+  </div>
 
     <button class="btn btn-secondary" v-if="profile.user_id !== authStore.user_id">Email User</button>
 
     <router-link class="btn btn-primary" v-if="profile.user_id === authStore.user_id" :to="`/profiles/match`">Match
       Me</router-link>
 
-    <button class="btn btn-fav" @click="addToFavourites(profile.id)"><font-awesome-icon
-        :icon="[isFavourited(profile.id) ? 'fas' : 'far', 'heart']"
-        :class="{ 'heart-icon': true, 'favourited': isFavourited(profile.id) }"
-        v-if="profile.user_id !== authStore.user_id" /></button>
+    <button class="btn btn-fav" @click="addToFavourites(profile.id)">
+      <font-awesome-icon
+    :icon="[isFavourited(profile.id) ? 'fas' : 'far', 'heart']"
+    :class="{ 'heart-icon': true, 'favourited': isFavourited(profile.id) }"
+  /></button>
   </div>
 </template>
 
@@ -297,11 +313,13 @@ watch(() => route.params.profile_id, (newId) => {
 }
 
 .profile-pic img {
-  width: 100%;
-  height: 100%;
+  width: 140px;
+  height: 140px;
   border-radius: 50%;
-  object-fit: cover;
-  border: 2px solid #ccc;
+  border: 4px solid #ffd700;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  margin-left: 20px;
+  margin-right: 20px;
 }
 
 .placeholder-pic {
@@ -315,21 +333,49 @@ watch(() => route.params.profile_id, (newId) => {
   color: white;
   background-color: #6c63ff; /* Example color */
   font-weight: bold;
-  border: 2px solid #ccc;
-}
+  border: 4px solid #ffd700;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  }
 
 .main-body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 2rem;
-  gap: 2rem;
+  min-height: 100vh;
+  background: linear-gradient(to bottom right, #ffecd2, #fcb69f);
+  padding: 2rem 1rem;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  /* gap: 2rem; */
 }
 
 h1 {
-  font-size: 2rem;
+  font-size: 2.5rem;
   font-weight: bold;
-  color: #333;
+  color: #e91e63;
+  margin-bottom: 2rem;
+  text-shadow: 1px 1px #fff;
+}
+
+/* blue */
+.user-card.card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #fff;
+  border-radius: 20px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  padding: 24px;
+  max-width: 720px;
+  width: 100%;
+  margin-bottom: 2rem;
+  transition: transform 0.3s ease;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.user-card.card h2{
+  color: #e91e63;
+  margin-bottom: 1rem;
 }
 
 section {
@@ -346,16 +392,39 @@ section:hover {
   transform: translateY(-3px);
 }
 
-.header-info img {
-  width: 120px;
-  height: 120px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 2px solid #ccc;
-  margin-right: 1.5rem;
+/* pink */
+.header-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  width: 90%;
 }
+  /* yellow */
+  .header-info div {
+    display: flex;
+    flex-direction: column;
+    align-items: left;
+    justify-content: left;
+    /* gap: 1rem; */
+    width: 90%;
+    /* background-color: lightgoldenrodyellow; */
+  }
+  .header-info img {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #ccc;
+    margin-right: 1.5rem;
+  }
+  .header-info h3 {
+    color: #e91e63;
+    margin-bottom: 1rem;
+  }
 
-.header-info,
+/* .header-info, */
 .user-info,
 .location,
 .appearance,
@@ -365,26 +434,142 @@ section:hover {
   gap: 1rem;
 }
 
+/* teal */
+.appearance {
+  /* background-color: lightseagreen; */
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-content: center;
+  width: 90%;
+}
+  .appearance h3 {
+    color: #e91e63;
+  }
+
+  .appearance h2 {
+    color: #e91e63;
+    margin-bottom: 1rem;
+  }
+
+  .appearance div {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+    .appearance div label {
+      width: 180px; /*Set a fixed width for labels*/
+      text-align: left; /* Align label text to the right */
+      margin: 0;
+      color: black;
+      /* padding-top: 6px;;
+      padding-bottom: 6px;; */
+    }
+
+    .appearance div p {
+      margin: 0; /* Remove extra margins */
+      flex: 1; /* Allow paragraphs to take up remaining space */
+      text-align: left; /* Align paragraph text to the left */
+    }
+
 .user-info {
   flex-direction: row;
   justify-content: space-between;
-  flex-wrap: wrap;
+  /* flex-wrap: wrap; */
+  width:90%
+}
+.user-info h3, h2 {
+  color: #e91e63;
+  margin-bottom: 1rem;
 }
 
+/* GREEN */
 .preferences,
 .values {
-  flex: 1 1 45%;
+  display: flex;
+  flex-direction: column;
+  align-content: center;
+  padding-left: 1rem;
+  /* flex: 1 1 45%; */
+  /* background-color: lightgreen; */
+  width: 45%;
 }
+  
+    .preferences div,
+    .values div {
+      display: flex;
+      flex-direction: row;
+      gap: 1rem;      
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+      .preferences div label,
+      .values div label {
+        width: 180px; /*Set a fixed width for labels*/
+        text-align: left; /* Align label text to the right */
+        margin: 0;
+        padding-top: 6px;
+        padding-bottom: 6px;
+        color: black;
+      }
+
+      .preferences div p,
+      .values div p {
+        margin: 0; /* Remove extra margins */
+        flex: 1; /* Allow paragraphs to take up remaining space */
+        text-align: left; /* Align paragraph text to the left */
+      }
+
+.favourite-users {
+  display: flex;
+  flex-direction: column;
+  align-content: center;
+  align-items: center;
+  justify-content: center;
+  padding-left: 1rem;
+  /* background-color: lightcoral; */
+  width: 90%;
+}
+  .favourite-users h3 {
+    color: #e91e63;
+    margin-bottom: 1rem;
+  }
+
+  .favourite-users ul {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .favourite-users li {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
 
 label {
   font-weight: 600;
-  color: #555;
+  color: black;
   margin-top: 0.5rem;
 }
 
 p {
   margin: 0.2rem 0 1rem;
   color: #333;
+}
+
+hr {
+  border: none;
+  border-top: 1.5px solid grey;
+  margin: 1.5rem 0;
+  width: 90%; /* Adjust width as needed */
 }
 
 .success-message,
@@ -444,10 +629,31 @@ p {
 }
 
 .btn-fav {
-  background: none;
-  border: none;
+  background: none; /* Remove the red background */
+  border: none; /* Remove the border */
   padding: 0;
-  margin-top: 1rem;
+  cursor: pointer; /* Make it look clickable */
+  display: inline-flex; /* Center the icon */
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-favourite {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  color: white;
+  background-color: #e91e63;
+  border: none;
+  border-radius: 0.5rem;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.btn-favourite:hover {
+  background-color: #d81b60;
 }
 
 .heart-icon {
@@ -455,6 +661,7 @@ p {
   cursor: pointer;
   color: grey;
   transition: color 0.3s;
+  margin: 1rem;
 }
 
 .heart-icon.favourited {

@@ -177,7 +177,7 @@ function filteredProfiles() {
         <h2>Recently Added Profiles</h2>
         <div class="profile-list">
             <div v-for="profile in recent_profiles" :key="profile.id" class="profile-item card">
-                <h3>{{ profile.sex }}</h3>
+                <h3>{{ profile.user_name }}</h3>
                 <p>{{ profile.description }}</p>
                 <router-link class="btn btn-primary" :to="`/profiles/${profile.id}`"
                     @click="trackProfileView(profile.id)">View more details</router-link>

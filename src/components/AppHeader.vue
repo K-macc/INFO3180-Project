@@ -11,51 +11,51 @@
 
         <div class="collapse navbar-collapse" id="navbarNav">
           <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-            <li class="nav-item" v-if="!isAuthenticated">
+            <li class="nav-item" >
               <RouterLink class="nav-link" to="/">Home</RouterLink>
             </li>
 
-            <li class="nav-item" v-if="!isAuthenticated">
+            <li class="nav-item" >
               <RouterLink class="nav-link" to="/register">Register</RouterLink>
             </li>
 
-            <li class="nav-item" v-if="!isAuthenticated">
+            <li class="nav-item" >
               <RouterLink class="nav-link" to="/login">Login</RouterLink>
             </li>
 
-            <li class="nav-item" v-if="isAuthenticated">
+            <li class="nav-item">
               <RouterLink class="nav-link" :to="`/users/${authStore.user_id}`">My Profile</RouterLink>
             </li>
 
-            <li class="nav-item" v-if="isAuthenticated">
+            <li class="nav-item">
               <RouterLink class="nav-link" to="/profiles/new">Add New Profile</RouterLink>
             </li>
 
-            <li class="nav-item" v-if="isAuthenticated">
+            <li class="nav-item">
               <RouterLink class="nav-link" to="/logout">Logout</RouterLink>
             </li>
 
-            <li class="nav-item" v-if="isAuthenticated">
+            <li class="nav-item">
               <RouterLink class="nav-link" to="/users">View Users</RouterLink>
             </li>
 
-            <li class="nav-item" v-if="isAuthenticated">
+            <li class="nav-item">
               <RouterLink class="nav-link" to="/profiles/check">Check Profiles</RouterLink>
             </li>
 
-            <li class="nav-item" v-if="isAuthenticated">
+            <li class="nav-item">
               <RouterLink class="nav-link" :to="`/profiles/update/${authStore.user_id}`">Update Profile</RouterLink>
             </li>
 
-            <li class="nav-item" v-if="isAuthenticated">
+            <li class="nav-item">
               <RouterLink class="nav-link" :to="`/profiles/${authStore.user_id}`">Profile Details</RouterLink>
             </li>
 
-            <li class="nav-item" v-if="isAuthenticated">
+            <li class="nav-item">
               <RouterLink class="nav-link" to="/profiles/match">Match Profile</RouterLink>
             </li>
 
-            <li class="nav-item" v-if="isAuthenticated">
+            <li class="nav-item">
               <RouterLink class="nav-link" to="/reports">View Reports</RouterLink>
             </li>
           </ul>
