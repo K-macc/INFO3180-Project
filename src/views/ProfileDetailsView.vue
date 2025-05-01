@@ -149,7 +149,6 @@ function fetchProfile() {
         console.error('Error fetching profile:', data.error);
         return;
       } else {
-        profile.value = data.profile;
         checkFavourites();
         loadFavourites(profile.value.user_id);
       }
@@ -191,11 +190,14 @@ watch(() => route.params.profile_id, (newId) => {
 
     <div class="header-info">
       <div class="profile-pic">
-  <img v-if="profile.image" :src="profile.image" alt="Profile Picture" />
+  <img v-if="profile.photo" :src="profile.photo" alt="Profile Picture" />
   <div v-else class="placeholder-pic">{{ profile.user_name?.charAt(0).toUpperCase() }}</div>
 </div>
 
       <h3>About Me</h3>
+
+      <label for="user_name">Name:</label>
+      <p>{{ profile.user_name   }}</p>
 
       <label for="description">Description:</label>
       <p>{{ profile.description }}</p>
@@ -300,11 +302,17 @@ watch(() => route.params.profile_id, (newId) => {
   width: 100%;
   height: 100%;
   border-radius: 50%;
-  object-fit: cover;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 48px;
+  color: white;
+  background-color: #6c63ff; /* Example color */
+  font-weight: bold;
   border: 2px solid #ccc;
 }
 
-.placeholder-pic {
+.placeholder-pic img{
   width: 100%;
   height: 100%;
   border-radius: 50%;

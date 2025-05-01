@@ -301,7 +301,26 @@ def get_profile(profile_id):
         return jsonify({"error": "Complete your profile to access this feature."}), 403
 
     profile = Profile.query.get_or_404(profile_id)
-    return jsonify({"profile":profile.serialize()}), 200
+    profile_data = {
+        "id": profile.id,
+        "user_id": profile.user_id_fk,
+        "user_name": profile.user.name,
+        "photo": f"/api/photo/{profile.user.photo}",
+        "description": profile.description,
+        "parish": profile.parish,
+        "biography": profile.biography,
+        "sex": profile.sex,
+        "race": profile.race,
+        "birth_year": profile.birth_year,
+        "height": profile.height,
+        "fav_cuisine": profile.fav_cuisine,
+        "fav_colour": profile.fav_colour,
+        "fav_school_subject": profile.fav_school_subject,
+        "political": profile.political,
+        "religious": profile.religious,
+        "family_oriented": profile.family_oriented
+    }
+    return jsonify({"profile":profile_data}), 200
 
 @app.route('/api/profiles/<int:user_id>/favourite', methods=['POST', 'DELETE'])
 @requires_auth  
