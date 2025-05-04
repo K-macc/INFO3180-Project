@@ -390,9 +390,10 @@ def get_matches(profile_id):
         
             if match_count >= 3:
                 matches.append(match)
-            
-    if match != []:
-        return jsonify({"message": "Matches found!!","matches": [p.serialize() for p in matches]}),200
+    
+    if matches != []:
+        return jsonify({"message": "Matches found!!",
+                        "matches": [p.serialize() for p in matches]}),200
     else:
         return jsonify({"error": "No matches found"}), 404
 
