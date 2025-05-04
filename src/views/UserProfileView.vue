@@ -7,9 +7,8 @@ const userID = authStore.user_id;
 const user = ref(null);
 const profiles = ref([]);
 
-function fetchUser() {
-    // ${userID}
-    fetch(`/api/users/1`, {
+function fetchUser() { 
+    fetch(`/api/users/${userID}`, {
         method: 'GET',
         headers: {
             'Authorization': `Bearer ${authStore.token}`,
