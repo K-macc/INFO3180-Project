@@ -12,7 +12,8 @@ export const useAuthStore = defineStore('auth', {
     flashMessage: '',
     user_id: null,
     profile_id: null,
-    current_fav_id: null  
+    current_fav_id: null,
+    isProfileComplete: false  
   }),
   actions: {
     login(userData, token, user_id) {
@@ -36,6 +37,21 @@ export const useAuthStore = defineStore('auth', {
     },
     setUserId(user_id) {
       this.user_id = user_id;
-    }
+    },
+    async checkProfileCompletion() {
+      try {
+        const response = await fetch('/api/profiles/check-complete', {
+          headers: {
+            'Authorization': `Bearer ${this.token}`
+          }
+        });
+        const data = await response.json();
+        this.isProfileComplete = data.complete;
+        return data;
+      } catch (error) {
+        console.error('Error checking profile completion:', error);
+        return { complete: false };
+      }
+   }
   }
 });

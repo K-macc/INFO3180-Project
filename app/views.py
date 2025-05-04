@@ -352,7 +352,7 @@ def add_or_delete_favourite(user_id):
             return jsonify({"error": "Already added to favourites"}), 404
 
         fav = Favourite(user_id_fk=u_id, fav_user_id_fk=user_id)
-        db.session.add(fav)
+        db.session.add(fav)g
         db.session.commit()
         return jsonify({"message": "User added to favourites!!"}), 201
 
@@ -363,20 +363,21 @@ def get_matches(profile_id):
     matches = []
     year = datetime.now().year
     # Check if profile is complete for the current user 
-    if not has_complete_profile(current_user.id):
+    current_user_id = g.current_user['user_id']
+    if not has_complete_profile(current_user_id):
         return jsonify({"error": "Complete your profile to access this feature."}), 403
 
     profile = Profile.query.get_or_404(profile_id)
     
     # Ensure the profile belongs to the current user
-    if profile.user_id_fk != current_user.id:  # Use user_id_fk to compare with current_user.id
+    if profile.user_id_fk != current_user_id:  # Corrected to use user_id_fk
         return jsonify({"error": "Unauthorized"}), 403
     
     age = year - profile.birth_year
 
     potential_matches = Profile.query.filter(
         Profile.id != profile.id,
-        Profile.user_id_fk != current_user.id,  # Use user_id_fk to filter
+        Profile.user_id_fk != current_user_id  # Corrected to use user_id_fk
     ).all()
     
     for match in potential_matches:
@@ -385,15 +386,13 @@ def get_matches(profile_id):
         height_diff = abs(profile.height - match.height)
         if age_diff <= 5 and 3 <= height_diff <= 10:
             fields_to_check = ['fav_cuisine', 'fav_colour', 'fav_school_subject','political', 'religious', 'family_oriented']
-
             match_count = sum(1 for field in fields_to_check if getattr(profile, field) == getattr(match, field))
         
             if match_count >= 3:
                 matches.append(match)
-    
-    if matches != []:
-        return jsonify({"message": "Matches found!!",
-                        "matches": [p.serialize() for p in matches]}),200
+            
+    if matches:  # Changed from 'if match != []' to 'if matches'
+        return jsonify({"message": "Matches found!!","matches": [p.serialize() for p in matches]}),200
     else:
         return jsonify({"error": "No matches found"}), 404
 
