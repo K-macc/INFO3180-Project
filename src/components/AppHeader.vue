@@ -2,7 +2,7 @@
   <header>
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
       <div class="container-fluid">
-        <RouterLink class="navbar-brand" to="/">VueJS with Flask</RouterLink>
+        <RouterLink class="navbar-brand" to="/">Jam Date</RouterLink>
 
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
           aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
