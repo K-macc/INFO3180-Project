@@ -92,6 +92,7 @@ class Profile(db.Model):
             "id": self.id,
             "user_id": self.user_id_fk,
             "user_name": self.user.name,
+            "photo": self.user.photo,
             "description": self.description,
             "parish": self.parish,
             "biography": self.biography,
