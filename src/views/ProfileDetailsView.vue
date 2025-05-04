@@ -149,6 +149,7 @@ function fetchProfile() {
         console.error('Error fetching profile:', data.error);
         return;
       } else {
+        profile.value = data.profile;
         checkFavourites();
         loadFavourites(profile.value.user_id);
       }

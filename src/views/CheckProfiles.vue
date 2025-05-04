@@ -53,8 +53,8 @@ onMounted(() => {
 
         <div class="profile-list">
                     <div v-for="profile in profiles" :key="profile.id" class="profile-item card">
-        <div class="profile-avatar" :style="{ backgroundColor: profile.profile_pic ? 'transparent' : stringToColor(profile.description) }">
-            <img v-if="profile.profile_pic" :src="profile.profile_pic" alt="Profile" class="avatar-img" />
+        <div class="profile-avatar" :style="{ backgroundColor: profile.photo ? 'transparent' : stringToColor(profile.description) }">
+            <img v-if="profile.photo" :src="profile.photo" alt="Profile" class="avatar-img" />
             <span v-else class="avatar-initials">{{ getInitials(profile.description || profile.sex) }}</span>
         </div>
 
