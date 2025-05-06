@@ -352,7 +352,7 @@ def add_or_delete_favourite(user_id):
             return jsonify({"error": "Already added to favourites"}), 404
 
         fav = Favourite(user_id_fk=u_id, fav_user_id_fk=user_id)
-        db.session.add(fav)g
+        db.session.add(fav)
         db.session.commit()
         return jsonify({"message": "User added to favourites!!"}), 201
 
@@ -408,7 +408,7 @@ def search_profiles():
         
         results = []
         
-        if check_fields(search_field) == False:
+        if not check_fields(search_field):
             return jsonify({"error": "Please fill all filter fields"}), 400
         
         if search_term:
