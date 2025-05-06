@@ -134,6 +134,7 @@ function filteredProfiles() {
                 {{ errorMessage }}
             </div>
         </transition>
+        <h1>Search Profiles</h1>
         <div class="search-container">
             <input v-model="searchTerm" type="search" class="search-input" placeholder="Enter an item to search"
                 @keyup.enter="filteredProfiles" />
@@ -174,10 +175,11 @@ function filteredProfiles() {
 
         </div>
 
-        <h2>Recently Added Profiles</h2>
+        <h1>Recently Added Profiles</h1>
         <div class="profile-list">
+            
             <div v-for="profile in recent_profiles" :key="profile.id" class="profile-item card">
-                <h3>{{ profile.user_name }}</h3>
+                <h2>{{ profile.user_name }}</h2>
                 <p>{{ profile.description }}</p>
                 <router-link class="btn btn-primary" :to="`/profiles/${profile.id}`"
                     @click="trackProfileView(profile.id)">View more details</router-link>
@@ -199,12 +201,31 @@ function filteredProfiles() {
 
 <style scoped>
 /* Layout and Container Styling */
-.profiles {
+/* .profiles {
     padding: 2rem;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: #f7f9fc;
     min-height: 100vh;
+} */
+
+.profiles {
+  display: flex;
+  flex-direction: column;
+  /* align-items: center; */
+  min-height: 100vh;
+  background: linear-gradient(to bottom right, #ffecd2, #fcb69f);
+  padding: 2rem 1rem;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  gap: 1rem;
 }
+    .profiles h1 {
+        font-size: 2.5rem;
+        color: #e91e63;
+        text-shadow: 1px 1px #fff;
+        background-color: white;
+        padding: 1rem;
+        border-radius: 10px
+    }
 
 /* Error message box */
 .error-message {
@@ -223,7 +244,7 @@ function filteredProfiles() {
 /* Search container */
 .search-container {
     text-align: center;
-    margin: 2rem 0;
+    margin: .5rem;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -243,16 +264,20 @@ function filteredProfiles() {
 
 /* Filter dropdown */
 .filter-dropdown {
+    display: flex;
+    flex-direction: column;
     padding: 0.5rem;
     border-radius: 8px;
     border: 1px solid #ccc;
     width: 200px;
     font-size: 1rem;
-    margin-bottom: 1rem;
+    margin-bottom: 1.5rem;
 }
 
 /* Filter container */
 .border.rounded.p-4.mb-4 {
+    display: flex;
+    flex-direction: column;
     background-color: #ffffff;
     border: 1px solid #ddd;
     border-radius: 10px;
@@ -266,6 +291,8 @@ function filteredProfiles() {
 /* Filter inputs and selects */
 .filter input,
 .filter select {
+    display: flex;
+    flex-direction: column;
     border: 1px solid #ccc;
     border-radius: 6px;
     padding: 0.5rem;
@@ -291,8 +318,10 @@ h2 {
 /* Profile cards layout */
 .profile-list {
     display: flex;
+    flex-direction: row;
     flex-wrap: wrap;
     justify-content: center;
+    align-items: center;
     gap: 1.5rem;
     margin-top: 1rem;
 }
@@ -300,6 +329,7 @@ h2 {
 /* Card styling */
 .profile-item.card {
     width: 300px;
+    align-items: center;
     padding: 1.5rem;
     background-color: #ffffff;
     border-radius: 15px;
@@ -315,20 +345,23 @@ h2 {
 }
 
 /* Profile text */
-.profile-item.card h3 {
+.profile-item.card h2 {
     margin: 0;
-    font-size: 1.2rem;
-    color: #4e73df;
+    /* font-size: 1.2rem; */
+    color: #e91e63;
+    font-weight: bold;
+    align-items: left;
 }
 
 .profile-item.card p {
     margin: 0.5rem 0 1rem;
     color: #555;
+    font-style: italic;
 }
 
 /* Primary button */
 .btn.btn-primary {
-    background-color: #4e73df;
+    background-color: #e91e63;
     color: white;
     padding: 0.6rem 1rem;
     border-radius: 8px;
@@ -342,7 +375,7 @@ h2 {
 }
 
 .btn.btn-primary:hover {
-    background-color: #2e59d9;
+    background-color: #d81b60;
 }
 
 /* Fade transition for error */
