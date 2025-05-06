@@ -150,7 +150,7 @@ h5 {
   background-color: #d4edda;
   padding: 10px;
   border-radius: 5px;
-  width: 25%;
+  width: 15%;
   top: 100px;
   right: 45px;
   text-align: center;
@@ -161,20 +161,13 @@ h5 {
   color: red;
   background-color: #f8d7da;
   padding: 10px;
-  padding-top: 20px;
-  padding-left: 0px;
   margin-bottom: 10px;
   border-radius: 5px;
   top: 100px;
   right: 45px;
   position: fixed;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  width: 26%;
-  min-height: 8%;
-  height: auto;
+  text-align: center;
+  width: 15%;
 }
 
 /* Fade Animation */

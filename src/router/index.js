@@ -53,14 +53,12 @@ const router = createRouter({
     { 
       path: '/profiles/create',
       name: 'CreateProfile',
-      component: () => import('@/views/CreateProfile.vue'),
-      meta: { requiresAuth: true }
+      component: AddProfileForm
     },
     {
       path: '/profiles/check',
       name: 'check-profiles',
-      component: CheckProfiles,
-      meta: { requiresAuth: true, requiresCompleteProfile: true }
+      component: CheckProfiles
     },
     {
       path: '/profiles/update/:profile_id',
@@ -86,24 +84,6 @@ const router = createRouter({
   scrollBehavior(to, from, savedPosition) {
     return { top: 0 };
   },
-})
-outer.beforeEach(async (to, from, next) => {
-  const authStore = useAuthStore()
-  
-  if (to.meta.requiresAuth && !authStore.token) {
-    next('/login')
-    return
-  }
-
-  if (to.meta.requiresCompleteProfile) {
-    const { complete } = await authStore.checkProfileCompletion()
-    if (!complete) {
-      next('/profiles/create')
-      return
-    }
-  }
-
-  next()
 })
 
 export default router
