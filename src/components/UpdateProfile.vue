@@ -320,7 +320,8 @@ function updateProfile() {
 .profile-form-div {
     margin: 30px auto;
     width: 75%;
-    background: linear-gradient(135deg, #9cb62a, #d2e434); /* Green to Gold gradient */
+    background: linear-gradient(135deg, #9cb62a, #d2e434);
+    /* Green to Gold gradient */
     padding: 20px;
     border: 1px solid #ddd;
     color: white;

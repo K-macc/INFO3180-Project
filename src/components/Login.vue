@@ -117,12 +117,37 @@ function login() {
 
 <style scoped>
 .login-container {
-  background: linear-gradient(to right, #478bda, #4364f7);
+  background: linear-gradient(120deg, #478bda, #4364f7);
   min-height: 100vh;
   display: flex;
+  position: relative;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  overflow: hidden;
+}
+
+.login-container::before {
+  content: "";
+  position: absolute;
+  width: 200%;
+  height: 100vh;
+  background: radial-gradient(circle, rgba(173,216,230, 0.2) 20%, transparent 70%);
+  animation: ripple 10s infinite linear;
+  top: -50%;
+  left: -50%;
+  z-index: 0;
+}
+
+@keyframes ripple {
+  0% {
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1.2) rotate(360deg);
+    opacity: 0.7;
+  }
 }
 
 .brand-title {

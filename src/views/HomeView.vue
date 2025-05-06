@@ -120,7 +120,7 @@ onMounted(() => {
 .home-wrapper {
   height: 100%;
   margin: 0;
-  background-color: yellow;
+  background-color: white;
 }
 
 .home-wrapper {
