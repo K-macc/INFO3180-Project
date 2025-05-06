@@ -1,6 +1,5 @@
 <template>
-  <div> <!-- Single root div -->
-
+  <div> 
     <div v-if="flashMessage">
       <transition name="fade">
         <div class="flash-message">
@@ -96,6 +95,8 @@ onMounted(() => {
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Pacifico&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap');
+
+
 .flash-message {
     color: green;
     background-color: #d4edda;
@@ -116,11 +117,10 @@ onMounted(() => {
     opacity: 0;
   }
 
-html,
-body,
 .home-wrapper {
   height: 100%;
   margin: 0;
+  background-color: white;
 }
 
 .home-wrapper {

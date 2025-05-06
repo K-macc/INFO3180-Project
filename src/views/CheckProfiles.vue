@@ -1,21 +1,12 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useAuthStore } from '@/stores/auth.js';
-import { useRouter } from 'vue-router'
 
 const authStore = useAuthStore();
-const router = useRouter();
 const profiles = ref([]);
 const userID = authStore.user_id;
 const isLoading = ref(true);
 const error = ref(null);
-
-async function checkProfileCompletion() {
-  const result = await authStore.checkProfileCompletion();
-  if (!result.complete) {
-    router.push('/profiles/create');
-  }
-}
 
 function trackProfileView(profileID) {
   authStore.setProfileId(profileID);
@@ -55,11 +46,8 @@ async function fetchProfiles() {
   }
 }
 
-onMounted(async () => {
-  await checkProfileCompletion();
-  if (authStore.isProfileComplete) {
-    fetchProfiles();
-  }
+onMounted(async () => { 
+  fetchProfiles();
 });
 </script>
 

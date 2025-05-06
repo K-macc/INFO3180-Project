@@ -273,7 +273,7 @@ function addProfile() {
 
 <style scoped>
 .profile-form-div {
-    margin: 0 auto;
+    margin: 30px auto;
     width: 75%;
     padding: 30px;
     border-radius: 20px;
