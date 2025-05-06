@@ -318,7 +318,7 @@ function updateProfile() {
 
 <style>
 .profile-form-div {
-    margin: 0 auto;
+    margin: 30px auto;
     width: 75%;
     background: linear-gradient(135deg, #9cb62a, #d2e434); /* Green to Gold gradient */
     padding: 20px;

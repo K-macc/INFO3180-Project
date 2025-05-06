@@ -1,5 +1,5 @@
 <template>
-    <footer class="mt-5">
+    <footer>
         <div class="container">
             <p>Copyright &copy {{ year }} Jam Date</p>
         </div>
@@ -7,11 +7,19 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
-
 const year = (new Date).getFullYear();
 </script>
 
 <style>
-/* Add any component specific styles here */
+footer {
+    background-color: #333;
+    color: #fff;
+    padding: 20px 0 5px 0;
+}
+
+.container {
+    max-width: 960px;
+    margin: 0 auto;
+    text-align: center;
+}
 </style>

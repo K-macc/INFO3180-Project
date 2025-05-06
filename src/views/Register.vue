@@ -82,7 +82,7 @@ function register() {
 </script>
 
 <template>
-  <div class="container">
+  <div class="register-container">
     <!-- Header -->
     <h1 class="title">Jam-Date</h1>
 
@@ -127,9 +127,8 @@ function register() {
 
 <style scoped>
   /* Page Background */
-  .container {
+  .register-container {
     background-color: #8648d6; /* Light blue background */
-    width: 100vw;
     height: 100vh;
     display: flex;
     flex-direction: column;
