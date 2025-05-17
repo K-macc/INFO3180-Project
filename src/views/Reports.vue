@@ -152,12 +152,6 @@ function sortFavourited() {
     height: 100%;
     gap: 1rem;
     margin-bottom: 120px;
-}
-
-.order-options {
-    margin-bottom: 1rem;
-    background-color: #FFFFFF;
-    border: 1px solid #AD2874; /* Fandango */
     border-radius: 8px;
     padding: 8px 20px 5px 12px;
     font-size: 16px;

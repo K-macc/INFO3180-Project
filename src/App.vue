@@ -7,6 +7,13 @@ import AppFooter from '@/components/AppFooter.vue'
 
 const authStore = useAuthStore()
 const isAuthenticated = computed(() => authStore.isAuthenticated)
+import { computed } from 'vue'
+import { useAuthStore } from '@/stores/auth'
+import AppHeader from '@/components/AppHeader.vue'
+import AppFooter from '@/components/AppFooter.vue'
+
+const authStore = useAuthStore()
+const isAuthenticated = computed(() => authStore.isAuthenticated)
 </script>
 
 <template>
@@ -52,22 +59,5 @@ html, body {
 .fade-enter-from,
 .fade-leave-to {
   opacity: 0;
-}
-</style>
-
-<style>
-/* Global styles */
-
-
-a {
-  text-decoration: none;
-  color: #42b983;
-}
-
-/* Responsive breakpoints */
-@media (max-width: 768px) {
-  body {
-    padding-top: 60px;
-  }
 }
 </style>

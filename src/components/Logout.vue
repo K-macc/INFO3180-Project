@@ -90,4 +90,19 @@ onMounted(async () => {
             </div>
         </transition>
     </div>
+    <div class="logout-message">
+        <transition name="fade">
+            <div v-if="success_message" class="success-message">
+                {{ success_message }}
+            </div>
+        </transition>
+
+        <transition name="fade">
+            <div v-if="errors.length > 0" class="error-message">
+                <ul>
+                    <li v-for="(error, index) in errors" :key="index">{{ error }}</li>
+                </ul>
+            </div>
+        </transition>
+    </div>
 </template>

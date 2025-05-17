@@ -4,8 +4,14 @@ import HomeView from '../views/HomeView.vue'
 import AddProfileForm from '../components/AddProfileForm.vue'
 import Logout from '../components/Logout.vue'
 import Register from '../views/Register.vue'
+import Register from '../views/Register.vue'
 import ProfileDetailsView from '../views/ProfileDetailsView.vue'
 import UserProfileView from '../views/UserProfileView.vue'
+import UserPage from '../views/UserPage.vue'
+import CheckProfiles from '../views/CheckProfiles.vue'
+import UpdateProfile from '../components/UpdateProfile.vue'
+import MatchProfile from '../views/MatchProfile.vue'
+import Reports from '../views/Reports.vue'
 import UserPage from '../views/UserPage.vue'
 import CheckProfiles from '../views/CheckProfiles.vue'
 import UpdateProfile from '../components/UpdateProfile.vue'
@@ -37,8 +43,14 @@ const router = createRouter({
     },
     {
       path: '/users/:user_id',
+      path: '/users/:user_id',
       name: 'user-profile-info',
       component: UserProfileView
+    },
+    {
+      path: '/users',
+      name: 'home-users',
+      component: UserPage
     },
     {
       path: '/users',

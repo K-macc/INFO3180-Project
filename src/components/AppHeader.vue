@@ -33,10 +33,12 @@
 
             <li class="nav-item">
               <RouterLink class="nav-link" to="/logout">Logout</RouterLink>
+              <RouterLink to="/" class="nav-link active" v-if="!isAuthenticated">Home</RouterLink>
             </li>
 
             <li class="nav-item">
               <RouterLink class="nav-link" to="/users">View Users</RouterLink>
+              <RouterLink to="/users" class="nav-link active" v-if="isAuthenticated">Home</RouterLink>
             </li>
 
             <li class="nav-item">

@@ -10,13 +10,16 @@ import jwt
 from datetime import datetime, timedelta
 from functools import wraps
 from binascii import Error
+from binascii import Error
 
+from flask import request, jsonify, send_file, send_from_directory, make_response, session, g, url_for, redirect, render_template
 from flask import request, jsonify, send_file, send_from_directory, make_response, session, g, url_for, redirect, render_template
 from flask_jwt_extended import jwt_required, current_user, get_jwt_identity
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from flask_wtf.csrf import generate_csrf
 from werkzeug.utils import secure_filename
 from werkzeug.security import generate_password_hash, check_password_hash
+from sqlalchemy import func, desc
 from sqlalchemy import func, desc
 
 
@@ -26,6 +29,22 @@ from app.forms import UserForm, ProfileForm, LoginForm
 from flask import flash
 from datetime import datetime
 import json
+from app.forms import UserForm, ProfileForm, LoginForm
+from flask import flash
+from datetime import datetime
+import json
+
+def form_errors(form):
+    error_messages = []
+    """Collects form errors"""
+    for field, errors in form.errors.items():
+        for error in errors:
+            message = u"Error in the %s field - %s" % (
+                    getattr(form, field).label.text,
+                    error
+                )
+            error_messages.append(message)
+    return error_messages
 
 def requires_auth(f):
   @wraps(f)
@@ -43,6 +62,7 @@ def requires_auth(f):
       return jsonify({'code': 'invalid_header', 'description': 'Token not found'}), 401
     elif len(parts) > 2:
       return jsonify({'code': 'invalid_header', 'description': r'Authorization header must be Bearer + \s + token'}), 401
+      return jsonify({'code': 'invalid_header', 'description': r'Authorization header must be Bearer + \s + token'}), 401
 
     token = parts[1]
     try:
@@ -57,6 +77,7 @@ def requires_auth(f):
     return f(*args, **kwargs)
 
   return decorated
+
 
 
 ###
@@ -117,11 +138,71 @@ def query_profile(user_id, field):
 @app.route('/api/v1/csrf-token', methods=['GET'])
 def get_csrf():
     return jsonify({'csrf_token': generate_csrf()}), 200
+def check_fields(fields):
+    for key, value in fields.items():
+        if value == '':
+            return False
+        
+def query_profile(user_id, field): 
+    if len(field) == 1:  
+        if 'sex' in field:    
+            profile = Profile.query.filter(
+                Profile.user_id_fk == user_id,
+                (Profile.sex == field['sex'])
+            ).all()
+        elif 'birth_year' in field:
+            profile = Profile.query.filter(
+                Profile.user_id_fk == user_id,
+                (Profile.birth_year == int(field['birth_year']) if field['birth_year'].isdigit() else False)
+            ).all()
+        else:
+            profile = Profile.query.filter(
+                Profile.user_id_fk == user_id,
+                (Profile.race == field['race'])
+            ).all()
+    elif len(field) == 2:
+        if 'birth_year' in field and 'sex' in field:
+            profile = Profile.query.filter(
+                    Profile.user_id_fk == user_id,
+                    (Profile.sex == field['sex']),
+                    (Profile.birth_year == int(field['birth_year']) if field['birth_year'].isdigit() else False)
+                ).all()
+        elif 'birth_year' in field:
+            profile = Profile.query.filter(
+                Profile.user_id_fk == user_id,
+                (Profile.race == field['race']),
+                (Profile.birth_year == int(field['birth_year']) if field['birth_year'].isdigit() else False)
+            ).all()
+        else:
+            profile = Profile.query.filter(
+                Profile.user_id_fk == user_id,
+                (Profile.sex == field['sex']),
+                (Profile.race == field['race'])
+            ).all()
+    elif len(field) == 3:
+        profile = Profile.query.filter(
+            Profile.user_id_fk == user_id,
+            (Profile.sex == field['sex']),
+            (Profile.race == field['race']),
+            (Profile.birth_year == int(field['birth_year']) if field['birth_year'].isdigit() else False)
+        ).all()
+    else:
+        profile = Profile.query.filter_by(user_id_fk = user_id).all()  
+    return profile
+
+@app.route('/api/v1/csrf-token', methods=['GET'])
+def get_csrf():
+    return jsonify({'csrf_token': generate_csrf()}), 200
 
 @app.route('/')
 def index():
     return app.send_static_file('index.html')
+    return app.send_static_file('index.html')
 
+
+@app.route('/assets/<path:filename>')
+def assets(filename):
+    return app.send_static_file(os.path.join('assets', filename))
 
 @app.route('/assets/<path:filename>')
 def assets(filename):
@@ -153,16 +234,40 @@ def register():
             
             session['user_id'] = new_user.id 
             
-            return jsonify({
+            return jsonify({"message": "User registered successfully!!"}, form = UserForm())
+    
+    if form.validate_on_submit():
+        if User.query.filter_by(username=form.username.data).first():
+            return jsonify({"error": "Username already exists!!"}), 400
+        elif User.query.filter_by(email=form.email.data).first():
+            return jsonify({"error": "Email Address already exists!!"}), 400
+        else:
+            photo = form.photo.data
+            filename = secure_filename(photo.filename)
+            photo.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            
+            new_user = User(
+            username=form.username.data,
+            password=generate_password_hash(form.password.data),
+            name=form.name.data,
+            email=form.email.data,
+            photo=filename
+            )
+            db.session.add(new_user)
+            db.session.commit()
+            
+            session['user_id'] = new_user.id 
+            
+        return jsonify({
             "message": "User registered successfully!!",
-            'user' : {
+            'user': {
                 'id': new_user.id,
                 'username': new_user.username,
                 'name': new_user.name,
                 'email': new_user.email,
                 'photo': new_user.photo
-                }
-            }), 201
+            }
+    }), 201
     else:
         return jsonify({"errors": form_errors(form)}), 400
 
@@ -208,6 +313,12 @@ def logout():
         return jsonify({"message": "Logged out successfully!!"}), 200
     except Exception as e:
         return jsonify({"errors": [str(e)]}), 400
+    try:
+        session.pop('user_id', None)  # Remove user ID from session
+        logout_user()
+        return jsonify({"message": "Logged out successfully!!"}), 200
+    except Exception as e:
+        return jsonify({"errors": [str(e)]}), 400
 
 
 @app.route('/api/profiles', methods=['GET'])
@@ -224,6 +335,8 @@ def get_profiles():
 ###
 @app.route('/api/check-profiles/<int:user_id>', methods=['GET'])
 @requires_auth
+@app.route('/api/check-profiles/<int:user_id>', methods=['GET'])
+@requires_auth
 def has_complete_profile(user_id):
     profiles = Profile.query.filter_by(user_id_fk=user_id).all()
     status = any(p.is_complete() for p in profiles)
@@ -231,8 +344,41 @@ def has_complete_profile(user_id):
         return jsonify({"status": status}), 200
     else:
         return jsonify({"error": "You need to have at least one profile completed"}), 404
+    status = any(p.is_complete() for p in profiles)
+    if status:
+        return jsonify({"status": status}), 200
+    else:
+        return jsonify({"error": "You need to have at least one profile completed"}), 404
 
 ## Vedang's Flask Endpoints starts here - Part 1
+
+@app.route('/api/profiles/<int:profile_id>', methods=['PUT'])
+@requires_auth
+def update_profile(profile_id):
+    form = ProfileForm()
+    user_id = session.get('user_id') 
+    
+    profile = Profile.query.get_or_404(profile_id)
+    
+    if profile.user_id_fk != user_id:
+        return jsonify({"error": "Unauthorized"}), 403
+    
+    profile.description = form.description.data
+    profile.parish = form.parish.data
+    profile.biography = form.biography.data
+    profile.sex = form.sex.data
+    profile.race = form.race.data
+    profile.birth_year = form.birth_year.data
+    profile.height = form.height.data
+    profile.fav_cuisine = form.fav_cuisine.data
+    profile.fav_colour = form.fav_colour.data
+    profile.fav_school_subject = form.fav_school_subject.data
+    profile.political = form.political.data
+    profile.religious = form.religious.data
+    profile.family_oriented = form.family_oriented.data
+    
+    db.session.commit()
+    return jsonify({"message": "Profile updated successfully!!"}), 200
 
 @app.route('/api/profiles/<int:profile_id>', methods=['PUT'])
 @requires_auth
@@ -296,6 +442,7 @@ def create_profile():
 
 @app.route('/api/profiles/<int:profile_id>', methods=['GET'])
 @requires_auth
+@requires_auth
 def get_profile(profile_id):
     if not has_complete_profile(current_user.id):
         return jsonify({"error": "Complete your profile to access this feature."}), 403
@@ -342,11 +489,28 @@ def add_or_delete_favourite(user_id):
     else:
         if user_id == u_id:  
             return jsonify({"error": "Cannot favourite yourself"}), 400
+    if request.method  == 'DELETE':
+        fav = Favourite.query.filter_by(user_id_fk=u_id, fav_user_id_fk=user_id).first()
+        if not fav:
+            return jsonify({"error": "User not found"}), 404
+        else:
+            db.session.delete(fav)
+            db.session.commit()
+            return jsonify({"message": "User removed from favourites!!"}), 200
+    else:
+        if user_id == u_id:  
+            return jsonify({"error": "Cannot favourite yourself"}), 400
 
         profile = Profile.query.filter_by(user_id_fk=user_id).first()
         if not profile:
             return jsonify({"error": "User not found"}), 404
+        profile = Profile.query.filter_by(user_id_fk=user_id).first()
+        if not profile:
+            return jsonify({"error": "User not found"}), 404
 
+        fav = Favourite.query.filter_by(user_id_fk=u_id, fav_user_id_fk=user_id).first()
+        if fav:
+            return jsonify({"error": "Already added to favourites"}), 404
         fav = Favourite.query.filter_by(user_id_fk=u_id, fav_user_id_fk=user_id).first()
         if fav:
             return jsonify({"error": "Already added to favourites"}), 404
@@ -355,13 +519,17 @@ def add_or_delete_favourite(user_id):
         db.session.add(fav)
         db.session.commit()
         return jsonify({"message": "User added to favourites!!"}), 201
+        fav = Favourite(user_id_fk=u_id, fav_user_id_fk=user_id)
+        db.session.add(fav)
+        db.session.commit()
+        return jsonify({"message": "User added to favourites!!"}), 201
 
 @app.route('/api/profiles/matches/<int:profile_id>', methods=['GET'])
 @requires_auth
 def get_matches(profile_id):
-    
     matches = []
     year = datetime.now().year
+
     # Check if profile is complete for the current user 
     current_user_id = g.current_user['user_id']
     if not has_complete_profile(current_user_id):
@@ -370,14 +538,14 @@ def get_matches(profile_id):
     profile = Profile.query.get_or_404(profile_id)
     
     # Ensure the profile belongs to the current user
-    if profile.user_id_fk != current_user_id:  # Corrected to use user_id_fk
+    if profile.user_id_fk != current_user_id:
         return jsonify({"error": "Unauthorized"}), 403
     
     age = year - profile.birth_year
 
     potential_matches = Profile.query.filter(
         Profile.id != profile.id,
-        Profile.user_id_fk != current_user_id  # Corrected to use user_id_fk
+        Profile.user_id_fk != current_user_id
     ).all()
     
     for match in potential_matches:
@@ -385,14 +553,13 @@ def get_matches(profile_id):
         age_diff = abs(match_age - age)
         height_diff = abs(profile.height - match.height)
         if age_diff <= 5 and 3 <= height_diff <= 10:
-            fields_to_check = ['fav_cuisine', 'fav_colour', 'fav_school_subject','political', 'religious', 'family_oriented']
+            fields_to_check = ['fav_cuisine', 'fav_colour', 'fav_school_subject', 'political', 'religious', 'family_oriented']
             match_count = sum(1 for field in fields_to_check if getattr(profile, field) == getattr(match, field))
-        
             if match_count >= 3:
                 matches.append(match)
             
-    if matches:  # Changed from 'if match != []' to 'if matches'
-        return jsonify({"message": "Matches found!!","matches": [p.serialize() for p in matches]}),200
+    if matches:
+        return jsonify({"message": "Matches found!!", "matches": [p.serialize() for p in matches]}), 200
     else:
         return jsonify({"error": "No matches found"}), 404
 
@@ -578,9 +745,7 @@ def add_header(response):
     response.headers['Cache-Control'] = 'public, max-age=0'
     return response
 
-
 @app.errorhandler(404)
 def page_not_found(error):
     """Custom 404 page."""
     return jsonify({'error': 'Not found'}), 404
-    # return render_template('404.html'), 404
