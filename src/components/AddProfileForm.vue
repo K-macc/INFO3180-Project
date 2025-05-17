@@ -24,7 +24,6 @@ const political = ref(null);
 const religious = ref(null);
 const family_oriented = ref(null);
 
-
 const togglePoliticalRadioButton = (value) => {
     political.value = political.value === value ? null : value;
 }
@@ -43,10 +42,11 @@ function flashMessage(prompt) {
             prompt.value = [];
         } else {
             prompt.value = '';
+            // router.push('/');
         }
-    }, 3000);
-}
 
+  }, 3000);
+}
 
 function getCsrfToken() {
     fetch('/api/v1/csrf-token')
@@ -86,8 +86,8 @@ function addProfile() {
                 flashMessage(success_message);
                 profileForm.reset();
                 setTimeout(() => {
-                    router.push('/');
-                }, 5000);
+                    router.push("/users");
+                }, 3000);
             } else if (data.error) {
                 errors.value.push(data.error);
                 flashMessage(errors);
@@ -271,128 +271,117 @@ function addProfile() {
 
 </template>
 
-
 <style scoped>
+h1{
+    color: white;
+}
+
+button {
+    width: 40%;
+    background-color: #6DDBFC; /* Sky Blue */
+    color: #333333; /* Jet */
+    padding: 12px 24px;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    width: 160px;
+    align-self: center;
+}
+
+button:hover {
+    background-color: #00C8FF; /* Vivid Sky Blue */
+}
+
 .profile-form-div {
-    margin: 0 auto;
+    margin: 30px auto;
     width: 75%;
-    padding: 20px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    background-color: #f9f9f9;
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    background: linear-gradient(to bottom right, #AD2874, #69003D); /* Lavender Blush to Fandango */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #333333; /* Jet */
 }
 
 .profile-form {
     display: flex;
     flex-direction: column;
-    gap: 30px;
-    margin-top: 30px;
+    gap: 32px;
+    margin-top: 20px;
 }
 
-.form-group {
-    margin-bottom: 15px;
+.form-group label {
+    font-weight: bold;
+    font-size: 1rem;
+    margin-bottom: 8px;
+    color: white; /* Tyrian Purple */
 }
 
-.group-items {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
+input[type="text"],
+input[type="number"],
+textarea,
+select {
+    border: 2px solid #8A0047; /* Murrey */
+    border-radius: 10px;
+    padding: 10px;
+    font-size: 16px;
+    background-color: #ffffff;
+    color: #333333;
+    width: 100%;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-.fav {
-    display: flex;
-    flex-direction: row;
-    justify-content: left;
-    gap: 222px;
-}
-
-.radio-options {
-    display: flex;
-    flex-direction: row;
-    justify-content: left;
-    gap: 222px;
-}
-
-.choices {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    gap: 20px;
-}
-
-div select {
-    display: flex;
-    flex-direction: column;
-}
-
-input[id^='fav'] {
-    width: 140%;
-}
-
-input[id^='pol'],
-input[id^='rel'],
-input[id^='fam'] {
-    margin-right: 10px;
-}
-
-input {
-    border: 1px solid #ccc;
-    border-radius: 8px;
-}
-
-button {
-    width: 10%;
+input:focus,
+textarea:focus,
+select:focus {
+    border-color: #00C8FF; /* Vivid Sky Blue */
+    outline: none;
+    box-shadow: 0 0 6px #00C8FF;
 }
 
 textarea {
-    width: 100%;
     height: 100px;
-    resize: none;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-}
-
-select {
-    background-color: #fff;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    padding: 8px 20px 5px 12px;
-    font-size: 14px;
-    cursor: pointer;
-    height: 38px;
+    resize: vertical;
 }
 
 .success-message {
-    color: green;
-    background-color: #d4edda;
-    padding: 10px;
-    border-radius: 5px;
-    width: 15%;
-    top: 100px;
-    right: 45px;
-    text-align: center;
+    background-color: #D0F5E8;
+    color: #155724;
+    padding: 12px;
+    border-radius: 8px;
     position: fixed;
+    top: 80px;
+    right: 45px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 .error-message {
-    color: red;
-    background-color: #f8d7da;
-    padding: 10px;
-    padding-top: 20px;
-    padding-left: 0px;
-    margin-bottom: 10px;
-    border-radius: 5px;
-    top: 70px;
-    right: 45px;
+    background-color: #FDE8EF;
+    color: #8A0047;
+    padding: 16px;
+    border-radius: 8px;
     position: fixed;
+    top: 80px;
+    right: 45px;
+    max-width: 350px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.radio-options,
+.group-items,
+.fav,
+.choices {
     display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    width: 26%;
-    min-height: 8%;
-    height: auto;
+    flex-wrap: wrap;
+    gap: 24px;
+}
+
+input[type='radio'] {
+    margin-right: 8px;
+    accent-color: #AD2874; /* Fandango */
 }
 
 .fade-leave-active {

@@ -316,128 +316,124 @@ function updateProfile() {
 
 </template>
 
-
-<style scoped>
+<style>
 .profile-form-div {
-    margin: 0 auto;
+    margin: 30px auto;
     width: 75%;
+    background: linear-gradient(to bottom right, #AD2874, #8A0047); /* Fandango to Murrey */
     padding: 20px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    background-color: #f9f9f9;
+    border: 1px solid #69003D; /* Tyrian Purple */
+    color: #F7E1E9; /* Lavender Blush text */
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(105, 0, 61, 0.2); /* Tyrian shadow */
+}
+
+h1 {
+    text-align: center;
+    color: #F7E1E9; /* Lavender Blush */
+    font-size: 2rem;
 }
 
 .profile-form {
     display: flex;
     flex-direction: column;
     gap: 30px;
+    color: #F7E1E9;
     margin-top: 30px;
+    font-family: 'Montserrat', sans-serif;
 }
 
-.form-group {
-    margin-bottom: 15px;
+.form-label {
+    font-weight: 600;
+    color: #F7E1E9; /* lavender blush */
 }
 
-.group-items {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
+input,
+textarea,
+select {
+    border: 2px solid #AD2874; /* Fandango */
+    border-radius: 10px;
+    padding: 10px 12px;
+    font-size: 15px;
+    background-color: #fff;
+    color: #333333; /* Jet */
+    font-family: 'Montserrat', sans-serif;
+    transition: border-color 0.3s ease;
 }
 
-.fav {
-    display: flex;
-    flex-direction: row;
-    justify-content: left;
-    gap: 222px;
+input:focus,
+textarea:focus,
+select:focus {
+    outline: none;
+    border-color: #00C8FF;
+    box-shadow: 0 0 6px rgba(0, 200, 255, 0.5);
 }
 
+textarea {
+    height: 100px;
+    resize: none;
+}
+
+button {
+    background-color: #6DDBFC; /* Sky Blue */
+    color: #333333; /* Jet */
+    padding: 12px 24px;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    width: 160px;
+    align-self: center;
+}
+
+button:hover {
+    background-color: #00C8FF; /* Vivid Sky Blue */
+}
+
+.group-items,
+.fav,
 .radio-options {
     display: flex;
-    flex-direction: row;
-    justify-content: left;
-    gap: 222px;
-}
-
-.choices {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
+    flex-wrap: wrap;
     gap: 20px;
 }
 
-div select {
-    display: flex;
-    flex-direction: column;
-}
-
-input[id^='fav'] {
-    width: 140%;
-}
-
+input[id^='fav'],
 input[id^='pol'],
 input[id^='rel'],
 input[id^='fam'] {
     margin-right: 10px;
 }
 
-input {
-    border: 1px solid #ccc;
-    border-radius: 8px;
-}
-
-button {
-    width: 10%;
-}
-
-textarea {
-    width: 100%;
-    height: 100px;
-    resize: none;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-}
-
-select {
-    background-color: #fff;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    padding: 8px 20px 5px 12px;
-    font-size: 14px;
-    cursor: pointer;
-    height: 38px;
-}
-
 .success-message {
-    color: green;
-    background-color: #d4edda;
+    color: #0f5132;
+    background-color: #d1e7dd;
     padding: 10px;
-    border-radius: 5px;
-    width: 15%;
-    top: 100px;
-    right: 45px;
+    border-radius: 8px;
+    border: 1px solid #badbcc;
     text-align: center;
     position: fixed;
+    top: 100px;
+    right: 45px;
+    width: 250px;
+    z-index: 1000;
+    box-shadow: 0 2px 8px rgba(0, 128, 0, 0.2);
 }
 
 .error-message {
-    color: red;
+    color: #842029;
     background-color: #f8d7da;
-    padding: 10px;
-    padding-top: 20px;
-    padding-left: 0px;
-    margin-bottom: 10px;
-    border-radius: 5px;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #f5c2c7;
+    position: fixed;
     top: 70px;
     right: 45px;
-    position: fixed;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    width: 26%;
-    min-height: 8%;
-    height: auto;
+    width: 300px;
+    z-index: 1000;
+    box-shadow: 0 2px 8px rgba(255, 0, 0, 0.2);
 }
 
 .fade-leave-active {
@@ -447,4 +443,14 @@ select {
 .fade-leave-to {
     opacity: 0;
 }
+
+select {
+    appearance: none;
+    background-color: #fff;
+    background-image: url('data:image/svg+xml;charset=US-ASCII,<svg xmlns="http://www.w3.org/2000/svg" width="14" height="10"><polygon points="7,10 0,0 14,0" style="fill:%2369003D"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 12px;
+}
 </style>
+

@@ -91,7 +91,8 @@ class Profile(db.Model):
         return {
             "id": self.id,
             "user_id": self.user_id_fk,
-            "user_name": self.user.name if self.user else None,
+            "user_name": self.user.name,
+            "photo": self.user.photo,
             "description": self.description,
             "parish": self.parish,
             "biography": self.biography,

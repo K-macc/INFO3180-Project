@@ -1,18 +1,19 @@
-import { defineStore } from 'pinia';
-import { useRouter } from 'vue-router';
-import { ref } from 'vue';
+import { defineStore } from "pinia";
+import { useRouter } from "vue-router";
+import { ref } from "vue";
 
 export const isAuthenticated = ref(false);
 
-export const useAuthStore = defineStore('auth', {
+export const useAuthStore = defineStore("auth", {
   state: () => ({
     user: null,
     token: null,
     router: useRouter(),
-    flashMessage: '',
+    flashMessage: "",
     user_id: null,
     profile_id: null,
-    current_fav_id: null  
+    current_fav_id: null,
+    isProfileComplete: false,
   }),
   actions: {
     login(userData, token, user_id) {
@@ -20,13 +21,13 @@ export const useAuthStore = defineStore('auth', {
       this.user_id = user_id;
       this.token = token;
       isAuthenticated.value = true;
-      localStorage.setItem('jwt', token);
+      localStorage.setItem("jwt", token);
     },
     logout() {
       this.user = null;
       isAuthenticated.value = false;
-      localStorage.removeItem('jwt');
-      this.router.push('/');
+      localStorage.removeItem("jwt");
+      this.router.push("/");
     },
     setFlashMessage(message) {
       this.flashMessage = message;
@@ -36,6 +37,26 @@ export const useAuthStore = defineStore('auth', {
     },
     setUserId(user_id) {
       this.user_id = user_id;
-    }
-  }
+    },
+    async checkProfileCompletion(id) {
+      try {
+        const response = await fetch(`/api/check-profiles/${id}`, {
+          headers: {
+            Authorization: `Bearer ${this.token}`,
+          },
+        });
+        const data = await response.json();
+        if (data.status) {
+          this.isProfileComplete = true;
+          return { complete: true };
+        } else {
+          this.isProfileComplete = false;
+          return { complete: false };
+        }
+      } catch (error) {
+        console.error("Error checking profile completion:", error);
+        return { complete: false };
+      }
+    },
+  },
 });

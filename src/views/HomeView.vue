@@ -1,6 +1,5 @@
 <template>
-  <div> <!-- Single root div -->
-
+  <div> 
     <div v-if="flashMessage">
       <transition name="fade">
         <div class="flash-message">
@@ -29,11 +28,17 @@
               Jam Date <span role="img" aria-label="heart">💖</span>
             </h1>
           </div>
-          <div class="center-title">
-            <h1 class="title-text">
-              Jam Date <span role="img" aria-label="heart">💖</span>
-            </h1>
-            <p class="caption">Where hearts meet for a lifetime</p>
+          <div class="center-wrapper">
+            <div class="card">
+              <div class="center-title">
+                <h1 class="title-text">
+                  Jamaica's 1st dating site<span role="img" aria-label="heart">💖</span>
+                </h1>
+                <p class="caption">Where hearts meet for a lifetime</p>
+                <p class="caption">From profile matching to suit matching</p>
+                <p class="caption">Find your loved one right here!</p>
+              </div>
+            </div>
           </div>
           <div class="right-buttons">
             <router-link to="/login" class="btn btn-outline-light me-2">Login</router-link>
@@ -96,6 +101,11 @@ onMounted(() => {
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Pacifico&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap');
+.image-grid {
+  opacity: calc(0.5 + 0.5 * var(--opacity));
+  transition: opacity 0.5s ease-in-out;
+}
+
 .flash-message {
     color: green;
     background-color: #d4edda;
@@ -108,6 +118,51 @@ onMounted(() => {
     position: fixed;
   }
 
+.center-title {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  z-index: 2; /* Above the card */
+  font-size: 18px;
+  width: 100%;
+}
+
+.center-title h1 {
+  font-family: 'Pacifico', cursive;
+  font-size: 3rem;
+  color: white;
+  text-shadow: 2px 2px 5px #000;
+}
+
+.center-title .caption {
+  font-family: 'Pacifico', cursive;  
+  font-size: 2rem;
+  color: white;
+  text-shadow: 2px 2px 5px #000;
+}
+
+.center-wrapper {
+  position: absolute;
+  top: 450%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1; /* Behind the title */
+  width: 90%;
+  max-width: 800px;
+}
+
+.card {
+  background-color: rgba(173, 40, 116, 0.85); /* Fandango w/ transparency */
+  padding: 40px;
+  border-radius: 15px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+  text-align: center;
+  width: 100%;
+  min-height: 300px;
+}
+
   .fade-leave-active {
     transition: opacity 1s ease-in-out;
   }
@@ -116,11 +171,10 @@ onMounted(() => {
     opacity: 0;
   }
 
-html,
-body,
 .home-wrapper {
   height: 100%;
   margin: 0;
+  background-color: white;
 }
 
 .home-wrapper {
@@ -191,31 +245,6 @@ body,
   background-color: rgb(173, 22, 47);
   color: white;
   font-weight: 5px;
-}
-
-.center-title {
-  margin: 60px auto;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  text-align: center;
-  z-index: 5; /* Ensure it's above the background */
-}
-
-.center-title h1 {
-  font-family: 'Pacifico', cursive;
-  font-size: 3rem;
-  color: white;
-  text-shadow: 2px 2px 5px #000;
-}
-
-.center-title .caption {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 1rem;
-  color: white;
-  margin-top: 10px;
-  font-style: italic;
 }
 
 .register-card {

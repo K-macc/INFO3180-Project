@@ -1,6 +1,7 @@
 # Add any form classes for Flask-WTF here
 from flask_wtf import FlaskForm
 from wtforms import StringField, TextAreaField, SelectField, IntegerField, FloatField, BooleanField, PasswordField
+from wtforms import StringField, TextAreaField, SelectField, IntegerField, FloatField, BooleanField, PasswordField
 from wtforms.validators import InputRequired, NumberRange
 from flask_wtf.file import FileRequired, FileField, FileAllowed
 
@@ -35,3 +36,5 @@ class LoginForm(FlaskForm):
 
     
 
+
+    

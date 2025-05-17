@@ -140,41 +140,24 @@ function sortFavourited() {
     height: 100%;
     gap: 2rem;
     margin-bottom: 120px;
+    background-color: #F7E1E9; /* Lavender Blush */
 }
 
-.top-favourited {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    height: 100%;
-    gap: 1rem;
-}
-
-.favourite-users {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    height: 100%;
-    margin-bottom: 120px
-}
-
+.top-favourited,
+.favourite-users,
 .top-favourited-users {
     display: flex;
     flex-direction: column;
     align-items: center;
     height: 100%;
-    margin-bottom: 120px
-}
-
-.order-options {
-    margin-bottom: 1rem;
-    background-color: #fff;
-    border: 1px solid #ccc;
+    gap: 1rem;
+    margin-bottom: 120px;
     border-radius: 8px;
     padding: 8px 20px 5px 12px;
     font-size: 16px;
     cursor: pointer;
     height: 38px;
+    color: #69003D; /* Tyrian Purple */
 }
 
 .favourites {
@@ -184,18 +167,21 @@ function sortFavourited() {
     gap: 1rem;
 }
 
-.user-fav{
+.user-fav {
     width: 300px;
     padding: 1rem;
     border-radius: 12px;
-    border: 1px solid #ccc;
-    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+    border: 1px solid #AD2874; /* Fandango */
+    box-shadow: 2px 2px 10px rgba(138, 0, 71, 0.15); /* Murrey shadow */
+    background-color: #FFFFFF;
+    color: #333333; /* Jet */
+    transition: all 0.3s ease-in-out;
 }
 
 .user-fav:hover {
-    background: white;
+    background: #6DDBFC; /* Sky Blue */
     transform: scale(1.05);
-    box-shadow: 0px 0px 10px rgb(146, 144, 144);
-    border-color: #817e7e96;
+    box-shadow: 0px 0px 12px rgba(0, 200, 255, 0.4); /* Vivid Sky Blue */
+    border-color: #00C8FF;
 }
 </style>

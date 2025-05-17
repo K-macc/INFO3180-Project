@@ -13,7 +13,6 @@ const csrf_token = ref("");
 const authStore = useAuthStore();
 const user_id = ref(null);
 
-
 function flashMessage(prompt) {
   setTimeout(() => {
     if (Array.isArray(prompt)) {
@@ -77,45 +76,139 @@ function login() {
       flashMessage(errorMessage);
     });
 };
-
 </script>
 
 <template>
-  <div>
-    <h1>Login</h1>
+  <div class="login-container">
+    <h1 class="brand-title">Jam-Date</h1>
 
-    <transition name="fade">
-      <div v-if="successMessage" class="success-message">
-        {{ successMessage }}
-      </div>
-    </transition>
+    <div class="login-card">
+      <h2 class="card-title">Welcome Back</h2>
 
-    <transition name="fade">
+      <form @submit.prevent="login" class="form" id="loginForm" enctype="multipart/form-data">
+        <input v-model="username" type="text" placeholder="Username" name="username" class="input"/>
+        <input v-model="password" type="password" placeholder="Password" name="password" class="input"/>
+
+        <button type="submit" class="btn-primary">Login</button>
+      </form>
+
+      <transition name="fade">
+        <div v-if="successMessage" class="success-message">
+          {{ successMessage }}
+        </div>
+      </transition>
+
+      <transition name="fade">
       <div v-if="errorMessage.length" class="error-message">
         <ul>
           <li v-for="(error, index) in errorMessage" :key="index">{{ error }}</li>
         </ul>
       </div>
     </transition>
+      
 
-
-    <form @submit.prevent="login" id="loginForm" enctype="multipart/form-data">
-      <div>
-        <label>Username:</label>
-        <input v-model="username" type="text" name="username" class="form-control">
+      <div class="link-group">
+        <router-link to="/register" class="link">Register</router-link>
+        <router-link to="/view-reports" class="link">View Reports</router-link>
       </div>
-      <div>
-        <label>Password:</label>
-        <input v-model="password" type="password" name="password" class="form-control">
-      </div>
-      <button type="submit">Login</button>
-    </form>
-    <p>Don't have an account? <router-link to="/register">Register here</router-link></p>
+    </div>
   </div>
 </template>
 
-
 <style scoped>
+.login-container {
+  background: linear-gradient(120deg, #8A0047, #AD2874);
+  min-height: 100vh;
+  display: flex;
+  position: relative;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+.login-container::before {
+  content: "";
+  position: absolute;
+  width: 200%;
+  height: 100vh;
+  background: radial-gradient(circle, rgba(173,216,230, 0.2) 20%, transparent 70%);
+  animation: ripple 10s infinite linear;
+  top: -50%;
+  left: -50%;
+  z-index: 0;
+}
+
+@keyframes ripple {
+  0% {
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1.2) rotate(360deg);
+    opacity: 0.7;
+  }
+}
+
+.brand-title {
+  font-size: 3rem;
+  font-weight: 700;
+  color: white;
+  margin-bottom: 1rem;
+}
+
+.login-card {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  padding: 2rem;
+  width: 90%;
+  max-width: 350px;
+  text-align: center;
+  z-index: 5;
+}
+
+.card-title {
+  font-size: 1.5rem;
+  margin-bottom: 1.2rem;
+  color: #333;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+}
+
+.input {
+  padding: 12px;
+  margin-bottom: 1rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+  transition: border 0.2s;
+}
+
+.input:focus {
+  outline: none;
+  border-color: #007bff;
+}
+
+.btn-primary {
+  padding: 12px;
+  background-color: #007bff;
+  color: white;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.btn-primary:hover {
+  background-color: #0056b3;
+}
+
 .success-message {
   color: green;
   background-color: #d4edda;
@@ -154,5 +247,21 @@ function login() {
 
 .fade-leave-to {
   opacity: 0;
+}
+
+.link-group {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: space-between;
+}
+
+.link {
+  color: #007bff;
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+.link:hover {
+  text-decoration: underline;
 }
 </style>

@@ -1,11 +1,17 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Login from '../components/Login.vue'
-import Home from '../views/Home.vue'
+import HomeView from '../views/HomeView.vue'
 import AddProfileForm from '../components/AddProfileForm.vue'
 import Logout from '../components/Logout.vue'
 import Register from '../views/Register.vue'
+import Register from '../views/Register.vue'
 import ProfileDetailsView from '../views/ProfileDetailsView.vue'
 import UserProfileView from '../views/UserProfileView.vue'
+import UserPage from '../views/UserPage.vue'
+import CheckProfiles from '../views/CheckProfiles.vue'
+import UpdateProfile from '../components/UpdateProfile.vue'
+import MatchProfile from '../views/MatchProfile.vue'
+import Reports from '../views/Reports.vue'
 import UserPage from '../views/UserPage.vue'
 import CheckProfiles from '../views/CheckProfiles.vue'
 import UpdateProfile from '../components/UpdateProfile.vue'
@@ -18,7 +24,7 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      component: Home
+      component: HomeView
     },
     {
       path: '/register',
@@ -37,6 +43,7 @@ const router = createRouter({
     },
     {
       path: '/users/:user_id',
+      path: '/users/:user_id',
       name: 'user-profile-info',
       component: UserProfileView
     },
@@ -46,8 +53,18 @@ const router = createRouter({
       component: UserPage
     },
     {
+      path: '/users',
+      name: 'home-users',
+      component: UserPage
+    },
+    {
       path: '/profiles/new',
       name: 'new-profile',
+      component: AddProfileForm
+    },
+    { 
+      path: '/profiles/create',
+      name: 'CreateProfile',
       component: AddProfileForm
     },
     {
@@ -79,6 +96,6 @@ const router = createRouter({
   scrollBehavior(to, from, savedPosition) {
     return { top: 0 };
   },
-
 })
+
 export default router
