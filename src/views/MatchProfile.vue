@@ -84,7 +84,7 @@ onMounted(() => {
 .container {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   padding: 20px;
-  background-color: #f4f6f8;
+  background-color: #F7E1E9; /* Lavender Blush */
   min-height: 100vh;
 }
 
@@ -92,12 +92,12 @@ onMounted(() => {
 h1 {
   font-size: 2rem;
   margin-bottom: 10px;
-  color: #333;
+  color: #69003D; /* Tyrian Purple */
 }
 
 h5 {
   font-size: 1.2rem;
-  color: #555;
+  color: #8A0047; /* Murrey */
   margin-bottom: 20px;
 }
 
@@ -106,68 +106,69 @@ h5 {
   background-color: white;
   margin-bottom: 20px;
   padding: 1.5rem;
-  border-radius: 12px;
-  border: 1px solid #e0e0e0;
-  box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.05);
+  border-radius: 16px;
+  border: 1px solid #AD2874; /* Fandango border */
+  box-shadow: 0px 2px 8px rgba(105, 0, 61, 0.1); /* Tyrian Purple */
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .match-results:hover {
   transform: scale(1.02);
-  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: 0px 4px 12px rgba(0, 200, 255, 0.3); /* Vivid Sky Blue */
 }
 
 /* Match Headings */
 .match-results h3 {
   margin-top: 0;
-  color: #1a73e8;
+  color: #00C8FF; /* Vivid Sky Blue */
 }
 
 .match-results p {
-  color: #444;
+  color: #333333; /* Jet */
   margin-bottom: 1rem;
 }
 
 /* View More Button */
 .match-results .btn {
-  background-color: #1a73e8;
-  color: white;
+  background-color: #6DDBFC; /* Sky Blue */
+  color: #333333; /* Jet */
   border: none;
   padding: 0.5rem 1rem;
   text-decoration: none;
-  border-radius: 6px;
-  font-weight: 500;
+  border-radius: 8px;
+  font-weight: 600;
   transition: background-color 0.3s ease;
 }
 
 .match-results .btn:hover {
-  background-color: #0c5ed7;
+  background-color: #00C8FF; /* Vivid Sky Blue */
 }
 
 /* Flash Messages */
 .success-message {
-  color: green;
+  color: #155724;
   background-color: #d4edda;
   padding: 10px;
-  border-radius: 5px;
-  width: 15%;
+  border-radius: 8px;
+  width: 250px;
   top: 100px;
   right: 45px;
   text-align: center;
   position: fixed;
+  box-shadow: 0 2px 8px rgba(0, 128, 0, 0.2);
 }
 
 .error-message {
-  color: red;
+  color: #721c24;
   background-color: #f8d7da;
   padding: 10px;
-  margin-bottom: 10px;
-  border-radius: 5px;
+  border-radius: 8px;
   top: 100px;
   right: 45px;
   position: fixed;
   text-align: center;
-  width: 15%;
+  width: 250px;
+  box-shadow: 0 2px 8px rgba(255, 0, 0, 0.2);
 }
 
 /* Fade Animation */

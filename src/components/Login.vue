@@ -117,7 +117,7 @@ function login() {
 
 <style scoped>
 .login-container {
-  background: linear-gradient(120deg, #478bda, #4364f7);
+  background: linear-gradient(120deg, #8A0047, #AD2874);
   min-height: 100vh;
   display: flex;
   position: relative;
@@ -165,6 +165,7 @@ function login() {
   width: 90%;
   max-width: 350px;
   text-align: center;
+  z-index: 5;
 }
 
 .card-title {

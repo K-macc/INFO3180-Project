@@ -91,14 +91,14 @@ onMounted(() => {
   flex-direction: column;
   align-items: center;
   min-height: 100vh;
-  background: linear-gradient(to bottom right, #ffecd2, #fcb69f);
+  background: linear-gradient(to bottom left, #F7E1E9, #8A0047); /* Lavender Blush to Sky Blue */
   padding: 2rem 1rem;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 h1 {
   font-size: 2.5rem;
-  color: #e91e63;
+  color: #AD2874; /* Fandango */
   margin-bottom: 2rem;
   text-shadow: 1px 1px #fff;
 }
@@ -124,7 +124,7 @@ h1 {
 }
 
 .user-card h2 {
-  color: #e91e63;
+  color: #8A0047; /* Murrey */
   margin-bottom: 1rem;
 }
 
@@ -132,7 +132,7 @@ img {
   width: 140px;
   height: 140px;
   border-radius: 50%;
-  border: 4px solid #ffd700;
+  border: 4px solid #00C8FF; /* Vivid Sky Blue */
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   margin-left: 20px;
   margin-right: 20px;
@@ -143,7 +143,7 @@ img {
   flex-direction: row;
   gap: 10px;
   font-size: 1rem;
-  color: #333;
+  color: #333; /* Jet */
   margin: 6px 0;
 }
 
@@ -170,7 +170,7 @@ label {
 
 .profiles h2 {
   font-size: 2rem;
-  color: #d81b60;
+  color: #69003D; /* Tyrian Purple */
   margin-bottom: 0.5rem;
 }
 
@@ -200,7 +200,7 @@ label {
 
 .profile-item.card h3 {
   font-size: 1.4rem;
-  color: #e91e63;
+  color: #AD2874; /* Fandango */
   margin-bottom: 12px;
 }
 
@@ -219,7 +219,7 @@ label {
 
 .btn.btn-primary {
   display: inline-block;
-  background: #e91e63;
+  background: #AD2874; /* Fandango */
   color: white;
   text-align: center;
   padding: 0.6rem 1rem;
@@ -227,13 +227,16 @@ label {
   border-radius: 12px;
   cursor: pointer;
   font-weight: bold;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s ease, transform 0.2s ease;
   text-decoration: none;
   margin-top: 16px;
+  box-shadow: 0 8px 18px rgba(173, 40, 116, 0.4);
 }
 
 .btn.btn-primary:hover {
-  background: #d81b60;
+  background: #69003D; /* Tyrian Purple */
+  transform: translateY(-2px);
+  box-shadow: 0 10px 22px rgba(138, 0, 71, 0.5); /* Murrey */
 }
 
 /* Responsive tweaks */
@@ -261,3 +264,4 @@ label {
   }
 }
 </style>
+

@@ -26,6 +26,8 @@ function stringToColor(str) {
 
 async function fetchProfiles() {
   try {
+    console.log('Fetching profiles for userID:', userID);
+    console.log('Auth token:', authStore.token);
     const response = await fetch(`/api/users/${userID}`, {
       method: 'GET',
       headers: {
@@ -37,6 +39,7 @@ async function fetchProfiles() {
     if (!response.ok) throw new Error('Failed to fetch profiles');
     
     const data = await response.json();
+    console.log('Response data:', data);
     profiles.value = data.profiles;
   } catch (err) {
     error.value = 'Failed to load profiles';
@@ -80,100 +83,168 @@ onMounted(async () => {
 </template>
 
 <style scoped>
+body {
+  background: linear-gradient(135deg, #00C8FF, #8A0047);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
 .title {
   text-align: center;
   margin: 2rem 0 1.5rem;
-  font-size: 2rem;
-  color: #333;
+  font-size: 2.8rem;
+  font-weight: 700;
+  color: #8A0047; /* Murrey */
+  letter-spacing: 1px;
+  animation: fadeInDown 0.6s ease-in-out;
 }
 
 .profile-list {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 2rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 2.5rem;
+  padding: 0 2rem 3rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  animation: fadeIn 0.8s ease-in-out;
 }
 
 .profile-item.card {
-  background-color: #fff;
-  border: 1px solid #e0e0e0;
-  border-radius: 12px;
-  width: 380px;
-  padding: 1.5rem;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  background: linear-gradient(145deg, #F7E1E9, #ffffff);
+  border-radius: 20px;
+  padding: 1.8rem 1.5rem;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  transition: all 0.35s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.profile-item.card::before {
+  content: "";
+  position: absolute;
+  top: -40%;
+  left: -40%;
+  width: 180%;
+  height: 180%;
+  background: radial-gradient(circle at center, rgba(0, 200, 255, 0.1), transparent 70%);
+  transform: rotate(25deg);
+  z-index: 0;
 }
 
 .profile-item.card:hover {
-  transform: scale(1.03);
-  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.1);
-  border-color: #ccc;
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: 0 18px 36px rgba(0, 0, 0, 0.15);
 }
 
 .profile-avatar {
-  width: 80px;
-  height: 80px;
+  width: 100px;
+  height: 100px;
   border-radius: 50%;
-  margin-bottom: 1rem;
-  background-color: #ccc;
+  margin: 0 auto 1rem;
+  background-color: #AD2874; /* Fandango */
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 2rem;
+  font-size: 25rem;
   color: #fff;
   overflow: hidden;
+  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.7);
+  animation: popIn 0.5s ease;
+  position: relative;
+  z-index: 1;
 }
 
 .avatar-img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  border-radius: 50%;
 }
 
 .avatar-initials {
   font-weight: bold;
   user-select: none;
+  font-size: 2rem;
 }
 
 .profile-details {
-  width: 100%;
-  text-align: center;
   margin-top: 0.5rem;
+  position: relative;
+  z-index: 1;
 }
 
 .profile-details p {
-  margin: 0.3rem 0;
-  color: #555;
+  margin: 0.4rem 0;
+  color: #333333; /* Jet */
   font-size: 1rem;
 }
 
 .btn.btn-primary {
   margin-top: 1rem;
-  background-color: #007bff;
+  background-color: #AD2874; /* Fandango */
   color: #fff;
-  padding: 0.6rem 1rem;
+  padding: 0.7rem 1.4rem;
   border: none;
-  border-radius: 6px;
+  border-radius: 12px;
   cursor: pointer;
-  transition: background-color 0.2s ease;
-  text-decoration: none;
-  display: inline-block;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: all 0.25s ease;
+  box-shadow: 0 8px 20px rgba(173, 40, 116, 0.4);
 }
 
 .btn.btn-primary:hover {
-  background-color: #0056b3;
+  background-color: #69003D; /* Tyrian Purple */
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(138, 0, 71, 0.5); /* Murrey shadow */
 }
 
-.loading, .error {
+.loading,
+.error {
   text-align: center;
   margin: 2rem;
   font-size: 1.2rem;
+  animation: fadeIn 0.5s ease;
 }
 
 .error {
-  color: red;
+  color: #8A0047; /* Murrey */
+  font-weight: 600;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes popIn {
+  0% {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 </style>
+
+

@@ -320,18 +320,17 @@ function updateProfile() {
 .profile-form-div {
     margin: 30px auto;
     width: 75%;
-    background: linear-gradient(135deg, #9cb62a, #d2e434);
-    /* Green to Gold gradient */
+    background: linear-gradient(to bottom right, #AD2874, #8A0047); /* Fandango to Murrey */
     padding: 20px;
-    border: 1px solid #ddd;
-    color: white;
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+    border: 1px solid #69003D; /* Tyrian Purple */
+    color: #F7E1E9; /* Lavender Blush text */
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(105, 0, 61, 0.2); /* Tyrian shadow */
 }
 
 h1 {
     text-align: center;
-    color: #2c3e50;
+    color: #F7E1E9; /* Lavender Blush */
     font-size: 2rem;
 }
 
@@ -339,24 +338,35 @@ h1 {
     display: flex;
     flex-direction: column;
     gap: 30px;
-    color: white;
+    color: #F7E1E9;
     margin-top: 30px;
+    font-family: 'Montserrat', sans-serif;
 }
 
 .form-label {
     font-weight: 600;
-    color: #34495e;
+    color: #F7E1E9; /* lavender blush */
 }
 
 input,
 textarea,
 select {
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    padding: 10px;
-    font-size: 14px;
-    background-color: #fdfdfd;
-    color: #2c3e50;
+    border: 2px solid #AD2874; /* Fandango */
+    border-radius: 10px;
+    padding: 10px 12px;
+    font-size: 15px;
+    background-color: #fff;
+    color: #333333; /* Jet */
+    font-family: 'Montserrat', sans-serif;
+    transition: border-color 0.3s ease;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+    outline: none;
+    border-color: #00C8FF;
+    box-shadow: 0 0 6px rgba(0, 200, 255, 0.5);
 }
 
 textarea {
@@ -365,20 +375,21 @@ textarea {
 }
 
 button {
-    background-color: #3498db;
-    color: white;
-    padding: 10px 20px;
+    background-color: #6DDBFC; /* Sky Blue */
+    color: #333333; /* Jet */
+    padding: 12px 24px;
     border: none;
-    border-radius: 8px;
+    border-radius: 10px;
     font-size: 16px;
+    font-weight: 600;
     cursor: pointer;
     transition: background-color 0.3s ease;
-    width: 150px;
+    width: 160px;
     align-self: center;
 }
 
 button:hover {
-    background-color: #2980b9;
+    background-color: #00C8FF; /* Vivid Sky Blue */
 }
 
 .group-items,
@@ -386,7 +397,7 @@ button:hover {
 .radio-options {
     display: flex;
     flex-wrap: wrap;
-    gap: 30px;
+    gap: 20px;
 }
 
 input[id^='fav'],
@@ -397,11 +408,11 @@ input[id^='fam'] {
 }
 
 .success-message {
-    color: #155724;
-    background-color: #d4edda;
+    color: #0f5132;
+    background-color: #d1e7dd;
     padding: 10px;
     border-radius: 8px;
-    border: 1px solid #c3e6cb;
+    border: 1px solid #badbcc;
     text-align: center;
     position: fixed;
     top: 100px;
@@ -412,11 +423,11 @@ input[id^='fam'] {
 }
 
 .error-message {
-    color: #721c24;
+    color: #842029;
     background-color: #f8d7da;
     padding: 12px;
     border-radius: 8px;
-    border: 1px solid #f5c6cb;
+    border: 1px solid #f5c2c7;
     position: fixed;
     top: 70px;
     right: 45px;
@@ -436,9 +447,10 @@ input[id^='fam'] {
 select {
     appearance: none;
     background-color: #fff;
-    background-image: url('data:image/svg+xml;charset=US-ASCII,<svg xmlns="http://www.w3.org/2000/svg" width="14" height="10"><polygon points="7,10 0,0 14,0" style="fill:%233498db"/></svg>');
+    background-image: url('data:image/svg+xml;charset=US-ASCII,<svg xmlns="http://www.w3.org/2000/svg" width="14" height="10"><polygon points="7,10 0,0 14,0" style="fill:%2369003D"/></svg>');
     background-repeat: no-repeat;
     background-position: right 10px center;
     background-size: 12px;
 }
 </style>
+

@@ -306,82 +306,78 @@ watch(() => route.params.profile_id, (newId) => {
 
 
 <style scoped>
+/* Core profile picture styles */
 .profile-pic {
   width: 150px;
   height: 150px;
   margin: 20px;
 }
 
-.profile-pic img {
-  width: 140px;
-  height: 140px;
-  border-radius: 50%;
-  border: 4px solid #ffd700;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-  margin-left: 20px;
-  margin-right: 20px;
-}
-
-.placeholder-pic {
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 48px;
-  color: white;
-  background-color: #6c63ff; /* Example color */
-  font-weight: bold;
-  border: 4px solid #ffd700;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-  }
-
 .main-body {
+  background: linear-gradient(to bottom left, #F7E1E9, #8A0047); /* Lavender Blush to Sky Blue */
   display: flex;
   flex-direction: column;
   align-items: center;
   min-height: 100vh;
-  background: linear-gradient(to bottom right, #ffecd2, #fcb69f);
   padding: 2rem 1rem;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  /* gap: 2rem; */
+}
+
+.profile-pic img,
+.placeholder-pic {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  border: 4px solid #AD2874; /* Fandango border */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: auto;
+  object-fit: cover;
+}
+
+/* Placeholder background */
+.placeholder-pic {
+  font-size: 48px;
+  color: white;
+  background-color: #69003D; /* Tyrian Purple */
+  font-weight: bold;
+}
+
+/* Headings */
+h1, h2, h3 {
+  color: #8A0047; /* Fandango */
+  text-shadow: 2px 2px #00C8FF; /* Lavender Blush shadow */
+  margin-bottom: 1rem;
 }
 
 h1 {
   font-size: 2.5rem;
   font-weight: bold;
-  color: #e91e63;
-  margin-bottom: 2rem;
-  text-shadow: 1px 1px #fff;
 }
 
-/* blue */
+/* Card container */
 .user-card.card {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  background-color: #fff;
-  border-radius: 20px;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
-  padding: 24px;
+  background: #F7E1E9; /* Lavender Blush */
+  border-radius: 1.5rem;
+  box-shadow: 0 6px 20px rgba(105, 0, 61, 0.15); /* Tyrian Purple shadow */
+  padding: 2rem;
   max-width: 720px;
   width: 100%;
   margin-bottom: 2rem;
   transition: transform 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   gap: 1rem;
-  flex-wrap: wrap;
 }
 
-.user-card.card h2{
-  color: #e91e63;
-  margin-bottom: 1rem;
-}
-
+/* Sections */
 section {
   background: white;
   border-radius: 1rem;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 20px rgba(51, 51, 51, 0.05); /* Jet subtle shadow */
   padding: 1.5rem 2rem;
   width: 100%;
   max-width: 700px;
@@ -392,186 +388,98 @@ section:hover {
   transform: translateY(-3px);
 }
 
-/* pink */
+/* Header area */
 .header-info {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 1rem;
-  padding: 1rem;
   width: 90%;
+  padding: 1rem;
 }
-  /* yellow */
-  .header-info div {
-    display: flex;
-    flex-direction: column;
-    align-items: left;
-    justify-content: left;
-    /* gap: 1rem; */
-    width: 90%;
-    /* background-color: lightgoldenrodyellow; */
-  }
-  .header-info img {
-    width: 120px;
-    height: 120px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 2px solid #ccc;
-    margin-right: 1.5rem;
-  }
-  .header-info h3 {
-    color: #e91e63;
-    margin-bottom: 1rem;
-  }
 
-/* .header-info, */
-.user-info,
-.location,
-.appearance,
+/* User details layout */
+.user-info {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 90%;
+  gap: 2rem;
+}
+
+.user-info h3, h2 {
+  color: #8A0047; /* Fandango */
+}
+
+/* Appearance block */
+.appearance {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 90%;
+  padding: 1rem;
+}
+
+.appearance h2, .appearance h3 {
+  color: #8A0047; /* Vivid Sky Blue highlight */
+}
+
+.appearance div,
+.preferences div,
+.values div {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.appearance label,
+.preferences label,
+.values label {
+  width: 180px;
+  font-weight: 600;
+  color: #333333; /* Jet */
+  text-align: left;
+}
+
+.appearance p,
+.preferences p,
+.values p {
+  flex: 1;
+  color: #333333; /* Jet */
+}
+
+/* Preferences & values */
+.preferences,
+.values {
+  flex-direction: column;
+  width: 45%;
+}
+
+/* Favourites section */
 .favourite-users {
+  width: 90%;
+  text-align: center;
+}
+
+.favourite-users h3 {
+  color: #8A0047; /* Vivid Sky Blue */
+}
+
+.favourite-users ul {
+  list-style: none;
+  padding: 0;
   display: flex;
   flex-direction: column;
   gap: 1rem;
 }
 
-/* teal */
-.appearance {
-  /* background-color: lightseagreen; */
-  padding: 1rem;
+.favourite-users li {
   display: flex;
-  flex-direction: column;
-  align-content: center;
-  width: 90%;
-}
-  .appearance h3 {
-    color: #e91e63;
-  }
-
-  .appearance h2 {
-    color: #e91e63;
-    margin-bottom: 1rem;
-  }
-
-  .appearance div {
-    display: flex;
-    flex-direction: row;
-    gap: 1rem;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-  }
-    .appearance div label {
-      width: 180px; /*Set a fixed width for labels*/
-      text-align: left; /* Align label text to the right */
-      margin: 0;
-      color: black;
-      /* padding-top: 6px;;
-      padding-bottom: 6px;; */
-    }
-
-    .appearance div p {
-      margin: 0; /* Remove extra margins */
-      flex: 1; /* Allow paragraphs to take up remaining space */
-      text-align: left; /* Align paragraph text to the left */
-    }
-
-.user-info {
-  flex-direction: row;
-  justify-content: space-between;
-  /* flex-wrap: wrap; */
-  width:90%
-}
-.user-info h3, h2 {
-  color: #e91e63;
-  margin-bottom: 1rem;
-}
-
-/* GREEN */
-.preferences,
-.values {
-  display: flex;
-  flex-direction: column;
-  align-content: center;
-  padding-left: 1rem;
-  /* flex: 1 1 45%; */
-  /* background-color: lightgreen; */
-  width: 45%;
-}
-  
-    .preferences div,
-    .values div {
-      display: flex;
-      flex-direction: row;
-      gap: 1rem;      
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-    }
-      .preferences div label,
-      .values div label {
-        width: 180px; /*Set a fixed width for labels*/
-        text-align: left; /* Align label text to the right */
-        margin: 0;
-        padding-top: 6px;
-        padding-bottom: 6px;
-        color: black;
-      }
-
-      .preferences div p,
-      .values div p {
-        margin: 0; /* Remove extra margins */
-        flex: 1; /* Allow paragraphs to take up remaining space */
-        text-align: left; /* Align paragraph text to the left */
-      }
-
-.favourite-users {
-  display: flex;
-  flex-direction: column;
-  align-content: center;
-  align-items: center;
   justify-content: center;
-  padding-left: 1rem;
-  /* background-color: lightcoral; */
-  width: 90%;
-}
-  .favourite-users h3 {
-    color: #e91e63;
-    margin-bottom: 1rem;
-  }
-
-  .favourite-users ul {
-    list-style: none;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-  }
-
-  .favourite-users li {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-  }
-
-label {
-  font-weight: 600;
-  color: black;
-  margin-top: 0.5rem;
+  align-items: center;
 }
 
-p {
-  margin: 0.2rem 0 1rem;
-  color: #333;
-}
-
-hr {
-  border: none;
-  border-top: 1.5px solid grey;
-  margin: 1.5rem 0;
-  width: 90%; /* Adjust width as needed */
-}
-
+/* Messages */
 .success-message,
 .error-message {
   position: fixed;
@@ -580,19 +488,19 @@ hr {
   padding: 1rem 1.5rem;
   border-radius: 0.5rem;
   font-weight: 500;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  animation: fadeOut 2s forwards;
   z-index: 1000;
+  animation: fadeOut 2s forwards;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
 .success-message {
-  background-color: #d1e7dd;
-  color: #0f5132;
+  background-color: #D6F0F9; /* pale blue success */
+  color: #0C4A6E; /* dark blue text */
 }
 
 .error-message {
-  background-color: #f8d7da;
-  color: #842029;
+  background-color: #F7D6DA; /* pale pink error */
+  color: #8A0047; /* Murrey */
 }
 
 @keyframes fadeOut {
@@ -601,6 +509,7 @@ hr {
   100% { opacity: 0; }
 }
 
+/* Buttons */
 .btn {
   padding: 0.6rem 1.2rem;
   border-radius: 0.5rem;
@@ -611,77 +520,76 @@ hr {
 }
 
 .btn-primary {
-  background-color: #007bff;
+  background-color: #6DDBFC; /* Sky Blue */
   color: white;
 }
 
 .btn-primary:hover {
-  background-color: #0056b3;
+  background-color: #00C8FF; /* Vivid Sky Blue */
 }
 
 .btn-secondary {
-  background-color: #6c757d;
+  background-color: #69003D; /* Tyrian Purple */
   color: white;
 }
 
 .btn-secondary:hover {
-  background-color: #5a6268;
-}
-
-.btn-fav {
-  background: none; /* Remove the red background */
-  border: none; /* Remove the border */
-  padding: 0;
-  cursor: pointer; /* Make it look clickable */
-  display: inline-flex; /* Center the icon */
-  align-items: center;
-  justify-content: center;
+  background-color: #8A0047; /* Murrey */
 }
 
 .btn-favourite {
-  display: inline-block;
-  padding: 0.5rem 1rem;
-  font-size: 1rem;
+  background-color: #AD2874; /* Fandango */
   color: white;
-  background-color: #e91e63;
-  border: none;
+  padding: 0.5rem 1rem;
   border-radius: 0.5rem;
-  text-align: center;
-  text-decoration: none;
+  font-size: 1rem;
   cursor: pointer;
+  border: none;
   transition: background-color 0.3s ease;
 }
 
 .btn-favourite:hover {
-  background-color: #d81b60;
+  background-color: #8A0047; /* Murrey */
 }
 
 .heart-icon {
   font-size: 2rem;
-  cursor: pointer;
-  color: grey;
+  color: #333333; /* Jet */
   transition: color 0.3s;
   margin: 1rem;
 }
 
 .heart-icon.favourited {
-  color: red;
+  color: #AD2874; /* Fandango */
 }
 
-.favourites ul {
-  list-style: none;
-  padding: 0;
+/* General styles */
+label {
+  font-weight: 600;
+  color: #333333; /* Jet */
 }
 
-.favourites li {
-  margin-bottom: 0.5rem;
+p {
+  margin: 0.2rem 0 1rem;
+  color: #333333; /* Jet */
 }
 
+hr {
+  border: none;
+  border-top: 1.5px solid #8A0047; /* Murrey */
+  margin: 1.5rem 0;
+  width: 90%;
+}
+
+/* Responsive */
 @media screen and (max-width: 768px) {
   .user-info {
     flex-direction: column;
-    gap: 1.5rem;
+  }
+
+  .preferences, .values {
+    width: 100%;
   }
 }
-
 </style>
+

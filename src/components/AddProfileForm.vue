@@ -272,15 +272,38 @@ function addProfile() {
 </template>
 
 <style scoped>
+h1{
+    color: white;
+}
+
+button {
+    width: 40%;
+    background-color: #6DDBFC; /* Sky Blue */
+    color: #333333; /* Jet */
+    padding: 12px 24px;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    width: 160px;
+    align-self: center;
+}
+
+button:hover {
+    background-color: #00C8FF; /* Vivid Sky Blue */
+}
+
 .profile-form-div {
     margin: 30px auto;
     width: 75%;
     padding: 30px;
     border-radius: 20px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-    background: linear-gradient(135deg, #d1c736, #98d625); /* Green to Gold gradient */
+    background: linear-gradient(to bottom right, #AD2874, #69003D); /* Lavender Blush to Fandango */
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    color: #000;
+    color: #333333; /* Jet */
 }
 
 .profile-form {
@@ -294,28 +317,29 @@ function addProfile() {
     font-weight: bold;
     font-size: 1rem;
     margin-bottom: 8px;
-    color: #fff;
+    color: white; /* Tyrian Purple */
 }
 
 input[type="text"],
 input[type="number"],
 textarea,
 select {
-    border: 2px solid #1a1a1a;
+    border: 2px solid #8A0047; /* Murrey */
     border-radius: 10px;
     padding: 10px;
     font-size: 16px;
     background-color: #ffffff;
-    color: #000000;
+    color: #333333;
     width: 100%;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 input:focus,
 textarea:focus,
 select:focus {
-    border-color: #ffb800;
+    border-color: #00C8FF; /* Vivid Sky Blue */
     outline: none;
-    box-shadow: 0 0 5px #ffb800;
+    box-shadow: 0 0 6px #00C8FF;
 }
 
 textarea {
@@ -323,26 +347,8 @@ textarea {
     resize: vertical;
 }
 
-button {
-    width: 40%;
-    background-color: #000000;
-    color: #ffb800;
-    padding: 14px 20px;
-    border: none;
-    border-radius: 12px;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-}
-
-button:hover {
-    background-color: #222222;
-    transform: scale(1.05);
-}
-
 .success-message {
-    background-color: #d4edda;
+    background-color: #D0F5E8;
     color: #155724;
     padding: 12px;
     border-radius: 8px;
@@ -353,8 +359,8 @@ button:hover {
 }
 
 .error-message {
-    background-color: #f8d7da;
-    color: #721c24;
+    background-color: #FDE8EF;
+    color: #8A0047;
     padding: 16px;
     border-radius: 8px;
     position: fixed;
@@ -375,7 +381,7 @@ button:hover {
 
 input[type='radio'] {
     margin-right: 8px;
-    accent-color: #000;
+    accent-color: #AD2874; /* Fandango */
 }
 
 .fade-leave-active {
@@ -385,5 +391,4 @@ input[type='radio'] {
 .fade-leave-to {
     opacity: 0;
 }
-
 </style>

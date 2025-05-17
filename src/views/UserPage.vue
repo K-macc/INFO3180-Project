@@ -200,190 +200,230 @@ function filteredProfiles() {
 </template>
 
 <style scoped>
-/* Layout and Container Styling */
-/* .profiles {
-    padding: 2rem;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f7f9fc;
-    min-height: 100vh;
-} */
-
+/* Global Layout */
 .profiles {
   display: flex;
   flex-direction: column;
-  /* align-items: center; */
   min-height: 100vh;
-  background: linear-gradient(to bottom right, #ffecd2, #fcb69f);
+  background: linear-gradient(to bottom right, #8A0047, #00C8FF); /* Lavender Blush to Sky Blue */
   padding: 2rem 1rem;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   gap: 1rem;
+  z-index: 5;
 }
-    .profiles h1 {
-        font-size: 2.5rem;
-        color: #e91e63;
-        text-shadow: 1px 1px #fff;
-        background-color: white;
-        padding: 1rem;
-        border-radius: 10px
-    }
 
-/* Error message box */
+.profiles h1 {
+  font-size: 2.8rem;
+  color: #AD2874; /* Fandango */
+  background: #F7E1E9;;
+  padding: 1rem 2rem;
+  border-radius: 12px;
+  text-shadow: 2px 2px #f7d4e6; /* lighter Lavender Blush */
+  box-shadow: 0 4px 12px rgba(138, 0, 71, 0.15); /* Murrey shadow */
+  animation: slideDown 0.8s ease-in-out;
+}
+
+/* Error Box */
 .error-message {
-    color: #721c24;
-    background-color: #f8d7da;
-    padding: 10px 20px;
-    margin-bottom: 20px;
-    border: 1px solid #f5c6cb;
-    border-radius: 8px;
-    position: fixed;
-    top: 70px;
-    right: 45px;
-    z-index: 1000;
+  color: #69003D; /* Tyrian Purple */
+  background-color: #F7E1E9; /* Lavender Blush */
+  padding: 12px 24px;
+  margin-bottom: 20px;
+  border: 1px solid #AD2874; /* Fandango */
+  border-radius: 8px;
+  position: fixed;
+  top: 70px;
+  right: 45px;
+  z-index: 1000;
+  box-shadow: 0 2px 8px rgba(138, 0, 71, 0.2); /* Murrey */
+  animation: fadeInUp 0.4s ease-in;
 }
 
-/* Search container */
+/* Search Container */
 .search-container {
-    text-align: center;
-    margin: .5rem;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: fadeIn 1s ease;
 }
 
-/* Input field */
+/* Input Field */
 .search-input {
-    padding: 0.75rem 1rem;
-    width: 60%;
-    max-width: 500px;
-    border-radius: 10px;
-    font-size: 1rem;
-    border: 1px solid #ccc;
-    margin-bottom: 1rem;
-    outline-color: #4e73df;
+  padding: 0.75rem 1rem;
+  width: 60%;
+  max-width: 500px;
+  border-radius: 12px;
+  font-size: 1rem;
+  border: 1px solid #00C8FF; /* Vivid Sky Blue */
+  margin-bottom: 1rem;
+  outline-color: #00C8FF;
+  background-color: #F7E1E9; /* Lavender Blush */
+  transition: 0.3s;
+  color: #333;
 }
 
-/* Filter dropdown */
+.search-input:focus {
+  border-color: #AD2874; /* Fandango */
+  box-shadow: 0 0 8px #AD2874aa;
+  background-color: #fff;
+}
+
+/* Filter Dropdown */
 .filter-dropdown {
-    display: flex;
-    flex-direction: column;
-    padding: 0.5rem;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-    width: 200px;
-    font-size: 1rem;
-    margin-bottom: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  padding: 0.6rem;
+  border-radius: 10px;
+  border: 1px solid #AD2874; /* Fandango */
+  background-color: #F7E1E9; /* Lavender Blush */
+  width: 200px;
+  font-size: 1rem;
+  margin-bottom: 1.5rem;
+  color: #69003D; /* Tyrian Purple */
 }
 
-/* Filter container */
+/* Filter Container */
 .border.rounded.p-4.mb-4 {
-    display: flex;
-    flex-direction: column;
-    background-color: #ffffff;
-    border: 1px solid #ddd;
-    border-radius: 10px;
-    width: 60%;
-    max-width: 600px;
-    margin: 1rem auto;
-    padding: 1rem;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  display: flex;
+  flex-direction: column;
+  background-color: #fff;
+  border: 1px solid #AD2874; /* Fandango */
+  border-radius: 12px;
+  width: 60%;
+  max-width: 600px;
+  margin: 1rem auto;
+  padding: 1rem;
+  box-shadow: 0 4px 16px rgba(173, 40, 116, 0.08); /* subtle fandango shadow */
 }
 
-/* Filter inputs and selects */
+/* Filter Inputs and Selects */
 .filter input,
 .filter select {
-    display: flex;
-    flex-direction: column;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    padding: 0.5rem;
-    font-size: 0.95rem;
+  border: 1px solid #00C8FF; /* Vivid Sky Blue */
+  border-radius: 8px;
+  padding: 0.5rem;
+  font-size: 0.95rem;
+  background-color: #F7E1E9; /* Lavender Blush */
+  color: #69003D; /* Tyrian Purple */
+  transition: 0.2s ease-in;
 }
 
-/* Filter remove button */
+.filter input:focus,
+.filter select:focus {
+  border-color: #AD2874; /* Fandango */
+  box-shadow: 0 0 8px #AD2874aa;
+  background-color: #fff;
+}
+
+/* Remove Button */
 button.text-gray-500 {
-    font-size: 1.2rem;
-    cursor: pointer;
-    background: none;
-    border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  background: none;
+  border: none;
+  color: #8A0047; /* Murrey */
+  transition: transform 0.2s ease;
 }
 
-/* Profile section title */
+button.text-gray-500:hover {
+  transform: rotate(15deg);
+  color: #AD2874; /* Fandango */
+}
+
+/* Section Title */
 h2 {
-    font-size: 1.5rem;
-    color: #333;
-    margin: 3rem 0 1rem;
-    text-align: center;
+  font-size: 1.6rem;
+  color: #69003D; /* Tyrian Purple */
+  margin: 3rem 0 1rem;
+  text-align: center;
 }
 
-/* Profile cards layout */
+/* Profile Card Grid */
 .profile-list {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-items: center;
-    gap: 1.5rem;
-    margin-top: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+  margin-top: 1rem;
+  animation: fadeIn 1s ease-in-out;
 }
 
-/* Card styling */
+/* Profile Card */
 .profile-item.card {
-    width: 300px;
-    align-items: center;
-    padding: 1.5rem;
-    background-color: #ffffff;
-    border-radius: 15px;
-    border: 1px solid #e0e0e0;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
-    transition: transform 0.2s, box-shadow 0.2s;
+  width: 300px;
+  padding: 1.8rem;
+  background: linear-gradient(145deg, #F7E1E9, #ffffff);
+  border-radius: 20px;
+  border: 1px solid #AD2874; /* Fandango */
+  box-shadow: 0 12px 24px rgba(173, 40, 116, 0.06);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  color: #69003D; /* Tyrian Purple */
 }
 
 .profile-item.card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0px 6px 16px rgba(0, 0, 0, 0.1);
-    border-color: #d0d0d0;
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: 0 16px 32px rgba(173, 40, 116, 0.25);
 }
 
-/* Profile text */
+/* Profile Text */
 .profile-item.card h2 {
-    margin: 0;
-    /* font-size: 1.2rem; */
-    color: #e91e63;
-    font-weight: bold;
-    align-items: left;
+  margin: 0;
+  color: #AD2874; /* Fandango */
+  font-size: 1.3rem;
+  font-weight: 600;
 }
 
 .profile-item.card p {
-    margin: 0.5rem 0 1rem;
-    color: #555;
-    font-style: italic;
+  margin: 0.5rem 0 1rem;
+  color: #444; /* Jet */
+  font-style: italic;
 }
 
-/* Primary button */
+/* Button */
 .btn.btn-primary {
-    background-color: #e91e63;
-    color: white;
-    padding: 0.6rem 1rem;
-    border-radius: 8px;
-    border: none;
-    font-weight: bold;
-    cursor: pointer;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    transition: background-color 0.3s;
+  background-color: #AD2874; /* Fandango */
+  color: #fff;
+  padding: 0.7rem 1.2rem;
+  border-radius: 10px;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: all 0.25s ease;
+  box-shadow: 0 6px 16px rgba(173, 40, 116, 0.3);
 }
 
 .btn.btn-primary:hover {
-    background-color: #d81b60;
+  background-color: #69003D; /* Tyrian Purple */
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(138, 0, 71, 0.4);
 }
 
-/* Fade transition for error */
+/* Fade Animations */
 .fade-leave-active {
-    transition: opacity 1s ease-in-out;
+  transition: opacity 1s ease-in-out;
 }
 
 .fade-leave-to {
-    opacity: 0;
+  opacity: 0;
+}
+
+/* Custom Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-30px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 </style>
+
