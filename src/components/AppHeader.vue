@@ -13,31 +13,31 @@
         <div class="collapse navbar-collapse" id="navbarNav">
           <ul class="navbar-nav me-auto mb-2 mb-lg-0">
             <li class="nav-item">
-              <RouterLink class="nav-link" :class="{ active: $route.path === '/' }" to="/" v-if="!isAuthenticated">Home</RouterLink>
+              <RouterLink class="nav-link" :class="{ active: $route.path === '/' }" to="/" v-if="!authStore.isAuthenticated">Home</RouterLink>
             </li>
             <li class="nav-item">
-              <RouterLink class="nav-link" :class="{ active: $route.path === '/register' }" to="/register" v-if="!isAuthenticated">Register</RouterLink>
+              <RouterLink class="nav-link" :class="{ active: $route.path === '/register' }" to="/register" v-if="!authStore.isAuthenticated">Register</RouterLink>
             </li>
             <li class="nav-item">
-              <RouterLink class="nav-link" :class="{ active: $route.path === '/login' }" to="/login" v-if="!isAuthenticated">Login</RouterLink>
+              <RouterLink class="nav-link" :class="{ active: $route.path === '/login' }" to="/login" v-if="!authStore.isAuthenticated">Login</RouterLink>
             </li>
             <li class="nav-item">
-              <RouterLink to="/users" class="nav-link" :class="{ active: $route.path === '/users' }" v-if="isAuthenticated">Home</RouterLink>
+              <RouterLink to="/users" class="nav-link" :class="{ active: $route.path === '/users' }" v-if="authStore.isAuthenticated">Home</RouterLink>
             </li>
             <li class="nav-item">
-              <RouterLink class="nav-link" :class="{ active: $route.path === `/users/${authStore.user_id}` }" :to="`/users/${authStore.user_id}`" v-if="isAuthenticated">My Profile</RouterLink>
+              <RouterLink class="nav-link" :class="{ active: $route.path === `/users/${authStore.user_id}` }" :to="`/users/${authStore.user_id}`" v-if="authStore.isAuthenticated">My Profile</RouterLink>
             </li>
             <li class="nav-item">
-              <RouterLink class="nav-link" :class="{ active: $route.path === '/profiles/new' }" to="/profiles/new" v-if="isAuthenticated">Add New Profile</RouterLink>
+              <RouterLink class="nav-link" :class="{ active: $route.path === '/profiles/new' }" to="/profiles/new" v-if="authStore.isAuthenticated">Add New Profile</RouterLink>
             </li>
             <li class="nav-item">
-              <RouterLink class="nav-link" :class="{ active: $route.path === '/reports' }" to="/reports" v-if="isAuthenticated">View Reports</RouterLink>
+              <RouterLink class="nav-link" :class="{ active: $route.path === '/reports' }" to="/reports" v-if="authStore.isAuthenticated">View Reports</RouterLink>
             </li>
           </ul>
 
           <ul class="navbar-nav mb-2 mb-lg-0">
             <li class="nav-item">
-              <RouterLink class="nav-link" to="/logout" v-if="isAuthenticated">
+              <RouterLink class="nav-link" to="/logout" v-if="authStore.isAuthenticated">
                 Logout
               </RouterLink>
             </li>
@@ -55,9 +55,6 @@ import { useAuthStore } from '@/stores/auth';
 
 const authStore = useAuthStore();
 
-const props = defineProps({
-  isAuthenticated: Boolean
-})
 </script>
 
 <style scoped>
