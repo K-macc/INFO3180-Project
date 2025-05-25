@@ -58,18 +58,24 @@ const authStore = useAuthStore();
 <style scoped>
 nav {
   background-color: #b10ca3;
+  
+}
+
+.navbar-brand {
+  font-weight: bold;
 }
 
 .nav-link {
   color: #fff !important;
+  font-weight: bold;
 }
 
 .nav-link:hover {
-  color: #ffcc00b4 !important;
+  color: #065f7c !important;
 }
 
 .nav-link.active {
-  color: #ffcc00 !important;
+  color: #00BFFF !important;
 }
 
 body {

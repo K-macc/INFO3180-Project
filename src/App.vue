@@ -1,12 +1,17 @@
 <script setup>
 import { RouterLink, RouterView } from 'vue-router'
-import { computed } from 'vue'
+import { onMounted } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import AppHeader from '@/components/AppHeader.vue'
 import AppFooter from '@/components/AppFooter.vue'
 
-const authStore = useAuthStore()
-const isAuthenticated = computed(() => authStore.isAuthenticated)
+const authStore = useAuthStore();
+authStore.restoreAuth();
+
+onMounted(() => {
+  authStore.restoreAuth();
+});
+const isAuthenticated = authStore.isAuthenticated;
 
 
 </script>

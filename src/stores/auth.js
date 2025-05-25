@@ -2,15 +2,15 @@ import { defineStore } from "pinia";
 import { useRouter } from "vue-router";
 import { ref } from "vue";
 
-export const isAuthenticated = ref(false);
+export const isAuthenticated = ref(!!localStorage.getItem("jwt"));
 
 export const useAuthStore = defineStore("auth", {
   state: () => ({
     user: null,
-    token: null,
+    token: localStorage.getItem("jwt") || null,
     router: useRouter(),
     flashMessage: "",
-    user_id: null,
+    user_id: localStorage.getItem("user_id") || null,
     profile_id: null,
     current_fav_id: null,
     isProfileComplete: false,
@@ -22,12 +22,26 @@ export const useAuthStore = defineStore("auth", {
       this.token = token;
       isAuthenticated.value = true;
       localStorage.setItem("jwt", token);
+      localStorage.setItem("user_id", user_id);
     },
     logout() {
       this.user = null;
+      this.token = null;
+      this.user_id = null;
       isAuthenticated.value = false;
       localStorage.removeItem("jwt");
+      localStorage.removeItem("user_id");
       this.router.push("/");
+    },
+    restoreAuth() {
+      const storedToken = localStorage.getItem("jwt");
+      const storedUserId = localStorage.getItem("user_id");
+
+      if (storedToken && storedUserId) {
+        this.token = storedToken;
+        this.user_id = storedUserId;
+        isAuthenticated.value = true;
+      }
     },
     setFlashMessage(message) {
       this.flashMessage = message;
