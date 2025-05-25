@@ -233,7 +233,7 @@ function sortFavourited() {
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(138, 0, 71, 0.12);
   padding: 1rem 1.2rem;
-  width: 300px;
+  width: 20px;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   cursor: default;
   color: #333;

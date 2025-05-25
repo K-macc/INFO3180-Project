@@ -57,8 +57,7 @@ function fetchProfiles() {
   fetch(`/api/check-profiles/${authStore.user_id}`, {
     method: 'GET',
     headers: {
-      'Authorization': `Bearer ${authStore.token}`,
-      'Content-Type': 'application/json'
+      'Authorization': `Bearer ${authStore.token}`
     }
   })
     .then(response => response.json())
@@ -73,8 +72,7 @@ function fetchProfiles() {
         fetch('/api/profiles', {
           method: 'GET',
           headers: {
-            'Authorization': `Bearer ${authStore.token}`,
-            'Content-Type': 'application/json'
+            'Authorization': `Bearer ${authStore.token}`
           }
         })
           .then(response => response.json())
@@ -105,8 +103,7 @@ function filteredProfiles() {
   fetch(url, {
     method: 'GET',
     headers: {
-      'Authorization': `Bearer ${authStore.token}`,
-      'Content-Type': 'application/json'
+      'Authorization': `Bearer ${authStore.token}`
     }
   })
     .then(response => response.json())
