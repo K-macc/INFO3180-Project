@@ -172,7 +172,7 @@ def login():
         user = User.query.filter_by(username=form.username.data).first()
 
         if user and check_password_hash(user.password, form.password.data):
-            token = create_access_token(identity=user.id)
+            token = create_access_token(identity=user)
 
             session["user_id"] = user.id
             login_user(user)
