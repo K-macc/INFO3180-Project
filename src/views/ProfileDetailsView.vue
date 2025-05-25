@@ -182,7 +182,7 @@ watch(() => route.params.profile_id, (newId) => {
     </transition>
 
     <div class="profile-card" v-if="profile">
-      <!-- TOP BAR: Avatar, Name, Buttons -->
+      
       <div class="profile-topbar">
         <div class="profile-avatar">
           <img v-if="profile.image" :src="profile.image" alt="Profile Picture" />
@@ -196,22 +196,20 @@ watch(() => route.params.profile_id, (newId) => {
           <div class="profile-btn-row">
             <button class="btn-fav" @click="addToFavourites(profile.id)"
               :aria-label="isFavourited(profile.id) ? 'Remove from favourites' : 'Add to favourites'"
-              v-if="profile.user_id !== authStore.user_id">
+              v-if="parseInt(profile.user_id) !== parseInt(authStore.user_id)">
               <font-awesome-icon :icon="[isFavourited(profile.id) ? 'fas' : 'far', 'heart']"
                 :class="{ 'heart-icon': true, 'favourited': isFavourited(profile.id) }" />
             </button>
           </div>
           </div>
-          <button class="btn btn-secondary" v-if="profile.user_id !== authStore.user_id">Email User</button>
-            <router-link class="btn btn-primary" v-if="profile.user_id === authStore.user_id" :to="`/profiles/match`">
+          <button class="btn btn-secondary" v-if="parseInt(profile.user_id) !== parseInt(authStore.user_id)">Email User</button>
+            <router-link class="btn btn-primary" v-if="parseInt(profile.user_id) === parseInt(authStore.user_id)" :to="`/profiles/match`">
               Match Me
             </router-link>
         </div>
       </div>
 
-      <!-- GRID LAYOUT -->
       <div class="profile-grid">
-        <!-- About (top left) -->
         <section class="about-section grid-about">
           <h2>About</h2>
           <div class="about-list">
@@ -230,7 +228,7 @@ watch(() => route.params.profile_id, (newId) => {
           </div>
         </section>
 
-        <!-- Appearance (top right) -->
+        
         <section class="appearance-section grid-appearance">
           <h2>Appearance</h2>
           <div class="appearance-list">
@@ -241,7 +239,7 @@ watch(() => route.params.profile_id, (newId) => {
           </div>
         </section>
 
-        <!-- Preferences (bottom left) -->
+       
         <section class="preferences-section grid-preferences">
           <h2>Preferences</h2>
           <div class="preferences-list">
@@ -251,7 +249,7 @@ watch(() => route.params.profile_id, (newId) => {
           </div>
         </section>
 
-        <!-- Values (bottom right) -->
+       
         <section class="values-section grid-values">
           <h2>Values</h2>
           <div class="values-list">
@@ -262,7 +260,7 @@ watch(() => route.params.profile_id, (newId) => {
         </section>
       </div>
 
-      <!-- Favourites (bottom, centered) -->
+      
       <section class="favourites-section">
         <h2>Favourite Users</h2>
         <ul>

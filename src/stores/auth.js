@@ -1,6 +1,5 @@
 import { defineStore } from "pinia";
 import { useRouter } from "vue-router";
-import { ref } from "vue";
 
 
 export const useAuthStore = defineStore("auth", {
@@ -10,7 +9,7 @@ export const useAuthStore = defineStore("auth", {
     router: useRouter(),
     flashMessage: "",
     user_id: localStorage.getItem("user_id") || null,
-    profile_id: null,
+    profile_id: localStorage.getItem("profile_id") || null,
     current_fav_id: null,
     isProfileComplete: false,
   }),
@@ -47,6 +46,7 @@ export const useAuthStore = defineStore("auth", {
     },
     setProfileId(profile_id) {
       this.profile_id = profile_id;
+      localStorage.setItem("profile_id", profile_id);
     },
     setUserId(user_id) {
       this.user_id = user_id;

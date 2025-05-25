@@ -232,6 +232,7 @@ def get_user(user_id):
         profiles_data = [
             {
                 "id": profile.id,
+                "user_id": profile.user_id_fk,  
                 "description": profile.description,
                 "parish": profile.parish,
                 "biography": profile.biography,

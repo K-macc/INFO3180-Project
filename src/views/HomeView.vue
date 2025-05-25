@@ -41,7 +41,7 @@ setTimeout(() => {
       </transition>
 
     <div class="home-wrapper">
-      <!-- Background image grid -->
+     
       <div class="image-grid">
         <div
           v-for="(profile, index) in profiles"
@@ -51,9 +51,9 @@ setTimeout(() => {
         ></div>
       </div>
 
-      <!-- Overlay elements -->
+    
       <div class="overlay">
-        <!-- Top navbar with buttons on the right -->
+       
         <div class="top-bar">
           <div class="left-title">
             <h1 class="title-text">
