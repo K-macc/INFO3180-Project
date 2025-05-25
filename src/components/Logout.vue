@@ -12,16 +12,20 @@ const authStore = useAuthStore();
 
 
 function getCsrfToken() {
-  fetch('/api/v1/csrf-token')
-    .then((response) => response.json())
-    .then((data) => {
-        console.log(data.csrf_token);
-      csrf_token.value = data.csrf_token;
-    })
-    .catch((error) => {
-      console.error("Error: ", error);
+    return new Promise((resolve, reject) => {
+        fetch('/api/v1/csrf-token')
+            .then((response) => response.json())
+            .then((data) => {
+                csrf_token.value = data.csrf_token;
+                resolve(); 
+            })
+            .catch((error) => {
+                console.error("Error: ", error);
+                reject(error); 
+            });
     });
 }
+
 
 
 const logoutUser = async () => {
@@ -37,7 +41,7 @@ const logoutUser = async () => {
         credentials: 'include',
         headers: {
             'Authorization': `Bearer ${authStore.token}`,
-            'X-CSRF-Token': csrf_token.value, 
+            'X-CSRF-Token': csrf_token.value, // Send CSRF token in header
             'Content-Type': 'application/json'
         }
     })
@@ -47,7 +51,7 @@ const logoutUser = async () => {
                 success_message.value = data.message;
                 authStore.setFlashMessage(success_message.value);
                 authStore.logout();
-                router.push('/'); 
+                router.push('/'); // Redirect to login page after logout
             } else {
                 errors.value = data.errors;
             }
@@ -60,9 +64,10 @@ const logoutUser = async () => {
 
 
 onMounted(async () => {
-    try{
-        await getCsrfToken();  
-        await logoutUser();     
+    try {
+        // First, wait for CSRF token to be fetched before logging out
+        await getCsrfToken();  // Wait for CSRF token to be fetched
+        await logoutUser();     // Now perform the logout after CSRF token is set
     } catch (error) {
         console.error('Error:', error);
     }
@@ -70,21 +75,6 @@ onMounted(async () => {
 </script>
 
 <template>
-    <div class="logout-message">
-        <transition name="fade">
-            <div v-if="success_message" class="success-message">
-                {{ success_message }}
-            </div>
-        </transition>
-
-        <transition name="fade">
-            <div v-if="errors.length > 0" class="error-message">
-                <ul>
-                    <li v-for="(error, index) in errors" :key="index">{{ error }}</li>
-                </ul>
-            </div>
-        </transition>
-    </div>
     <div class="logout-message">
         <transition name="fade">
             <div v-if="success_message" class="success-message">

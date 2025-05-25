@@ -1,8 +1,8 @@
 <template>
   <header>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
       <div class="container-fluid">
-        <img src="../../public/jam_date_logo.png" alt="Logo" class="logo" :style="{ width: '50px' , height: '50px' }" />
+        <img src="../../public/jam_date_logo.png" alt="Logo" class="logo" :style="{ width: '50px', height: '50px' }" />
         <RouterLink class="navbar-brand" to="/">Jam Date</RouterLink>
 
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
@@ -13,55 +13,45 @@
         <div class="collapse navbar-collapse" id="navbarNav">
           <ul class="navbar-nav me-auto mb-2 mb-lg-0">
             <li class="nav-item">
-              <RouterLink class="nav-link" to="/">Home</RouterLink>
+              <RouterLink class="nav-link" :class="{ active: $route.path === '/' }" to="/" v-if="!isAuthenticated">Home</RouterLink>
             </li>
-
             <li class="nav-item">
-              <RouterLink class="nav-link" to="/register">Register</RouterLink>
+              <RouterLink class="nav-link" :class="{ active: $route.path === '/register' }" to="/register" v-if="!isAuthenticated">Register</RouterLink>
             </li>
-
             <li class="nav-item">
-              <RouterLink class="nav-link" to="/login">Login</RouterLink>
+              <RouterLink class="nav-link" :class="{ active: $route.path === '/login' }" to="/login" v-if="!isAuthenticated">Login</RouterLink>
             </li>
-
             <li class="nav-item">
-              <RouterLink class="nav-link" :to="`/users/${authStore.user_id}`" v-if="isAuthenticated">My Profile
+              <RouterLink to="/users" class="nav-link" :class="{ active: $route.path === '/users' }" v-if="isAuthenticated">Home</RouterLink>
+            </li>
+            <li class="nav-item">
+              <RouterLink class="nav-link" :class="{ active: $route.path === `/users/${authStore.user_id}` }" :to="`/users/${authStore.user_id}`" v-if="isAuthenticated">My Profile</RouterLink>
+            </li>
+            <li class="nav-item">
+              <RouterLink class="nav-link" :class="{ active: $route.path === '/profiles/new' }" to="/profiles/new" v-if="isAuthenticated">Add New Profile</RouterLink>
+            </li>
+            <li class="nav-item">
+              <RouterLink class="nav-link" :class="{ active: $route.path === '/profiles/check' }" to="/profiles/check" v-if="isAuthenticated">Check Profiles</RouterLink>
+            </li>
+            <li class="nav-item">
+              <RouterLink class="nav-link" :class="{ active: $route.path === `/profiles/update/${authStore.user_id}` }" :to="`/profiles/update/${authStore.user_id}`" v-if="isAuthenticated">Update Profile</RouterLink>
+            </li>
+            <li class="nav-item">
+              <RouterLink class="nav-link" :class="{ active: $route.path === `/profiles/${authStore.user_id}` }" :to="`/profiles/${authStore.user_id}`" v-if="isAuthenticated">Profile Details</RouterLink>
+            </li>
+            <li class="nav-item">
+              <RouterLink class="nav-link" :class="{ active: $route.path === '/profiles/match' }" to="/profiles/match" v-if="isAuthenticated">Match Profile</RouterLink>
+            </li>
+            <li class="nav-item">
+              <RouterLink class="nav-link" :class="{ active: $route.path === '/reports' }" to="/reports" v-if="isAuthenticated">View Reports</RouterLink>
+            </li>
+          </ul>
+
+          <ul class="navbar-nav mb-2 mb-lg-0">
+            <li class="nav-item">
+              <RouterLink class="nav-link" to="/logout" v-if="isAuthenticated">
+                Logout
               </RouterLink>
-            </li>
-
-            <li class="nav-item">
-              <RouterLink class="nav-link" to="/profiles/new" v-if="isAuthenticated">Add New Profile</RouterLink>
-            </li>
-
-            <li class="nav-item">
-              <RouterLink class="nav-link" to="/logout" v-if="isAuthenticated">Logout</RouterLink>
-            </li>
-
-            <li class="nav-item">
-              <RouterLink class="nav-link" to="/users" v-if="isAuthenticated">View Users</RouterLink>
-              <RouterLink to="/users" class="nav-link active" v-if="isAuthenticated">Home</RouterLink>
-            </li>
-
-            <li class="nav-item">
-              <RouterLink class="nav-link" to="/profiles/check" v-if="isAuthenticated">Check Profiles</RouterLink>
-            </li>
-
-            <li class="nav-item">
-              <RouterLink class="nav-link" :to="`/profiles/update/${authStore.user_id}`" v-if="isAuthenticated">Update
-                Profile</RouterLink>
-            </li>
-
-            <li class="nav-item">
-              <RouterLink class="nav-link" :to="`/profiles/${authStore.user_id}`" v-if="isAuthenticated">Profile Details
-              </RouterLink>
-            </li>
-
-            <li class="nav-item">
-              <RouterLink class="nav-link" to="/profiles/match" v-if="isAuthenticated">Match Profile</RouterLink>
-            </li>
-
-            <li class="nav-item">
-              <RouterLink class="nav-link" to="/reports" v-if="isAuthenticated">View Reports</RouterLink>
             </li>
           </ul>
         </div>
@@ -78,6 +68,22 @@ const authStore = useAuthStore();
 </script>
 
 <style scoped>
+nav {
+  background-color: #b10ca3;
+}
+
+.nav-link {
+  color: #fff !important;
+}
+
+.nav-link:hover {
+  color: #ffcc00b4 !important;
+}
+
+.nav-link.active {
+  color: #ffcc00 !important;
+}
+
 body {
   padding-top: 70px;
 }

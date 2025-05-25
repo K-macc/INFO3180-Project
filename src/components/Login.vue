@@ -57,6 +57,7 @@ function login() {
     .then(response => response.json())
     .then(data => {
       if (data.error) {
+        console.log('Error:', data.error);
         errorMessage.value = data.error;
         flashMessage(errorMessage);
       } else {
@@ -105,7 +106,7 @@ function login() {
 
     <div class="login-card">
 
-      <h2 class="card-title">Welcome Back 👋</h2>
+      <h2 class="card-title">Login</h2>
 
       <form @submit.prevent="login" class="form" id="loginForm" enctype="multipart/form-data">
         <input v-model="username" type="text" placeholder="Username" name="username" class="input" />
@@ -211,22 +212,42 @@ function login() {
   text-decoration: underline;
 }
 
-.success-message,
-.error-message {
+.success-message {
   position: fixed;
   top: 250px;
-  right: 80px;
+  right: 380px;
   z-index: 9999;
   padding: 1rem 1.5rem;
   border-radius: 0.75rem;
   font-weight: 500;
   font-size: 1rem;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-  width: 520px;
+  width: 280px;
   display: flex;
   align-items: center;
   gap: 0.75rem;
   text-align: left;
+}
+
+.error-message {
+  position: fixed;
+  top: 250px;
+  right: 150px;
+  z-index: 9999;
+  padding: 1rem 1.5rem;
+  border-radius: 0.75rem;
+  font-weight: 500;
+  font-size: 1rem;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  width: 500px;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  text-align: left;
+}
+
+.error-message * {
+  margin: 0;
 }
 
 .success-message::before {

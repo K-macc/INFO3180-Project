@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-import loginpic from '@/assets/loginpic.png';
+import loginpic from '@/assets/registerpic.jpg';
 
 const username = ref('');
 const password = ref('');
@@ -91,7 +91,8 @@ function register() {
     backgroundPosition: 'center center'
   }">
     
-    <h1 class="title">Jam-Date 💖</h1>
+
+    <h1 class="title">Jam-Date</h1>
 
     <transition name="fade">
       <div v-if="successMessage" class="alert success-message">
@@ -144,13 +145,10 @@ function register() {
 }
 
 .title {
-  z-index: 2;
-  font-size: 2.8rem;
-  font-weight: 600;
-  color: #fff;
-  text-align: center;
-  margin-bottom: 2rem;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: #444;
+  margin-bottom: 1rem;
 }
 
 .register-card {
@@ -236,22 +234,42 @@ function register() {
 }
 
 
-.success-message,
-.error-message {
+.success-message {
   position: fixed;
-  top: 80px;
-  right: 60px;
+  top: 150px;
+  right: 300px;
   z-index: 9999;
   padding: 1rem 1.5rem;
   border-radius: 0.75rem;
   font-weight: 500;
   font-size: 1rem;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-  width: 520px;
+  width: 300px;
   display: flex;
   align-items: center;
   gap: 0.75rem;
   text-align: left;
+}
+
+.error-message {
+  position: fixed;
+  top: 100px;
+  right: 100px;
+  z-index: 9999;
+  padding: 1rem 1.5rem;
+  border-radius: 0.75rem;
+  font-weight: 500;
+  font-size: 1rem;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  width: 500px;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  text-align: left;
+}
+
+.error-message * {
+  margin: 0;
 }
 
 .success-message::before {
@@ -284,16 +302,5 @@ function register() {
 
 .fade-leave-to {
   opacity: 0;
-}
-
-/* Responsive optimization */
-@media (max-width: 480px) {
-  .title {
-    font-size: 2rem;
-  }
-
-  .form-container {
-    padding: 1.5rem;
-  }
 }
 </style>
