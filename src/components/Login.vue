@@ -1,3 +1,39 @@
+<template>
+  <div class="login-container">
+    <h1 class="brand-title">Jam-Date</h1>
+    <transition name="fade">
+        <div v-if="successMessage" class="message success">
+          {{ successMessage }}
+        </div>
+      </transition>
+
+      <transition name="fade">
+        <div v-if="errorMessage.length" class="message error">
+          <ul>
+            <li v-for="(error, index) in errorMessage" :key="index">{{ error }}</li>
+          </ul>
+        </div>
+      </transition>
+
+    <div class="login-card">
+
+      <h2 class="card-title">Welcome Back 👋</h2>
+
+      <form @submit.prevent="login" class="form" id="loginForm" enctype="multipart/form-data">
+        <input v-model="username" type="text" placeholder="Username" name="username" class="input"/>
+        <input v-model="password" type="password" placeholder="Password" name="password" class="input"/>
+        <button type="submit" class="btn-primary">Login</button>
+      </form>
+
+      
+
+      <div class="link-group">
+        <router-link to="/register" class="link">Create an Account</router-link>
+      </div>
+    </div>
+  </div>
+</template>
+
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
@@ -75,193 +111,124 @@ function login() {
       errorMessage.value.push('An error occurred. Please try again.');
       flashMessage(errorMessage);
     });
-};
+}
 </script>
-
-<template>
-  <div class="login-container">
-    <h1 class="brand-title">Jam-Date</h1>
-
-    <div class="login-card">
-      <h2 class="card-title">Welcome Back</h2>
-
-      <form @submit.prevent="login" class="form" id="loginForm" enctype="multipart/form-data">
-        <input v-model="username" type="text" placeholder="Username" name="username" class="input"/>
-        <input v-model="password" type="password" placeholder="Password" name="password" class="input"/>
-
-        <button type="submit" class="btn-primary">Login</button>
-      </form>
-
-      <transition name="fade">
-        <div v-if="successMessage" class="success-message">
-          {{ successMessage }}
-        </div>
-      </transition>
-
-      <transition name="fade">
-      <div v-if="errorMessage.length" class="error-message">
-        <ul>
-          <li v-for="(error, index) in errorMessage" :key="index">{{ error }}</li>
-        </ul>
-      </div>
-    </transition>
-      
-
-      <div class="link-group">
-        <router-link to="/register" class="link">Register</router-link>
-        <router-link to="/view-reports" class="link">View Reports</router-link>
-      </div>
-    </div>
-  </div>
-</template>
 
 <style scoped>
 .login-container {
   background: linear-gradient(120deg, #8A0047, #AD2874);
   min-height: 100vh;
   display: flex;
-  position: relative;
-  flex-direction: column;
   justify-content: center;
   align-items: center;
-  overflow: hidden;
-}
-
-.login-container::before {
-  content: "";
-  position: absolute;
-  width: 200%;
-  height: 100vh;
-  background: radial-gradient(circle, rgba(173,216,230, 0.2) 20%, transparent 70%);
-  animation: ripple 10s infinite linear;
-  top: -50%;
-  left: -50%;
-  z-index: 0;
-}
-
-@keyframes ripple {
-  0% {
-    transform: scale(1) rotate(0deg);
-    opacity: 1;
-  }
-  100% {
-    transform: scale(1.2) rotate(360deg);
-    opacity: 0.7;
-  }
+  flex-direction: column;
+  padding: 1rem;
 }
 
 .brand-title {
-  font-size: 3rem;
-  font-weight: 700;
-  color: white;
+  font-size: 2.5rem;
+  color: #fff;
   margin-bottom: 1rem;
+  font-weight: bold;
 }
 
 .login-card {
-  background: white;
+  background: #ffffff;
   border-radius: 16px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
   padding: 2rem;
-  width: 90%;
-  max-width: 350px;
+  width: 100%;
+  max-width: 400px;
   text-align: center;
-  z-index: 5;
+  position: relative;
 }
 
 .card-title {
-  font-size: 1.5rem;
-  margin-bottom: 1.2rem;
+  font-size: 1.75rem;
   color: #333;
+  margin-bottom: 1.5rem;
 }
 
 .form {
   display: flex;
   flex-direction: column;
+  gap: 1rem;
 }
 
 .input {
   padding: 12px;
-  margin-bottom: 1rem;
-  border-radius: 8px;
-  border: 1px solid #ccc;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  background-color: #f9f9f9;
   font-size: 1rem;
-  transition: border 0.2s;
+  transition: border 0.3s ease;
 }
 
 .input:focus {
-  outline: none;
   border-color: #007bff;
+  outline: none;
 }
 
 .btn-primary {
   padding: 12px;
   background-color: #007bff;
-  color: white;
+  color: #fff;
   font-weight: bold;
   border: none;
-  border-radius: 8px;
+  border-radius: 10px;
   font-size: 1rem;
   cursor: pointer;
-  transition: background 0.3s;
+  transition: background-color 0.3s ease;
 }
 
 .btn-primary:hover {
   background-color: #0056b3;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(105, 0, 61, 0.3);
 }
 
-.success-message {
-  color: green;
-  background-color: #d4edda;
-  padding: 10px;
-  border-radius: 5px;
-  width: 15%;
-  top: 100px;
-  right: 45px;
-  text-align: center;
-  position: fixed;
+.message {
+  margin-top: 1rem;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  text-align: left;
+  top: 250px;
+  right: 450px;
+  position: absolute;
+  z-index: 10;
 }
 
-.error-message {
-  color: red;
+.success {
+  background-color: #d1e7dd;
+  color: #0f5132;
+}
+
+.error {
   background-color: #f8d7da;
-  padding: 10px;
-  padding-top: 20px;
-  padding-left: 0px;
-  margin-bottom: 10px;
-  border-radius: 5px;
-  top: 70px;
-  right: 45px;
-  position: fixed;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  width: 26%;
-  min-height: 8%;
-  height: auto;
-}
-
-.fade-leave-active {
-  transition: opacity 1s ease-in-out;
-}
-
-.fade-leave-to {
-  opacity: 0;
+  color: #842029;
 }
 
 .link-group {
-  margin-top: 1rem;
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
+  margin-top: 1.5rem;
 }
 
 .link {
+  font-size: 0.9rem;
   color: #007bff;
   text-decoration: none;
-  font-size: 0.9rem;
 }
 
 .link:hover {
   text-decoration: underline;
+}
+
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 0.5s;
+}
+.fade-enter-from, .fade-leave-to {
+  opacity: 0;
 }
 </style>

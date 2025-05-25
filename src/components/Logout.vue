@@ -12,20 +12,15 @@ const authStore = useAuthStore();
 
 
 function getCsrfToken() {
-    return new Promise((resolve, reject) => {
-        fetch('/api/v1/csrf-token')
-            .then((response) => response.json())
-            .then((data) => {
-                csrf_token.value = data.csrf_token;
-                resolve();  // Resolve when token is successfully fetched
-            })
-            .catch((error) => {
-                console.error("Error: ", error);
-                reject(error);  // Reject if there is an error
-            });
+  fetch('/api/v1/csrf-token')
+    .then((response) => response.json())
+    .then((data) => {
+      csrf_token.value = data.csrf_token;
+    })
+    .catch((error) => {
+      console.error("Error: ", error);
     });
 }
-
 
 
 const logoutUser = async () => {
@@ -41,7 +36,7 @@ const logoutUser = async () => {
         credentials: 'include',
         headers: {
             'Authorization': `Bearer ${authStore.token}`,
-            'X-CSRF-Token': csrf_token.value, // Send CSRF token in header
+            'X-CSRF-Token': csrf_token.value, 
             'Content-Type': 'application/json'
         }
     })
@@ -51,7 +46,7 @@ const logoutUser = async () => {
                 success_message.value = data.message;
                 authStore.setFlashMessage(success_message.value);
                 authStore.logout();
-                router.push('/'); // Redirect to login page after logout
+                router.push('/'); 
             } else {
                 errors.value = data.errors;
             }
@@ -64,10 +59,9 @@ const logoutUser = async () => {
 
 
 onMounted(async () => {
-    try {
-        // First, wait for CSRF token to be fetched before logging out
-        await getCsrfToken();  // Wait for CSRF token to be fetched
-        await logoutUser();     // Now perform the logout after CSRF token is set
+    try{
+        await getCsrfToken();  
+        await logoutUser();     
     } catch (error) {
         console.error('Error:', error);
     }

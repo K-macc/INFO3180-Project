@@ -41,9 +41,8 @@
             </div>
           </div>
           <div class="right-buttons">
-            <router-link to="/login" class="btn btn-outline-light me-2">Login</router-link>
-            <router-link to="/register" class="btn btn-outline-light me-2">Register</router-link>
-            <router-link to="/view-reports" class="btn btn-outline-light">View Reports</router-link>
+            <router-link to="/login" class="btn btn-danger me-2 d-flex align-items-center justify-content-center" :style="{ height: '50px', width: '80px' }">Login</router-link>
+            <router-link to="/register" class="btn btn-danger me-2 d-flex align-items-center justify-content-center" :style="{ height: '50px', width: '80px' }">Register</router-link>
           </div>
         </div>
       </div>
