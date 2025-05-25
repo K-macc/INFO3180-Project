@@ -50,9 +50,14 @@
 
 <script setup>
 import { RouterLink } from "vue-router";
-import { useAuthStore, isAuthenticated } from "@/stores/auth";
+import { defineProps } from 'vue';
+import { useAuthStore } from '@/stores/auth';
 
 const authStore = useAuthStore();
+
+const props = defineProps({
+  isAuthenticated: Boolean
+})
 </script>
 
 <style scoped>
