@@ -7,7 +7,7 @@ const userID = authStore.user_id;
 const user = ref(null);
 const profiles = ref([]);
 
-function fetchUser() { 
+function fetchUser() {
     fetch(`/api/users/${userID}`, {
         method: 'GET',
         headers: {
@@ -15,163 +15,149 @@ function fetchUser() {
             'Content-Type': 'application/json'
         }
     })
-        .then(response => {
-            return response.json();
-        })
+        .then(response => response.json())
         .then(data => {
             user.value = data.user;
             profiles.value = data.profiles;
         })
         .catch(error => {
             console.error('Failed to parse JSON:', error);
-        })
-
+        });
 }
 
 function trackProfileView(profileID) {
     authStore.setProfileId(profileID);
 }
 
-
 onMounted(() => {
     fetchUser();
 });
-
 </script>
 
 <template>
-    <div class="main-body">
+    <div class="main-body-bg">
         <h1>My Profile</h1>
 
-<div class="user-card card" v-if="user">
-    <img :src="user.photo" alt="Profile Picture" />
-    <div class="text-content">
-        <h2>My Details</h2>
-        <div class="user-info">
-            <label for="name">Name:</label>
-            <p>{{ user.name }} </p>
+        <div class="user-card card" v-if="user">
+            <img :src="user.photo" alt="Profile Picture" />
+            <div class="text-content">
+                <h2>My Details</h2>
+                <div class="user-info">
+                    <label>Name:</label>
+                    <p>{{ user.name }}</p>
+                </div>
+                <div class="user-info">
+                    <label>Email:</label>
+                    <p>{{ user.email }}</p>
+                </div>
+                <div class="user-info">
+                    <label>Date Joined:</label>
+                    <p>{{ user.date_joined }}</p>
+                </div>
+            </div>
         </div>
-        <div class="user-info">
-            <label for="email">Email:</label>
-            <p>{{ user.email }}</p>
-        </div>
-        <div class="user-info">
-            <label for="date_joined">Date Joined:</label>
-            <p>{{ user.date_joined }}</p>
-        </div>
-    </div>
-</div>
 
-        <div class="profiles">
-            <h2>Profiles</h2>
-
+        <div class="profiles" v-if="profiles.length">
+            <h2>My Profiles</h2>
             <div class="profile-list">
                 <div v-for="profile in profiles" :key="profile.id" class="profile-item card">
                     <h3>About Me</h3>
-
-                    <label for="description">Description:</label>
+                    <label>Description:</label>
                     <p>{{ profile.description }}</p>
-
-
-                    <label for="biography">Biography:</label>
+                    <label>Biography:</label>
                     <p>{{ profile.biography }}</p>
-
-                    <router-link class="btn btn-primary" :to="`/profiles/${profile.id}`"
-                        @click="trackProfileView(profile.id)">View Profile</router-link>
+                    <router-link
+                        class="btn btn-primary"
+                        :to="`/profiles/${profile.id}`"
+                        @click="trackProfileView(profile.id)"
+                    >
+                        View Profile
+                    </router-link>
                 </div>
             </div>
         </div>
     </div>
 </template>
 
-
 <style scoped>
-.main-body {
+.main-body-bg {
   display: flex;
   flex-direction: column;
   align-items: center;
   min-height: 100vh;
-  background: linear-gradient(to bottom left, #F7E1E9, #8A0047); /* Lavender Blush to Sky Blue */
   padding: 2rem 1rem;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 h1 {
-  font-size: 2.5rem;
-  color: #AD2874; /* Fandango */
+  font-size: 3rem;
+  color: #f7d4e6;
+  text-shadow: 2px 2px #AD2874;
   margin-bottom: 2rem;
-  text-shadow: 1px 1px #fff;
 }
 
 .user-card.card {
   display: flex;
-  flex-direction: row;
   align-items: center;
   background-color: #fff;
+  border: 1px solid #AD2874;
   border-radius: 20px;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
-  padding: 24px;
-  max-width: 720px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  padding: 2rem;
+  max-width: 500px;
   width: 100%;
-  margin-bottom: 2rem;
-  transition: transform 0.3s ease;
-  gap: 20px;
+  margin-bottom: 3rem;
+  gap: 24px;
+  transition: all 0.3s ease;
   flex-wrap: wrap;
 }
 
-.user-card.card:hover {
-  transform: scale(1.02);
-}
-
 .user-card h2 {
-  color: #8A0047; /* Murrey */
+  color: #ad1457;
   margin-bottom: 1rem;
+  text-align: start;
 }
 
 img {
   width: 140px;
   height: 140px;
   border-radius: 50%;
-  border: 4px solid #00C8FF; /* Vivid Sky Blue */
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-  margin-left: 20px;
-  margin-right: 20px;
+  border: 4px solid #ad1457;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.3);
+}
+
+.text-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 .user-info {
   display: flex;
-  flex-direction: row;
-  gap: 10px;
-  font-size: 1rem;
-  color: #333; /* Jet */
-  margin: 6px 0;
+  justify-content: flex-start;
+  gap: 8px;
+  font-size: 1.1rem;
+  color: #444;
+  margin-bottom: 0.1rem;
 }
 
 label {
-  font-weight: 600;
-  color: #444;
-  min-width: 90px;
-}
-
-.text-content {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  flex: 1;
+  font-weight: bold;
+  min-width: 50px;
+  color: #555;
 }
 
 .profiles {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2rem;
   width: 100%;
 }
 
 .profiles h2 {
-  font-size: 2rem;
-  color: #69003D; /* Tyrian Purple */
-  margin-bottom: 0.5rem;
+  font-size: 2.2rem;
+  color: #f7d4e6;
+  text-shadow: 2px 2px #AD2874;
+  margin-bottom: 1.5rem;
 }
 
 .profile-list {
@@ -183,85 +169,57 @@ label {
 }
 
 .profile-item.card {
-  background: #fff;
+  background: linear-gradient(145deg, #F7E1E9, #ffffff);
+  border: 1px solid #AD2874;
+  color: #69003D;
   border-radius: 20px;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
-  width: 320px;
-  padding: 20px;
+  box-shadow: 0 8px 26px rgba(0, 0, 0, 0.12);
+  width: 300px;
+  padding: 1.5rem;
   text-align: left;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  overflow: hidden;
+  transition: all 0.3s ease;
 }
 
 .profile-item.card:hover {
-  transform: scale(1.03);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  transform: scale(1.04);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
 }
 
 .profile-item.card h3 {
   font-size: 1.4rem;
-  color: #AD2874; /* Fandango */
-  margin-bottom: 12px;
+  color: #c2185b;
+  margin-bottom: 0.75rem;
 }
 
 .profile-item.card label {
   display: block;
-  font-weight: bold;
-  margin-top: 12px;
-  color: #444;
+  font-weight: 600;
+  margin-top: 1rem;
+  color: #333;
 }
 
 .profile-item.card p {
-  margin-top: 4px;
-  color: #333;
-  line-height: 1.4;
+  margin-top: 0.3rem;
+  color: #444;
+  line-height: 1.5;
 }
 
 .btn.btn-primary {
   display: inline-block;
-  background: #AD2874; /* Fandango */
   color: white;
-  text-align: center;
-  padding: 0.6rem 1rem;
+  padding: 0.6rem 1.2rem;
   border: none;
   border-radius: 12px;
   cursor: pointer;
   font-weight: bold;
-  transition: background-color 0.3s ease, transform 0.2s ease;
   text-decoration: none;
-  margin-top: 16px;
-  box-shadow: 0 8px 18px rgba(173, 40, 116, 0.4);
+  margin-top: 1rem;
+  box-shadow: 0 8px 20px rgba(216, 27, 96, 0.3);
+  transition: all 0.3s ease;
 }
 
 .btn.btn-primary:hover {
-  background: #69003D; /* Tyrian Purple */
   transform: translateY(-2px);
-  box-shadow: 0 10px 22px rgba(138, 0, 71, 0.5); /* Murrey */
-}
-
-/* Responsive tweaks */
-@media (max-width: 768px) {
-  .user-card.card {
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    padding: 20px;
-  }
-
-  .text-content {
-    align-items: center;
-    margin-left: 0;
-  }
-
-  .user-info {
-    justify-content: center;
-    text-align: left;
-    flex-wrap: wrap;
-  }
-
-  img {
-    margin: 0 auto 20px auto;
-  }
+  box-shadow: 0 10px 28px rgba(136, 14, 79, 0.5);
 }
 </style>
-

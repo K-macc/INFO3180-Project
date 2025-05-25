@@ -26,8 +26,6 @@ function stringToColor(str) {
 
 async function fetchProfiles() {
   try {
-    console.log('Fetching profiles for userID:', userID);
-    console.log('Auth token:', authStore.token);
     const response = await fetch(`/api/users/${userID}`, {
       method: 'GET',
       headers: {
@@ -39,7 +37,6 @@ async function fetchProfiles() {
     if (!response.ok) throw new Error('Failed to fetch profiles');
     
     const data = await response.json();
-    console.log('Response data:', data);
     profiles.value = data.profiles;
   } catch (err) {
     error.value = 'Failed to load profiles';
@@ -55,7 +52,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div>
+  <div class="container-bg">
     <h1 class="title">Choose a Profile</h1>
 
     <div v-if="isLoading" class="loading">Loading profiles...</div>
@@ -83,9 +80,8 @@ onMounted(async () => {
 </template>
 
 <style scoped>
-body {
-  background: linear-gradient(135deg, #00C8FF, #8A0047);
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+.container-bg {
+  padding: 1rem;
 }
 
 .title {
@@ -93,7 +89,8 @@ body {
   margin: 2rem 0 1.5rem;
   font-size: 2.8rem;
   font-weight: 700;
-  color: #8A0047; /* Murrey */
+  color: #f7d4e6;
+  text-shadow: 2px 2px #AD2874;
   letter-spacing: 1px;
   animation: fadeInDown 0.6s ease-in-out;
 }
@@ -110,6 +107,8 @@ body {
 
 .profile-item.card {
   background: linear-gradient(145deg, #F7E1E9, #ffffff);
+  border: 1px solid #AD2874;
+  color: #69003D;
   border-radius: 20px;
   padding: 1.8rem 1.5rem;
   box-shadow: 0 12px 28px rgba(0, 0, 0, 0.1);
@@ -126,7 +125,6 @@ body {
   left: -40%;
   width: 180%;
   height: 180%;
-  background: radial-gradient(circle at center, rgba(0, 200, 255, 0.1), transparent 70%);
   transform: rotate(25deg);
   z-index: 0;
 }
@@ -141,7 +139,7 @@ body {
   height: 100px;
   border-radius: 50%;
   margin: 0 auto 1rem;
-  background-color: #AD2874; /* Fandango */
+  background-color: #AD2874; 
   display: flex;
   align-items: center;
   justify-content: center;
@@ -175,13 +173,12 @@ body {
 
 .profile-details p {
   margin: 0.4rem 0;
-  color: #333333; /* Jet */
+  color: #333333; 
   font-size: 1rem;
 }
 
 .btn.btn-primary {
   margin-top: 1rem;
-  background-color: #AD2874; /* Fandango */
   color: #fff;
   padding: 0.7rem 1.4rem;
   border: none;
@@ -194,9 +191,8 @@ body {
 }
 
 .btn.btn-primary:hover {
-  background-color: #69003D; /* Tyrian Purple */
   transform: translateY(-2px);
-  box-shadow: 0 10px 24px rgba(138, 0, 71, 0.5); /* Murrey shadow */
+  box-shadow: 0 10px 24px rgba(138, 0, 71, 0.5); 
 }
 
 .loading,
@@ -208,11 +204,11 @@ body {
 }
 
 .error {
-  color: #8A0047; /* Murrey */
+  color: #f7d4e6;
+  text-shadow: 2px 2px #AD2874;
   font-weight: 600;
 }
 
-/* Animations */
 @keyframes fadeIn {
   from {
     opacity: 0;

@@ -61,7 +61,7 @@ class Profile(db.Model):
     sex = db.Column(db.String(10), nullable=True)
     race = db.Column(db.String(10), nullable=True)
     birth_year = db.Column(db.Integer, nullable=True)
-    height = db.Column(db.Float, nullable=True)
+    height = db.Column(db.String, nullable=True)
     fav_cuisine = db.Column(db.String(80), nullable=True)
     fav_colour = db.Column(db.String(80), nullable=True)
     fav_school_subject = db.Column(db.String(80), nullable=True)
@@ -107,6 +107,7 @@ class Profile(db.Model):
             "religious": self.religious,
             "family_oriented": self.family_oriented
         }
+        
 
 
 class Favourite(db.Model):

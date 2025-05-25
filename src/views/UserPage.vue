@@ -33,7 +33,7 @@ function addFilter() {
   if (!filterValues.value.includes(selectedFilter.value) && selectedFilter.value === 'sex') {
     filters.value.push({ field: selectedFilter.value, operator: 'between', value: '' });
     filterValues.value.push(selectedFilter.value);
-    selectedFilter.value = ''; // reset the dropdown
+    selectedFilter.value = ''; 
   } else if (!filterValues.value.includes(selectedFilter.value) && selectedFilter.value === 'race') {
     filters.value.push({ field: selectedFilter.value, operator: 'among', value: '' });
     filterValues.value.push(selectedFilter.value);
@@ -128,7 +128,7 @@ function filteredProfiles() {
 </script>
 
 <template>
-  <div class="profiles">
+  <div class="profiles-bg">
 
     <transition name="fade">
       <div v-if="errorMessage" class="alert error-message">
@@ -173,7 +173,7 @@ function filteredProfiles() {
 
           <button @click="removeFilter(index)" class="filter-button">✕</button>
         </div>
-        <button @click="filteredProfiles" class="btn btn-primary">Search</button>
+        <button @click="filteredProfiles" class="btn btn-primary search">Search</button>
       </div>
 
     </div>
@@ -203,27 +203,26 @@ function filteredProfiles() {
 </template>
 
 <style scoped>
-/* Global Layout */
-.profiles {
+
+.profiles-bg {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background: linear-gradient(to bottom right, #8A0047, #00C8FF);
   padding: 2rem 1rem;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   gap: 1rem;
   z-index: 5;
 }
 
-.profiles h1 {
+h1 {
   font-size: 2.8rem;
   color: #f7d4e6;
   text-shadow: 2px 2px #AD2874;
   animation: slideDown 0.8s ease-in-out;
   margin-top: 3rem;
+  text-align: center;
 }
 
-/* Error Box */
+
 .error-message {
   position: fixed;
   top: 100px;
@@ -234,24 +233,19 @@ function filteredProfiles() {
   font-weight: 500;
   font-size: 1rem;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-  width: 250px;
+  min-width: 250px;
+  max-width: 450px;
   display: flex;
   align-items: center;
   gap: 0.75rem;
   text-align: left;
   animation: fadeInUp 0.4s ease-in;
 
-  background-color: #fee2e2; /* soft red */
-  color: #991b1b; /* dark red */
+  background-color: #fee2e2; 
+  color: #991b1b; 
 }
 
-.error-message::before {
-  content: '⚠️';
-  font-weight: bold;
-  font-size: 1.2rem;
-}
 
-/* Search Container */
 .search-container {
   text-align: center;
   display: flex;
@@ -260,7 +254,7 @@ function filteredProfiles() {
   animation: fadeIn 1s ease;
 }
 
-/* Input Field */
+
 .search-input {
   padding: 0.75rem 1rem;
   width: 60%;
@@ -280,21 +274,18 @@ function filteredProfiles() {
   background-color: #fff;
 }
 
-/* Filter Dropdown */
+
 .filter-dropdown {
   display: flex;
   flex-direction: column;
   padding: 0.6rem;
   border-radius: 10px;
   border: 1px solid #AD2874;
-  /* Fandango */
   background-color: #F7E1E9;
-  /* Lavender Blush */
   width: 200px;
   font-size: 1rem;
   margin-bottom: 1.5rem;
   color: #69003D;
-  /* Tyrian Purple */
 }
 
 .filter-dropdown:focus {
@@ -303,20 +294,17 @@ function filteredProfiles() {
   background-color: #fff;
 }
 
-/* Filter Container */
 .filter-container {
   display: flex;
   flex-direction: column;
   background-color: #fff;
   border: 1px solid #AD2874;
-  /* Fandango */
   border-radius: 12px;
   width: 60%;
   max-width: 600px;
   margin: 1rem auto;
   padding: 1rem;
   box-shadow: 0 4px 16px rgba(173, 40, 116, 0.08);
-  /* subtle fandango shadow */
 }
 
 .filter-body {
@@ -370,16 +358,13 @@ select.filter-option {
   color: #AD2874;
 }
 
-/* Section Title */
 h2 {
   font-size: 1.6rem;
   color: #69003D;
-  /* Tyrian Purple */
   margin: 3rem 0 1rem;
   text-align: center;
 }
 
-/* Profile Card Grid */
 .profile-list {
   display: flex;
   flex-wrap: wrap;
@@ -391,18 +376,15 @@ h2 {
   animation: fadeIn 1s ease-in-out;
 }
 
-/* Profile Card */
 .profile-item.card {
-  width: 300px;
+  width: 350px;
   padding: 1.8rem;
   background: linear-gradient(145deg, #F7E1E9, #ffffff);
   border-radius: 20px;
   border: 1px solid #AD2874;
-  /* Fandango */
   box-shadow: 0 12px 24px rgba(173, 40, 116, 0.06);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   color: #69003D;
-  /* Tyrian Purple */
 }
 
 .profile-item.card:hover {
@@ -410,11 +392,9 @@ h2 {
   box-shadow: 0 16px 32px rgba(173, 40, 116, 0.25);
 }
 
-/* Profile Text */
 .profile-item.card h2 {
   margin: 0;
   color: #AD2874;
-  /* Fandango */
   font-size: 1.3rem;
   font-weight: 600;
 }
@@ -422,15 +402,12 @@ h2 {
 .profile-item.card p {
   margin: 0.5rem 0 1rem;
   color: #444;
-  /* Jet */
   font-style: italic;
   text-align: center;
 }
 
-/* Button */
+
 .btn.btn-primary {
-  background-color: #AD2874;
-  /* Fandango */
   color: #fff;
   padding: 0.7rem 1.2rem;
   border-radius: 10px;
@@ -443,55 +420,22 @@ h2 {
 }
 
 .btn.btn-primary:hover {
-  background-color: #69003D;
-  /* Tyrian Purple */
   transform: translateY(-2px);
   box-shadow: 0 8px 20px rgba(138, 0, 71, 0.4);
 }
 
-/* Fade Animations */
-.fade-leave-active {
-  transition: opacity 1s ease-in-out;
+.search {
+  width: 40%;
+  margin: 0 auto;
 }
 
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s;
+}
+
+.fade-enter-from,
 .fade-leave-to {
   opacity: 0;
-}
-
-/* Custom Animations */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes slideDown {
-  from {
-    opacity: 0;
-    transform: translateY(-30px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
 }
 </style>

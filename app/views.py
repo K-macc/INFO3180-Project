@@ -12,7 +12,12 @@ from binascii import Error
 from flask import request, jsonify, send_from_directory, session
 from flask_jwt_extended import current_user
 from flask_login import login_user, logout_user
-from flask_jwt_extended import create_access_token, get_jwt_identity, get_jwt, jwt_required
+from flask_jwt_extended import (
+    create_access_token,
+    get_jwt_identity,
+    get_jwt,
+    jwt_required,
+)
 from flask_wtf.csrf import generate_csrf
 from werkzeug.utils import secure_filename
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -23,7 +28,6 @@ from app import app, db
 from app.models import User, Profile, Favourite
 from app.forms import UserForm, ProfileForm, LoginForm
 import json
-
 
 
 def check_fields(fields):
@@ -100,6 +104,7 @@ def query_profile(user_id, field):
 # Routing for your application.
 ###
 
+
 @app.route("/api/v1/csrf-token", methods=["GET"])
 def get_csrf():
     return jsonify({"csrf_token": generate_csrf()}), 200
@@ -114,9 +119,11 @@ def index():
 def assets(filename):
     return app.send_static_file(os.path.join("assets", filename))
 
+
 ###
 # Users
 ###
+
 
 @app.route("/api/register", methods=["POST"])
 def register():
@@ -170,7 +177,7 @@ def login():
         if user and check_password_hash(user.password, form.password.data):
             token = create_access_token(identity=user.id)
 
-            session["user_id"] = user.id  
+            session["user_id"] = user.id
             login_user(user)
 
             return jsonify(
@@ -194,11 +201,12 @@ def login():
 @jwt_required()
 def logout():
     try:
-        session.pop("user_id", None)  
+        session.pop("user_id", None)
         logout_user()
         return jsonify({"message": "Logged out successfully!!"}), 200
     except Exception as e:
         return jsonify({"errors": [str(e)]}), 400
+
 
 @app.route("/api/users/<int:user_id>", methods=["GET"])
 @jwt_required()
@@ -250,12 +258,12 @@ def get_user(user_id):
 # Profiles
 ###
 
+
 @app.route("/api/profiles", methods=["GET"])
 @jwt_required()
 def get_profiles():
     current_user_id = session.get("user_id")
 
-    
     profiles = Profile.query.filter(Profile.user_id_fk != current_user_id).all()
 
     return jsonify({"profiles": [profile.serialize() for profile in profiles]}), 200
@@ -365,6 +373,7 @@ def get_profile(profile_id):
     }
     return jsonify({"profile": profile_data}), 200
 
+
 @app.route("/api/search", methods=["GET"])
 @jwt_required()
 def search_profiles():
@@ -376,8 +385,9 @@ def search_profiles():
 
         results = []
 
-        if not check_fields(search_field):
-            return jsonify({"error": "Please fill all filter fields!!"}), 400
+        if search_field:
+            if not check_fields(search_field):
+                return jsonify({"error": "Please fill all filter fields!!"}), 400
 
         if search_term:
             user_query = User.query.filter(
@@ -406,33 +416,34 @@ def search_profiles():
 # Favourites
 ###
 
+
 @app.route("/api/profiles/<int:user_id>/favourite", methods=["POST", "DELETE"])
 @jwt_required()
 def add_or_delete_favourite(user_id):
     u_id = session.get("user_id")
 
     if not has_complete_profile(u_id):
-        return jsonify({"error": "Complete your profile to access this feature."}), 403
+        return jsonify({"error": "Complete your profile to access this feature!!"}), 403
 
     if request.method == "DELETE":
         fav = Favourite.query.filter_by(user_id_fk=u_id, fav_user_id_fk=user_id).first()
         if not fav:
-            return jsonify({"error": "User not found"}), 404
+            return jsonify({"error": "User not found!!"}), 404
         else:
             db.session.delete(fav)
             db.session.commit()
             return jsonify({"message": "User removed from favourites!!"}), 200
     else:
         if user_id == u_id:
-            return jsonify({"error": "Cannot favourite yourself"}), 400
+            return jsonify({"error": "Cannot favourite yourself!!"}), 400
 
         profile = Profile.query.filter_by(user_id_fk=user_id).first()
         if not profile:
-            return jsonify({"error": "User not found"}), 404
+            return jsonify({"error": "User not found!!"}), 404
 
         fav = Favourite.query.filter_by(user_id_fk=u_id, fav_user_id_fk=user_id).first()
         if fav:
-            return jsonify({"error": "Already added to favourites"}), 404
+            return jsonify({"error": "Already added to favourites!!"}), 404
 
         fav = Favourite(user_id_fk=u_id, fav_user_id_fk=user_id)
         db.session.add(fav)
@@ -445,52 +456,80 @@ def add_or_delete_favourite(user_id):
 def get_matches(profile_id):
     matches = []
     year = datetime.now().year
-    
+
     current_user_id = session.get("user_id")
     if not has_complete_profile(current_user_id):
-        return jsonify({"error": "Complete your profile to access this feature."}), 403
+        return jsonify({"error": "Complete your profile to access this feature!!"}), 403
 
     profile = Profile.query.get_or_404(profile_id)
 
-    
-    if profile.user_id_fk != current_user_id:  
-        return jsonify({"error": "Unauthorized"}), 403
+    if profile.user_id_fk != current_user_id:
+        return jsonify({"error": "Unauthorized!!"}), 403
 
     age = year - profile.birth_year
 
     potential_matches = Profile.query.filter(
         Profile.id != profile.id,
-        Profile.user_id_fk != current_user_id,  
+        Profile.user_id_fk != current_user_id,
     ).all()
 
     for match in potential_matches:
-        match_age = year - match.birth_year
-        age_diff = abs(match_age - age)
-        height_diff = abs(profile.height - match.height)
-        if age_diff <= 5 and 3 <= height_diff <= 10:
-            fields_to_check = [
-                "fav_cuisine",
-                "fav_colour",
-                "fav_school_subject",
-                "political",
-                "religious",
-                "family_oriented",
-            ]
-            match_count = sum(
-                1
-                for field in fields_to_check
-                if getattr(profile, field) == getattr(match, field)
-            )
+        if profile.sex != match.sex:
+            match_age = year - match.birth_year
+            age_diff = abs(match_age - age)
+            
+            profile_height_split = profile.height.split("'")
+            profile_ft_to_in = int(profile_height_split[0]) * 12
+            profile_height = profile_ft_to_in + int(profile_height_split[1])
+            
+            match_height_split = match.height.split("'")
+            match_ft_to_in = int(match_height_split[0]) * 12
+            match_height = match_ft_to_in + int(match_height_split[1])
+            
+            height_diff = abs(profile_height - match_height)
+            if age_diff <= 5 and 3 <= height_diff <= 10:
+                fields_to_check = [
+                    "fav_cuisine",
+                    "fav_colour",
+                    "fav_school_subject",
+                    "political",
+                    "religious",
+                    "family_oriented",
+                ]
+                match_count = sum(
+                    1
+                    for field in fields_to_check
+                    if getattr(profile, field) == getattr(match, field)
+                )
+               
+                if match_count >= 3:
+                    match_data = {
+                        "id": match.id,
+                        "user_id": match.user_id_fk,
+                        "user_name": match.user.name,
+                        "photo": f"/api/photo/{match.user.photo}",
+                        "description": match.description,
+                        "parish": match.parish,
+                        "biography": match.biography,
+                        "sex": match.sex,
+                        "race": match.race,
+                        "birth_year": match.birth_year,
+                        "height": match.height,
+                        "fav_cuisine": match.fav_cuisine,
+                        "fav_colour": match.fav_colour,
+                        "fav_school_subject": match.fav_school_subject,
+                        "political": match.political,
+                        "religious": match.religious,
+                        "family_oriented": match.family_oriented,
+                    }
+                    matches.append(match_data)
 
-            if match_count >= 3:
-                matches.append(match)
-
-    if matches:  
+    if matches:
         return jsonify(
-            {"message": "Matches found!!", "matches": [p.serialize() for p in matches]}
+            {"message": "Matches found!!", "matches": matches}
         ), 200
     else:
-        return jsonify({"error": "No matches found"}), 404
+        return jsonify({"error": "No matches found!!"}), 404
 
 
 @app.route("/api/users/<int:user_id>/favourites", methods=["GET"])
@@ -505,7 +544,7 @@ def get_user_favourites(user_id):
     )
 
     if not favourites:
-        return jsonify({"error": "No favourites found for this user"}), 404
+        return jsonify({"error": "No favourites found for this user!!"}), 404
     else:
         if order == "name":
             favourites = favourites.order_by(User.name.asc())
@@ -546,7 +585,7 @@ def get_top_favoured_users(N):
         )
 
         if not top_favourites:
-            return jsonify({"error": "No favoured users found"}), 404
+            return jsonify({"error": "No favoured users found!!"}), 404
 
         else:
             if order == "name":
@@ -585,10 +624,10 @@ def get_photo(filename):
     ), 200
 
 
-
 ###
 # The functions below should be applicable to all Flask apps.
 ###
+
 
 def form_errors(form):
     error_messages = []

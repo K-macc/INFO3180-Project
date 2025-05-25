@@ -57,7 +57,6 @@ function login() {
     .then(response => response.json())
     .then(data => {
       if (data.error) {
-        console.log('Error:', data.error);
         errorMessage.value = data.error;
         flashMessage(errorMessage);
       } else {
@@ -136,7 +135,7 @@ function login() {
 
 .brand-title {
   font-size: 2.5rem;
-  color: #fff;
+  color: #444;
   margin-bottom: 1rem;
   font-weight: bold;
 }
@@ -188,6 +187,8 @@ function login() {
   font-size: 1rem;
   cursor: pointer;
   transition: background-color 0.3s ease;
+  width: 60%;
+  margin: 0 auto;
 }
 
 .btn-primary:hover {
@@ -239,7 +240,7 @@ function login() {
   font-weight: 500;
   font-size: 1rem;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-  width: 500px;
+  width: 550px;
   display: flex;
   align-items: center;
   gap: 0.75rem;
@@ -250,23 +251,9 @@ function login() {
   margin: 0;
 }
 
-.success-message::before {
-  content: '✔';
-  color: #065f46;
-  font-weight: bold;
-  font-size: 1.2rem;
-}
-
-.error-message::before {
-  content: '⚠';
-  color: #991b1b;
-  font-weight: bold;
-  font-size: 1.2rem;
-}
-
 .success-message {
   background-color: #d1fae5;
-  color: #065f46;
+  color: #0C4A6E;
 }
 
 .error-message {

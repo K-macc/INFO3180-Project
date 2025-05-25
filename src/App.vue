@@ -31,6 +31,20 @@ html, body {
     margin: 0;
 }
 
+body, [class$="-bg"] {
+    background-image: url('/src/assets/backgroundpic.webp');
+    background-repeat: no-repeat;
+    background-size: cover;      
+    background-position: center; 
+    background-attachment: fixed;
+    font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    min-height: 100vh;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background-color: #f7e1e9;
+  }
+
 .wrapper {
     display: flex;
     flex-direction: column;
@@ -44,8 +58,6 @@ html, body {
   margin-bottom: 0;
 }
 
-
-/* Transition effects */
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 0.3s ease;

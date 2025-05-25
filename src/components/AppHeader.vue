@@ -31,18 +31,6 @@
               <RouterLink class="nav-link" :class="{ active: $route.path === '/profiles/new' }" to="/profiles/new" v-if="isAuthenticated">Add New Profile</RouterLink>
             </li>
             <li class="nav-item">
-              <RouterLink class="nav-link" :class="{ active: $route.path === '/profiles/check' }" to="/profiles/check" v-if="isAuthenticated">Check Profiles</RouterLink>
-            </li>
-            <li class="nav-item">
-              <RouterLink class="nav-link" :class="{ active: $route.path === `/profiles/update/${authStore.user_id}` }" :to="`/profiles/update/${authStore.user_id}`" v-if="isAuthenticated">Update Profile</RouterLink>
-            </li>
-            <li class="nav-item">
-              <RouterLink class="nav-link" :class="{ active: $route.path === `/profiles/${authStore.user_id}` }" :to="`/profiles/${authStore.user_id}`" v-if="isAuthenticated">Profile Details</RouterLink>
-            </li>
-            <li class="nav-item">
-              <RouterLink class="nav-link" :class="{ active: $route.path === '/profiles/match' }" to="/profiles/match" v-if="isAuthenticated">Match Profile</RouterLink>
-            </li>
-            <li class="nav-item">
               <RouterLink class="nav-link" :class="{ active: $route.path === '/reports' }" to="/reports" v-if="isAuthenticated">View Reports</RouterLink>
             </li>
           </ul>

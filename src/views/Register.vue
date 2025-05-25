@@ -59,7 +59,6 @@ function register() {
   })
     .then(response => response.json())
     .then(data => {
-      console.log(data.value);
       if (data.errors) {
         errorMessage.value = data.errors;
         flashMessage(errorMessage);
@@ -261,7 +260,7 @@ function register() {
   font-weight: 500;
   font-size: 1rem;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-  width: 500px;
+  width: 550px;
   display: flex;
   align-items: center;
   gap: 0.75rem;
@@ -272,23 +271,9 @@ function register() {
   margin: 0;
 }
 
-.success-message::before {
-  content: '✔';
-  color: #065f46;
-  font-weight: bold;
-  font-size: 1.2rem;
-}
-
-.error-message::before {
-  content: '⚠';
-  color: #991b1b;
-  font-weight: bold;
-  font-size: 1.2rem;
-}
-
 .success-message {
   background-color: #d1fae5;
-  color: #065f46;
+  color: #0C4A6E;
 }
 
 .error-message {

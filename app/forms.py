@@ -2,8 +2,9 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, TextAreaField, SelectField, IntegerField, FloatField, BooleanField, PasswordField
 from wtforms import StringField, TextAreaField, SelectField, IntegerField, FloatField, BooleanField, PasswordField
-from wtforms.validators import InputRequired, NumberRange
+from wtforms.validators import InputRequired, NumberRange,  ValidationError
 from flask_wtf.file import FileRequired, FileField, FileAllowed
+import re
 
 class UserForm(FlaskForm):
     username = StringField('Username', validators=[InputRequired()])
@@ -20,13 +21,15 @@ class ProfileForm(FlaskForm):
     sex = SelectField('Sex', choices = [ ('male', 'Male'), ('female', 'Female') ], validators=[InputRequired()])
     race = SelectField('Race', choices = [ ('black', 'Black'), ('white', 'White'), ('asian', 'Asian'), ('indigenous', 'Indigenous'), ('mixed','Mixed') ], validators=[InputRequired()])
     birth_year = IntegerField('Birth Year', validators=[InputRequired(), NumberRange(min=1900, max=2025, message="Enter a valid year")])
-    height = FloatField("Height", validators=[InputRequired(), NumberRange(min=50, max=300, message="Enter your height in cm")])
+    height = StringField("Height (e.g. 5'11)", validators=[InputRequired()])
     fav_cuisine = StringField('Favorite Cuisine', validators=[InputRequired()])
     fav_colour = StringField('Favorite Colour', validators=[InputRequired()])
     fav_school_subject = StringField('Favorite School Subject', validators=[InputRequired()])
     political = BooleanField('Political')
     religious = BooleanField('Religious')
     family_oriented = BooleanField('Family Oriented')
+    
+
     
 class LoginForm(FlaskForm):
     username = StringField('Username', validators=[InputRequired()])

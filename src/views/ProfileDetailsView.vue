@@ -5,7 +5,7 @@ import { useRoute } from 'vue-router';
 
 const profile = ref(null);
 const authStore = useAuthStore();
-const profileID = ref(null); 
+const profileID = ref(null);
 const favourites = ref([]);
 const check_fav = ref([]);
 const load_fav = ref([])
@@ -13,7 +13,6 @@ const success_message = ref('');
 const error_message = ref('');
 const csrf_token = ref("");
 const route = useRoute();
-
 
 profileID.value = authStore.profile_id;
 
@@ -174,422 +173,378 @@ watch(() => route.params.profile_id, (newId) => {
 </script>
 
 <template>
-  <div class="main-body" v-if="profile">
+  <div class="profile-bg">
     <transition name="fade">
-      <div v-if="success_message" class="success-message">
-        {{ success_message }}
-      </div>
+      <div v-if="success_message" class="alert success-message">{{ success_message }}</div>
+    </transition>
+    <transition name="fade">
+      <div v-if="error_message" class="alert error-message">{{ error_message }}</div>
     </transition>
 
-    <transition name="fade">
-      <div v-if="error_message" class="error-message">
-        {{ error_message }}
-      </div>
-    </transition>
-
-    <h1>My Profile</h1>
-
-    <div class="user-card card">
-      <div class="profile-pic">
-        <img v-if="profile.image" :src="profile.image" alt="Profile Picture" />
-        <div v-else class="placeholder-pic">{{ profile.user_name?.charAt(0).toUpperCase() }}</div>
-      </div>
-      <div class="header-info">
-      <h3>About {{ profile.user_name }}</h3>
-
-      <div>
-          <label for="description">Description:</label>
-          <p>{{ profile.description }}</p>
-
-          <label for="biography">Biography:</label>
-          <p>{{ profile.biography }}</p>
-
-          <label for="parish">Parish:</label>
-          <p>{{ profile.parish }}</p>
-      </div>
-    </div>
-
-    <hr>
-    <div class="user-info">
-      <div class="preferences">
-      <h3>Preferences</h3>
-
-        <div>
-          <label for="fav_cuisine">Favourite Cuisine:</label>
-          <p>{{ profile.fav_cuisine }}</p>
+    <div class="profile-card" v-if="profile">
+      <!-- TOP BAR: Avatar, Name, Buttons -->
+      <div class="profile-topbar">
+        <div class="profile-avatar">
+          <img v-if="profile.image" :src="profile.image" alt="Profile Picture" />
+          <div v-else class="avatar-placeholder">
+            {{ profile.user_name?.charAt(0).toUpperCase() }}
+          </div>
         </div>
-
-        <div>
-          <label for="fav_colour">Favourite Colour:</label>
-          <p>{{ profile.fav_colour }}</p>
-        </div>
-
-        <div>
-          <label for="fav_school_subject">Favourite School Subject:</label>
-          <p>{{ profile.fav_school_subject }}</p>
+        <div class="profile-name-btns">
+          <div class="profile-name-button">
+            <h1>{{ profile.user_name }}</h1>
+          <div class="profile-btn-row">
+            <button class="btn-fav" @click="addToFavourites(profile.id)"
+              :aria-label="isFavourited(profile.id) ? 'Remove from favourites' : 'Add to favourites'"
+              v-if="profile.user_id !== authStore.user_id">
+              <font-awesome-icon :icon="[isFavourited(profile.id) ? 'fas' : 'far', 'heart']"
+                :class="{ 'heart-icon': true, 'favourited': isFavourited(profile.id) }" />
+            </button>
+          </div>
+          </div>
+          <button class="btn btn-secondary" v-if="profile.user_id !== authStore.user_id">Email User</button>
+            <router-link class="btn btn-primary" v-if="profile.user_id === authStore.user_id" :to="`/profiles/match`">
+              Match Me
+            </router-link>
         </div>
       </div>
 
-      <div class="values">
-      <h3>Values</h3>
+      <!-- GRID LAYOUT -->
+      <div class="profile-grid">
+        <!-- About (top left) -->
+        <section class="about-section grid-about">
+          <h2>About</h2>
+          <div class="about-list">
+            <div>
+              <label>Description:</label>
+              <p>{{ profile.description }}</p>
+            </div>
+            <div>
+              <label>Biography:</label>
+              <p>{{ profile.biography }}</p>
+            </div>
+            <div>
+              <label>Parish:</label>
+              <p>{{ profile.parish }}</p>
+            </div>
+          </div>
+        </section>
 
-        <div>
-          <label for="political">Political:</label>
-          <p>{{ profile.political }}</p>
-        </div>
+        <!-- Appearance (top right) -->
+        <section class="appearance-section grid-appearance">
+          <h2>Appearance</h2>
+          <div class="appearance-list">
+            <div><label>Sex:</label><p>{{ profile.sex }}</p></div>
+            <div><label>Race:</label><p>{{ profile.race }}</p></div>
+            <div><label>Birth Year:</label><p>{{ profile.birth_year }}</p></div>
+            <div><label>Height:</label><p>{{ profile.height }}</p></div>
+          </div>
+        </section>
 
-        <div>
-          <label for="religious">Religious:</label>
-          <p>{{ profile.religious }}</p>
-        </div>
+        <!-- Preferences (bottom left) -->
+        <section class="preferences-section grid-preferences">
+          <h2>Preferences</h2>
+          <div class="preferences-list">
+            <div><label>Favourite Cuisine:</label><p>{{ profile.fav_cuisine }}</p></div>
+            <div><label>Favourite Colour:</label><p>{{ profile.fav_colour }}</p></div>
+            <div><label>Favourite School Subject:</label><p>{{ profile.fav_school_subject }}</p></div>
+          </div>
+        </section>
 
-        <div>
-          <label for="family_oriented">Family Oriented:</label>
-          <p>{{ profile.family_oriented }}</p>
-        </div>
+        <!-- Values (bottom right) -->
+        <section class="values-section grid-values">
+          <h2>Values</h2>
+          <div class="values-list">
+            <div><label>Political:</label><p>{{ profile.political }}</p></div>
+            <div><label>Religious:</label><p>{{ profile.religious }}</p></div>
+            <div><label>Family Oriented:</label><p>{{ profile.family_oriented }}</p></div>
+          </div>
+        </section>
       </div>
-    </div>
 
-    <hr>
-    <div class="appearance">
-      <h3>Appearance</h3>
-
-
-      <div>
-        <label for="sex">Sex:</label>
-        <p>{{ profile.sex }}</p>
-      </div>
-
-      <div>
-        <label for="race">Race:</label>
-        <p>{{ profile.race }}</p>
-      </div>
-
-      <div>
-        <label for="birth_year">Birth Year:</label>
-        <p>{{ profile.birth_year }}</p>
-      </div>
-
-      <div>
-        <label for="height">Height:</label>
-        <p>{{ profile.height }} cm</p>
-      </div>
-    </div>
-
-    <hr>
-    <div class="favourite-users">
-      <h3>Favourite Users</h3>
-      <div class="favourites">
+      <!-- Favourites (bottom, centered) -->
+      <section class="favourites-section">
+        <h2>Favourite Users</h2>
         <ul>
           <li v-for="favourite in load_fav" :key="favourite.id">
-            <router-link :to="`/profiles/${favourite.fav_profile_id}`" class ="btn-favourite">
+            <router-link :to="`/profiles/${favourite.fav_profile_id}`" class="favourite-link">
               {{ favourite.user_name }}
             </router-link>
           </li>
         </ul>
-      </div>
+      </section>
     </div>
-  </div>
-
-    <button class="btn btn-secondary" v-if="profile.user_id !== authStore.user_id">Email User</button>
-
-    <router-link class="btn btn-primary" v-if="profile.user_id === authStore.user_id" :to="`/profiles/match`">Match
-      Me</router-link>
-
-    <button class="btn btn-fav" @click="addToFavourites(profile.id)">
-      <font-awesome-icon
-    :icon="[isFavourited(profile.id) ? 'fas' : 'far', 'heart']"
-    :class="{ 'heart-icon': true, 'favourited': isFavourited(profile.id) }"
-  /></button>
   </div>
 </template>
 
-
 <style scoped>
-/* Core profile picture styles */
-.profile-pic {
-  width: 150px;
-  height: 150px;
-  margin: 20px;
-}
-
-.main-body {
-  background: linear-gradient(to bottom left, #F7E1E9, #8A0047); /* Lavender Blush to Sky Blue */
+.profile-bg {
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
-  min-height: 100vh;
-  padding: 2rem 1rem;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  padding: 3rem 1rem;
 }
 
-.profile-pic img,
-.placeholder-pic {
-  width: 140px;
-  height: 140px;
+.profile-card {
+  background: #fff;
+  border-radius: 2rem;
+  max-width: 900px;
+  width: 100%;
+  box-shadow: 0 12px 36px rgba(138, 0, 71, 0.12), 0 1.5px 6px rgba(0,0,0,0.04);
+  padding: 2.5rem 2rem 2rem 2rem;
+  margin-top: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+  animation: fadeIn 0.8s cubic-bezier(.68,-0.55,.27,1.55);
+}
+
+.profile-topbar {
+  display: flex;
+  align-items: center;
+  gap: 2.5rem;
+  margin-bottom: 1.2rem;
+  justify-content: flex-start;
+}
+
+.profile-avatar {
+  width: 120px;
+  height: 120px;
   border-radius: 50%;
-  border: 4px solid #AD2874; /* Fandango border */
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+  border: 5px solid #AD2874;
+  box-shadow: 0 4px 18px rgba(138,0,71,0.10);
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: auto;
+  background: #F7E1E9;
+}
+
+.profile-avatar img {
+  width: 100%;
+  height: 100%;
   object-fit: cover;
 }
 
-/* Placeholder background */
-.placeholder-pic {
-  font-size: 48px;
-  color: white;
-  background-color: #69003D; /* Tyrian Purple */
-  font-weight: bold;
-}
-
-/* Headings */
-h1, h2, h3 {
-  color: #8A0047; /* Fandango */
-  text-shadow: 2px 2px #00C8FF; /* Lavender Blush shadow */
-  margin-bottom: 1rem;
-}
-
-h1 {
-  font-size: 2.5rem;
-  font-weight: bold;
-}
-
-/* Card container */
-.user-card.card {
-  background: #F7E1E9; /* Lavender Blush */
-  border-radius: 1.5rem;
-  box-shadow: 0 6px 20px rgba(105, 0, 61, 0.15); /* Tyrian Purple shadow */
-  padding: 2rem;
-  max-width: 720px;
+.avatar-placeholder {
   width: 100%;
-  margin-bottom: 2rem;
-  transition: transform 0.3s ease;
+  height: 100%;
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 1rem;
+  justify-content: center;
+  font-size: 3rem;
+  font-weight: 700;
+  color: #fff;
+  background: linear-gradient(135deg, #AD2874 40%, #8A0047 100%);
 }
 
-/* Sections */
-section {
-  background: white;
-  border-radius: 1rem;
-  box-shadow: 0 4px 20px rgba(51, 51, 51, 0.05); /* Jet subtle shadow */
-  padding: 1.5rem 2rem;
-  width: 100%;
-  max-width: 700px;
-  transition: transform 0.3s;
-}
-
-section:hover {
-  transform: translateY(-3px);
-}
-
-/* Header area */
-.header-info {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1rem;
-  width: 90%;
-  padding: 1rem;
-}
-
-/* User details layout */
-.user-info {
+.profile-name-button {
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
-  width: 90%;
-  gap: 2rem;
-}
-
-.user-info h3, h2 {
-  color: #8A0047; /* Fandango */
-}
-
-/* Appearance block */
-.appearance {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  width: 90%;
-  padding: 1rem;
-}
-
-.appearance h2, .appearance h3 {
-  color: #8A0047; /* Vivid Sky Blue highlight */
-}
-
-.appearance div,
-.preferences div,
-.values div {
-  display: flex;
+  gap: 0.1rem;
   align-items: center;
-  gap: 1rem;
+  margin-bottom: 0.9rem;
 }
 
-.appearance label,
-.preferences label,
-.values label {
-  width: 180px;
-  font-weight: 600;
-  color: #333333; /* Jet */
-  text-align: left;
+
+.profile-name-btns h1 {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: #8A0047;
+  margin: 0;
+  letter-spacing: 1px;
 }
 
-.appearance p,
-.preferences p,
-.values p {
-  flex: 1;
-  color: #333333; /* Jet */
-}
-
-/* Preferences & values */
-.preferences,
-.values {
-  flex-direction: column;
-  width: 45%;
-}
-
-/* Favourites section */
-.favourite-users {
-  width: 90%;
-  text-align: center;
-}
-
-.favourite-users h3 {
-  color: #8A0047; /* Vivid Sky Blue */
-}
-
-.favourite-users ul {
-  list-style: none;
-  padding: 0;
+.profile-btn-row {
   display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.favourite-users li {
-  display: flex;
-  justify-content: center;
+  flex-direction: row;
+  gap: 1.1rem;
   align-items: center;
 }
 
-/* Messages */
-.success-message,
-.error-message {
-  position: fixed;
-  top: 70px;
-  right: 30px;
-  padding: 1rem 1.5rem;
-  border-radius: 0.5rem;
-  font-weight: 500;
-  z-index: 1000;
-  animation: fadeOut 2s forwards;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
-
-.success-message {
-  background-color: #D6F0F9; /* pale blue success */
-  color: #0C4A6E; /* dark blue text */
-}
-
-.error-message {
-  background-color: #F7D6DA; /* pale pink error */
-  color: #8A0047; /* Murrey */
-}
-
-@keyframes fadeOut {
-  0% { opacity: 1; }
-  80% { opacity: 1; }
-  100% { opacity: 0; }
-}
-
-/* Buttons */
-.btn {
-  padding: 0.6rem 1.2rem;
-  border-radius: 0.5rem;
-  font-weight: 600;
-  cursor: pointer;
+.btn-fav {
+  background: none;
   border: none;
-  transition: background 0.3s;
-}
-
-.btn-primary {
-  background-color: #6DDBFC; /* Sky Blue */
-  color: white;
-}
-
-.btn-primary:hover {
-  background-color: #00C8FF; /* Vivid Sky Blue */
-}
-
-.btn-secondary {
-  background-color: #69003D; /* Tyrian Purple */
-  color: white;
-}
-
-.btn-secondary:hover {
-  background-color: #8A0047; /* Murrey */
-}
-
-.btn-favourite {
-  background-color: #AD2874; /* Fandango */
-  color: white;
-  padding: 0.5rem 1rem;
-  border-radius: 0.5rem;
-  font-size: 1rem;
+  outline: none;
   cursor: pointer;
-  border: none;
-  transition: background-color 0.3s ease;
+  transition: transform 0.15s;
+  width: 50px;
 }
 
-.btn-favourite:hover {
-  background-color: #8A0047; /* Murrey */
+.btn-fav:hover {
+  transform: scale(1.12);
 }
 
 .heart-icon {
   font-size: 2rem;
-  color: #333333; /* Jet */
+  color: #AD2874;
   transition: color 0.3s;
-  margin: 1rem;
 }
-
 .heart-icon.favourited {
-  color: #AD2874; /* Fandango */
+  color: #e6397e;
 }
 
-/* General styles */
-label {
+.btn {
+  padding: 0.65rem 1.5rem;
+  border-radius: 0.7rem;
   font-weight: 600;
-  color: #333333; /* Jet */
+  font-size: 1.05rem;
+  cursor: pointer;
+  border: none;
+  transition: background 0.3s, color 0.3s;
+  box-shadow: 0 2px 8px rgba(138,0,71,0.07);
+}
+
+.btn-secondary {
+  background: #8A0047;
+  color: #fff;
+}
+.btn-secondary:hover {
+  background: #AD2874;
+  color: #fff;
+}
+
+.profile-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto auto;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.grid-about {
+  grid-column: 1 / 2;
+  grid-row: 1 / 2;
+}
+.grid-appearance {
+  grid-column: 2 / 3;
+  grid-row: 1 / 2;
+}
+.grid-preferences {
+  grid-column: 1 / 2;
+  grid-row: 2 / 3;
+}
+.grid-values {
+  grid-column: 2 / 3;
+  grid-row: 2 / 3;
+}
+
+section {
+  background: #F7E1E9;
+  border-radius: 1.2rem;
+  box-shadow: 0 2px 12px rgba(138,0,71,0.04);
+  padding: 1.5rem 1.2rem;
+}
+
+.about-section h2,
+.preferences-section h2,
+.values-section h2,
+.appearance-section h2,
+.favourites-section h2 {
+  color: #8A0047;
+  margin-bottom: 0.7rem;
+  font-weight: 700;
+}
+
+.about-list > div,
+.preferences-list > div,
+.values-list > div,
+.appearance-list > div {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 0.4rem;
+}
+
+label {
+  min-width: 140px;
+  font-weight: 600;
+  color: #8A0047;
+  margin-right: 0.6rem;
+  text-align: left;
 }
 
 p {
-  margin: 0.2rem 0 1rem;
-  color: #333333; /* Jet */
+  margin: 0;
+  color: #333;
+  font-size: 1rem;
+  line-height: 1.5;
 }
 
-hr {
-  border: none;
-  border-top: 1.5px solid #8A0047; /* Murrey */
-  margin: 1.5rem 0;
-  width: 90%;
+.favourites-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  margin-top: 1.5rem;
+  background: #F7E1E9;
+  border-radius: 1.2rem;
+  box-shadow: 0 2px 12px rgba(138,0,71,0.04);
+  padding: 1.5rem 1.2rem;
+  max-width: 500px;
 }
 
-/* Responsive */
-@media screen and (max-width: 768px) {
-  .user-info {
-    flex-direction: column;
-  }
+.favourites-section ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  justify-content: center;
+}
 
-  .preferences, .values {
-    width: 100%;
-  }
+.favourite-link {
+  background: linear-gradient(90deg, #AD2874 0%, #8A0047 100%);
+  color: #fff;
+  padding: 0.45rem 1.1rem;
+  border-radius: 0.7rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: background 0.2s;
+  box-shadow: 0 1px 4px rgba(138,0,71,0.08);
+}
+
+.favourite-link:hover {
+  background: linear-gradient(90deg, #8A0047 0%, #AD2874 100%);
+  color: #fff;
+}
+
+.success-message,
+.error-message {
+  position: fixed;
+  top: 130px;
+  right: 130px;
+  padding: 1rem 1.5rem;
+  border-radius: 0.7rem;
+  font-weight: 500;
+  z-index: 1000;
+  animation: fadeOut 2s forwards;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  text-align: left;
+}
+
+.success-message {
+  background-color: #D6F0F9;
+  color: #0C4A6E;
+}
+.error-message {
+  background-color: #F7D6DA;
+  color: #8A0047;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
 }
 </style>
-
