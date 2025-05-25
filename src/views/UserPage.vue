@@ -14,6 +14,8 @@ const router = useRouter();
 const filters = ref([])
 const filterValues = ref([]);
 const filterOptions = ref([]);
+const token = localStorage.getItem("jwt");
+const payload = token ? JSON.parse(atob(token.split(".")[1])) : null;
 
 function flashMessage(prompt) {
   setTimeout(() => {
@@ -54,6 +56,7 @@ function removeFilter(index) {
 }
 
 function fetchProfiles() {
+  console.log("payload", payload, token);
   fetch(`/api/check-profiles/${authStore.user_id}`, {
     method: 'GET',
     headers: {

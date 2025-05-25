@@ -20,7 +20,7 @@ jwt = JWTManager(app)
 
 @jwt.user_identity_loader
 def user_identity_lookup(user):
-    return user.id  # should be an int or string, no 'subject' field needed
+    return str(user.id)  # should be an int or string, no 'subject' field needed
 
 
 # Initialize LoginManager

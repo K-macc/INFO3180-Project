@@ -206,7 +206,7 @@ def logout():
 
 
 @app.route("/api/users/<int:user_id>", methods=["GET"])
-# @jwt_required()
+@jwt_required()
 def get_user(user_id):
     try:
         user = db.session.query(User).filter_by(id=user_id).first()
