@@ -18,6 +18,11 @@ csrf = CSRFProtect(app)
 migrate = Migrate(app, db)
 jwt = JWTManager(app)
 
+@jwt.user_identity_loader
+def user_identity_lookup(user):
+    return user.id  # should be an int or string, no 'subject' field needed
+
+
 # Initialize LoginManager
 login_manager = LoginManager()
 login_manager.init_app(app)

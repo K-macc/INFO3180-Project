@@ -57,6 +57,7 @@ function fetchProfiles() {
   fetch(`/api/check-profiles/${authStore.user_id}`, {
     method: 'GET',
     headers: {
+      'Content-Type': 'application/json',
       'Authorization': `Bearer ${authStore.token}`
     }
   })

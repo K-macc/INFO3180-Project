@@ -6,18 +6,13 @@ This file creates your application.
 """
 
 import os
-from datetime import datetime, timedelta
+from datetime import datetime
 from binascii import Error
 
 from flask import request, jsonify, send_from_directory, session
-from flask_jwt_extended import current_user
 from flask_login import login_user, logout_user
-from flask_jwt_extended import (
-    create_access_token,
-    get_jwt_identity,
-    get_jwt,
-    jwt_required,
-)
+from flask_jwt_extended import create_access_token, jwt_required
+
 from flask_wtf.csrf import generate_csrf
 from werkzeug.utils import secure_filename
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -28,6 +23,8 @@ from app import app, db
 from app.models import User, Profile, Favourite
 from app.forms import UserForm, ProfileForm, LoginForm
 import json
+
+
 
 
 def check_fields(fields):
@@ -209,7 +206,7 @@ def logout():
 
 
 @app.route("/api/users/<int:user_id>", methods=["GET"])
-@jwt_required()
+# @jwt_required()
 def get_user(user_id):
     try:
         user = db.session.query(User).filter_by(id=user_id).first()
