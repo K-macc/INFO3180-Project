@@ -1,43 +1,8 @@
-<template>
-  <div class="login-container">
-    <h1 class="brand-title">Jam-Date</h1>
-    <transition name="fade">
-        <div v-if="successMessage" class="message success">
-          {{ successMessage }}
-        </div>
-      </transition>
-
-      <transition name="fade">
-        <div v-if="errorMessage.length" class="message error">
-          <ul>
-            <li v-for="(error, index) in errorMessage" :key="index">{{ error }}</li>
-          </ul>
-        </div>
-      </transition>
-
-    <div class="login-card">
-
-      <h2 class="card-title">Welcome Back 👋</h2>
-
-      <form @submit.prevent="login" class="form" id="loginForm" enctype="multipart/form-data">
-        <input v-model="username" type="text" placeholder="Username" name="username" class="input"/>
-        <input v-model="password" type="password" placeholder="Password" name="password" class="input"/>
-        <button type="submit" class="btn-primary">Login</button>
-      </form>
-
-      
-
-      <div class="link-group">
-        <router-link to="/register" class="link">Create an Account</router-link>
-      </div>
-    </div>
-  </div>
-</template>
-
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/auth.js';
+import loginpic from '@/assets/loginpic.png';
 
 const router = useRouter();
 const username = ref('');
@@ -48,6 +13,7 @@ const token = ref('');
 const csrf_token = ref("");
 const authStore = useAuthStore();
 const user_id = ref(null);
+const photo = [{ image: loginpic }]
 
 function flashMessage(prompt) {
   setTimeout(() => {
@@ -114,6 +80,48 @@ function login() {
 }
 </script>
 
+<template>
+  <div class="login-container" :style="{
+    backgroundImage: `url(${photo[0].image})`,
+    backgroundRepeat: 'no-repeat',
+    backgroundSize: 'cover',
+    backgroundPosition: 'center center'
+  }">
+    <h1 class="brand-title">Jam-Date</h1>
+
+    <transition name="fade">
+      <div v-if="successMessage" class="alert success-message">
+        {{ successMessage }}
+      </div>
+    </transition>
+
+    <transition name="fade">
+      <div v-if="errorMessage.length" class="alert error-message">
+        <ul>
+          <li v-for="(error, index) in errorMessage" :key="index">{{ error }}</li>
+        </ul>
+      </div>
+    </transition>
+
+    <div class="login-card">
+
+      <h2 class="card-title">Welcome Back 👋</h2>
+
+      <form @submit.prevent="login" class="form" id="loginForm" enctype="multipart/form-data">
+        <input v-model="username" type="text" placeholder="Username" name="username" class="input" />
+        <input v-model="password" type="password" placeholder="Password" name="password" class="input" />
+        <button type="submit" class="btn-primary">Login</button>
+      </form>
+
+      <p class="link-group">
+        Don't have an account?
+        <router-link to="/register" class="link">Create an Account</router-link>
+      </p>
+    </div>
+  </div>
+</template>
+
+
 <style scoped>
 .login-container {
   background: linear-gradient(120deg, #8A0047, #AD2874);
@@ -159,7 +167,7 @@ function login() {
   padding: 12px;
   border-radius: 10px;
   border: 1px solid #ddd;
-  background-color: #f9f9f9;
+  background-color: #e7e5e5f3;
   font-size: 1rem;
   transition: border 0.3s ease;
 }
@@ -187,36 +195,14 @@ function login() {
   box-shadow: 0 6px 15px rgba(105, 0, 61, 0.3);
 }
 
-.message {
-  margin-top: 1rem;
-  padding: 0.75rem 1rem;
-  border-radius: 8px;
-  font-size: 0.95rem;
-  text-align: left;
-  top: 250px;
-  right: 450px;
-  position: absolute;
-  z-index: 10;
-}
-
-.success {
-  background-color: #d1e7dd;
-  color: #0f5132;
-}
-
-.error {
-  background-color: #f8d7da;
-  color: #842029;
-}
-
 .link-group {
-  display: flex;
+  font-size: 0.95rem;
   justify-content: center;
   margin-top: 1.5rem;
+  font-weight: 500;
 }
 
 .link {
-  font-size: 0.9rem;
   color: #007bff;
   text-decoration: none;
 }
@@ -225,10 +211,55 @@ function login() {
   text-decoration: underline;
 }
 
-.fade-enter-active, .fade-leave-active {
+.success-message,
+.error-message {
+  position: fixed;
+  top: 250px;
+  right: 80px;
+  z-index: 9999;
+  padding: 1rem 1.5rem;
+  border-radius: 0.75rem;
+  font-weight: 500;
+  font-size: 1rem;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  width: 520px;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  text-align: left;
+}
+
+.success-message::before {
+  content: '✔';
+  color: #065f46;
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+.error-message::before {
+  content: '⚠';
+  color: #991b1b;
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+.success-message {
+  background-color: #d1fae5;
+  color: #065f46;
+}
+
+.error-message {
+  background-color: #fee2e2;
+  color: #991b1b;
+}
+
+.fade-enter-active,
+.fade-leave-active {
   transition: opacity 0.5s;
 }
-.fade-enter-from, .fade-leave-to {
+
+.fade-enter-from,
+.fade-leave-to {
   opacity: 0;
 }
 </style>
